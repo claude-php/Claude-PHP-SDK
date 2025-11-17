@@ -1,0 +1,191 @@
+<?php
+
+/**
+ * Stub definitions for improved Psalm/PHPStan autocomplete.
+ */
+
+namespace ClaudePhp\Responses {
+    /**
+     * @phpstan-type TextBlock array{
+     *     type: 'text',
+     *     text: string
+     * }
+     * @phpstan-type ToolUseBlock array{
+     *     type: 'tool_use',
+     *     id: string,
+     *     name: string,
+     *     input: array<string, mixed>
+     * }
+     * @phpstan-type ToolResultBlock array{
+     *     type: 'tool_result',
+     *     tool_use_id: string,
+     *     content?: string|null,
+     *     is_error?: bool
+     * }
+     * @phpstan-type MessageContentBlock = TextBlock|ToolUseBlock|ToolResultBlock
+     *
+     * @psalm-type TextBlock TextBlock
+     * @psalm-type ToolUseBlock ToolUseBlock
+     * @psalm-type ToolResultBlock ToolResultBlock
+     * @psalm-type MessageContentBlock MessageContentBlock
+     */
+    class Message
+    {
+        /** @var list<MessageContentBlock|TextContent|ToolUseContent|ToolResultContent> */
+        public array $content = [];
+    }
+
+    class StreamResponse implements \IteratorAggregate
+    {
+        /**
+         * @return \Traversable<int, array<string, mixed>>
+         */
+        public function getIterator(): \Traversable {}
+    }
+}
+
+namespace ClaudePhp\Responses\Helpers {
+    use ClaudePhp\Responses\Message;
+    use ClaudePhp\Responses\TextContent;
+    use ClaudePhp\Responses\ToolResultContent;
+    use ClaudePhp\Responses\ToolUseContent;
+
+    final class MessageContentHelper
+    {
+        /**
+         * @param Message|array<string, mixed> $message
+         * @return list<TextContent>
+         */
+        public static function textBlocks(Message|array $message): array {}
+
+        /**
+         * @param Message|array<string, mixed> $message
+         * @return list<ToolUseContent>
+         */
+        public static function toolUses(Message|array $message): array {}
+
+        /**
+         * @param Message|array<string, mixed> $message
+         * @return list<ToolResultContent>
+         */
+        public static function toolResults(Message|array $message): array {}
+
+        /**
+         * @param Message|array<string, mixed> $message
+         */
+        public static function text(Message|array $message, string $glue = "\n\n"): string {}
+    }
+
+    final class StreamEventHelper
+    {
+        /**
+         * @param array<string, mixed> $event
+         */
+        public static function type(array $event): string {}
+
+        /**
+         * @param array<string, mixed> $event
+         */
+        public static function isTextDelta(array $event): bool {}
+
+        /**
+         * @param array<string, mixed> $event
+         */
+        public static function textDelta(array $event): ?string {}
+
+        /**
+         * @param array<string, mixed> $event
+         */
+        public static function isInputJsonDelta(array $event): bool {}
+
+        /**
+         * @param array<string, mixed> $event
+         */
+        public static function inputJsonDelta(array $event): ?string {}
+
+        /**
+         * @param array<string, mixed> $event
+         */
+        public static function isMessageStop(array $event): bool {}
+    }
+}
+
+namespace ClaudePhp\Lib\Streaming {
+    /**
+     * @phpstan-type MessageStartEvent array{
+     *     type: 'message_start',
+     *     message?: array{
+     *         id?: string,
+     *         model?: string,
+     *         role?: string,
+     *         usage?: array{
+     *             input_tokens?: int,
+     *             cache_creation_input_tokens?: int,
+     *             cache_read_input_tokens?: int
+     *         }
+     *     }
+     * }
+     * @phpstan-type MessageDeltaEvent array{
+     *     type: 'message_delta',
+     *     delta?: array{
+     *         stop_reason?: string|null,
+     *         stop_sequence?: string|null
+     *     },
+     *     usage?: array{
+     *         output_tokens?: int,
+     *         input_tokens?: int,
+     *         server_tool_use?: array<string, mixed>|null
+     *     }
+     * }
+     * @phpstan-type MessageStopEvent array{
+     *     type: 'message_stop',
+     *     stop_reason?: string|null
+     * }
+     * @phpstan-type ContentBlockStartEvent array{
+     *     type: 'content_block_start',
+     *     index: int,
+     *     content_block: array{
+     *         type: 'text'|'tool_use',
+     *         id?: string,
+     *         name?: string,
+     *         input?: array<string, mixed>
+     *     }
+     * }
+     * @phpstan-type ContentBlockDeltaEvent array{
+     *     type: 'content_block_delta',
+     *     index: int,
+     *     delta: array{
+     *         type: 'text_delta'|'input_json_delta',
+     *         text?: string,
+     *         partial_json?: string
+     *     }
+     * }
+     * @phpstan-type ContentBlockStopEvent array{
+     *     type: 'content_block_stop',
+     *     index: int
+     * }
+     * @phpstan-type StreamEvent = MessageStartEvent|MessageDeltaEvent|MessageStopEvent|ContentBlockStartEvent|ContentBlockDeltaEvent|ContentBlockStopEvent
+     *
+     * @psalm-type MessageStartEvent MessageStartEvent
+     * @psalm-type MessageDeltaEvent MessageDeltaEvent
+     * @psalm-type MessageStopEvent MessageStopEvent
+     * @psalm-type ContentBlockStartEvent ContentBlockStartEvent
+     * @psalm-type ContentBlockDeltaEvent ContentBlockDeltaEvent
+     * @psalm-type ContentBlockStopEvent ContentBlockStopEvent
+     * @psalm-type StreamEvent StreamEvent
+     */
+    class MessageStream implements \Iterator
+    {
+        /**
+         * @return StreamEvent|null
+         */
+        public function current(): mixed {}
+
+        /**
+         * @return StreamEvent|null
+         */
+        public function finalMessage(): ?\ClaudePhp\Responses\Message {}
+
+        public function textStream(): string {}
+    }
+}

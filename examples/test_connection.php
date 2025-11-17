@@ -27,8 +27,8 @@ if (file_exists($envFile)) {
     }
 }
 
-// SDK expects ANTHROPIC_API_KEY but .env has CLAUDE_API_KEY
-$apiKey = $_ENV['CLAUDE_API_KEY'] ?? $_ENV['ANTHROPIC_API_KEY'] ?? null;
+// SDK expects ANTHROPIC_API_KEY but .env has ANTHROPIC_API_KEY
+$apiKey = $_ENV['ANTHROPIC_API_KEY'] ?? $_ENV['ANTHROPIC_API_KEY'] ?? null;
 
 echo "API Key (first 10 chars): " . substr($apiKey, 0, 10) . "...\n";
 

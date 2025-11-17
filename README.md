@@ -234,6 +234,34 @@ $batch = $client->messages->batches->retrieve($batch->id);
 echo "Status: " . $batch->processing_status;
 ```
 
+## Response Helpers
+
+Need structured output from responses without hand-written casts? Two helper
+classes ship with the SDK:
+
+- `ClaudePhp\Responses\Helpers\MessageContentHelper` hydrates content blocks into
+  `TextContent`, `ToolUseContent`, and `ToolResultContent` objects.
+- `ClaudePhp\Responses\Helpers\StreamEventHelper` exposes guard/inspection
+  helpers for SSE payloads (text deltas, tool input JSON, message stop events).
+
+```php
+use ClaudePhp\Responses\Helpers\MessageContentHelper;
+use ClaudePhp\Responses\Helpers\StreamEventHelper;
+
+$message = $client->messages->create([...]);
+
+foreach (MessageContentHelper::toolUses($message) as $toolCall) {
+    // $toolCall is a ToolUseContent value object
+}
+
+$stream = $client->messages->stream([...]);
+foreach ($stream as $event) {
+    if (StreamEventHelper::isTextDelta($event)) {
+        echo StreamEventHelper::textDelta($event);
+    }
+}
+```
+
 ## Error Handling
 
 The SDK provides a comprehensive exception hierarchy for proper error handling:

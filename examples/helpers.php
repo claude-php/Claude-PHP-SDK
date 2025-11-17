@@ -36,11 +36,11 @@ function loadEnv(string $envFile): void
 
 /**
  * Get API key from environment
- * Supports both CLAUDE_API_KEY and ANTHROPIC_API_KEY
+ * Supports both ANTHROPIC_API_KEY and ANTHROPIC_API_KEY
  */
 function getApiKey(): string
 {
-    return $_ENV['CLAUDE_API_KEY'] ?? $_ENV['ANTHROPIC_API_KEY'] ?? throw new RuntimeException(
-        'API key not found. Set CLAUDE_API_KEY or ANTHROPIC_API_KEY in .env file'
+    return $_ENV['ANTHROPIC_API_KEY'] ?? $_ENV['ANTHROPIC_API_KEY'] ?? throw new RuntimeException(
+        'API key not found. Set ANTHROPIC_API_KEY or ANTHROPIC_API_KEY in .env file'
     );
 }

@@ -6,7 +6,7 @@ This directory contains example scripts demonstrating various features of the Cl
 
 1. Create a `.env` file in the project root with your API key:
 ```
-CLAUDE_API_KEY=your-api-key-here
+ANTHROPIC_API_KEY=your-api-key-here
 ```
 
 2. Run any example:
