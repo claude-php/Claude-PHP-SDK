@@ -40,11 +40,14 @@ class Messages extends Resource
         $body = Transform::transform($params, $this->getParamTypes());
         FileExtraction::extractFiles($body, [['files', '<array>']]);
 
+        // Extract betas parameter and convert to anthropic-beta header
+        $headers = $this->extractBetaHeaders($body);
+
         if (!empty($params['stream'])) {
-            return $this->_postStream('/v1/messages', $body);
+            return $this->_postStream('/v1/messages', $body, $headers);
         }
 
-        $response = $this->_post('/v1/messages', $body);
+        $response = $this->_post('/v1/messages', $body, $headers);
         if (!\is_array($response)) {
             throw new \RuntimeException('Unexpected response payload from beta messages API');
         }
@@ -225,5 +228,30 @@ class Messages extends Resource
                 server_tool_use: $data['usage']['server_tool_use'] ?? null,
             ),
         );
+    }
+
+    /**
+     * Extract betas parameter from body and convert to anthropic-beta header.
+     *
+     * According to the API documentation, beta features should be sent via
+     * the anthropic-beta HTTP header, not in the request body.
+     *
+     * @param array<string, mixed> &$body Request body (passed by reference to remove betas)
+     * @return array<string, string> Headers to add to the request
+     */
+    private function extractBetaHeaders(array &$body): array
+    {
+        if (!isset($body['betas']) || !is_array($body['betas']) || empty($body['betas'])) {
+            unset($body['betas']);
+            return [];
+        }
+
+        $betas = $body['betas'];
+        unset($body['betas']);
+
+        // Convert array of beta feature names to comma-separated string
+        $betaHeader = implode(',', $betas);
+
+        return ['anthropic-beta' => $betaHeader];
     }
 }

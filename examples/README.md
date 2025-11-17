@@ -35,6 +35,10 @@ php examples/messages.php
 - **tools.php** - Basic tool use with manual tool execution
 - **web_search.php** - Use Claude's built-in web search tool
 
+### Beta Features
+
+- **beta_features.php** - Using beta features with the anthropic-beta header
+
 ### Testing
 
 - **test_connection.php** - Basic connectivity test with debugging output

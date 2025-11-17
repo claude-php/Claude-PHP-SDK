@@ -71,11 +71,11 @@ patterns.
 
 ## Supported Models
 
-| Model | ID | Best For |
-|-------|----|---------:|
+| Model             | ID                           |                  Best For |
+| ----------------- | ---------------------------- | ------------------------: |
 | Claude Sonnet 4.5 | `claude-sonnet-4-5-20250929` | Complex reasoning, coding |
-| Claude Haiku 4.5 | `claude-haiku-4-5-20251001` | Speed & cost efficiency |
-| Claude Opus 4.1 | `claude-opus-4-1-20250805` | Specialized tasks |
+| Claude Haiku 4.5  | `claude-haiku-4-5-20251001`  |   Speed & cost efficiency |
+| Claude Opus 4.1   | `claude-opus-4-1-20250805`   |         Specialized tasks |
 
 Use model aliases (`claude-sonnet-4-5`, `claude-haiku-4-5`) for automatic updates.
 
@@ -119,6 +119,26 @@ $response = $client->messages()->create([
 ]);
 ```
 
+### Using Beta Features
+
+Beta features are accessed through the `beta()` namespace and use the `anthropic-beta` HTTP header as specified in the [API documentation](https://docs.claude.com/en/api/beta-headers).
+
+```php
+// The SDK automatically converts the 'betas' array parameter
+// to the 'anthropic-beta' HTTP header
+$response = $client->beta()->messages()->create([
+    'model' => 'claude-sonnet-4-5-20250929',
+    'max_tokens' => 1024,
+    'messages' => [
+        ['role' => 'user', 'content' => 'Hello!'],
+    ],
+    'betas' => ['prompt-caching-2024-07-31', 'thinking-2024-11-28'],
+]);
+
+// Multiple beta features are comma-separated in the header:
+// anthropic-beta: prompt-caching-2024-07-31,thinking-2024-11-28
+```
+
 ### Beta Structured Outputs
 
 ```php
@@ -139,6 +159,7 @@ $parsed = $client->beta()->messages()->parse([
         ['role' => 'user', 'content' => 'I need 2 lattes for $4 each'],
     ],
     'output_format' => $orderSchema,
+    // Note: structured-outputs-2025-09-17 beta is automatically added
 ]);
 
 // ['product_name' => 'latte', 'quantity' => 2, 'price' => 4.0]
@@ -377,16 +398,17 @@ public function register(): void
 ```yaml
 # config/services.yaml
 services:
-    ClaudePhp\ClaudePhp:
-        arguments:
-            $apiKey: '%env(string:ANTHROPIC_API_KEY)%'
-            $timeout: '%env(float:CLAUDE_TIMEOUT)%'
-            $maxRetries: '%env(int:CLAUDE_MAX_RETRIES)%'
+  ClaudePhp\ClaudePhp:
+    arguments:
+      $apiKey: "%env(string:ANTHROPIC_API_KEY)%"
+      $timeout: "%env(float:CLAUDE_TIMEOUT)%"
+      $maxRetries: "%env(int:CLAUDE_MAX_RETRIES)%"
 ```
 
 ## Contributing
 
 Contributions are welcome! Please ensure:
+
 - Code follows PSR-12 standards
 - All tests pass: `composer test`
 - No style issues: `composer lint`
