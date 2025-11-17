@@ -37,7 +37,7 @@ class MessagesApiTest extends TestCase
         $this->assertNotEmpty($response->content);
 
         // Verify HTTP request
-        $this->assertHttpRequestMade('POST', '/v1/messages', [
+        $this->assertHttpRequestMade('POST', '/messages', [
             'model' => 'claude-sonnet-4-5-20250929',
             'max_tokens' => 100,
             'messages' => [
@@ -68,7 +68,7 @@ class MessagesApiTest extends TestCase
         ]);
 
         $this->assertInstanceOf(Message::class, $response);
-        $this->assertHttpRequestMade('POST', '/v1/messages');
+        $this->assertHttpRequestMade('POST', '/messages');
 
         $lastRequest = $this->getLastRequest();
         $body = json_decode((string) $lastRequest->getBody(), true);
@@ -182,7 +182,7 @@ class MessagesApiTest extends TestCase
         ]);
 
         $this->assertInstanceOf(StreamResponse::class, $response);
-        $this->assertHttpRequestMade('POST', '/v1/messages');
+        $this->assertHttpRequestMade('POST', '/messages');
 
         $lastRequest = $this->getLastRequest();
         $body = json_decode((string) $lastRequest->getBody(), true);

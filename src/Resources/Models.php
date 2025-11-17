@@ -39,6 +39,10 @@ class Models extends Resource
      */
     public function retrieve(string $modelId): array
     {
+        if (empty($modelId)) {
+            throw new \InvalidArgumentException('model_id is required');
+        }
+
         return $this->_get("/models/{$modelId}");
     }
 }

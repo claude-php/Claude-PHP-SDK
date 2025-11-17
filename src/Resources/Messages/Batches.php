@@ -85,6 +85,10 @@ class Batches extends Resource
      */
     public function cancel(string $batchId): array
     {
+        if (empty($batchId)) {
+            throw new \InvalidArgumentException('batch_id is required');
+        }
+
         return $this->_post("/messages/batches/{$batchId}/cancel", []);
     }
 
