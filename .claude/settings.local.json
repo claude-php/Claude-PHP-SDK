@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(mkdir:*)",
+      "Bash(find:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(tree:*)",
+      "Bash(chmod:*)",
+      "Bash(php -l:*)",
+      "Bash(composer install:*)",
+      "Bash(./vendor/bin/phpunit:*)",
+      "Bash(phpunit:*)",
+      "Bash(composer test:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

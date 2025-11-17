@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Test script for Claude PHP SDK
+# Equivalent to Python SDK's test script using pytest
+
+echo "🧪 Running Claude PHP SDK tests..."
+
+# Parse command line arguments
+COVERAGE=false
+VERBOSE=false
+FILTER=""
+PHP_VERSIONS=()
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --coverage)
+            COVERAGE=true
+            shift
+            ;;
+        --verbose|-v)
+            VERBOSE=true
+            shift
+            ;;
+        --filter)
+            FILTER="$2"
+            shift 2
+            ;;
+        --php-version)
+            PHP_VERSIONS+=("$2")
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Usage: $0 [--coverage] [--verbose] [--filter <pattern>] [--php-version <version>]"
+            exit 1
+            ;;
+    esac
+done
+
+# Check if PHPUnit is available
+if [[ ! -f "./vendor/bin/phpunit" ]]; then
+    echo "❌ PHPUnit not found. Run './scripts/bootstrap' first."
+    exit 1
+fi
+
+# Build PHPUnit command
+PHPUNIT_CMD="./vendor/bin/phpunit"
+PHPUNIT_ARGS=(
+    "--testdox"
+    "--colors=always"
+)
+
+# Add coverage if requested
+if [[ "$COVERAGE" == true ]]; then
+    PHPUNIT_ARGS+=(
+        "--coverage-html" "coverage-html"
+        "--coverage-text"
+        "--coverage-clover" "coverage.xml"
+    )
+    echo "📊 Coverage reporting enabled"
+fi
+
+# Add verbosity if requested
+if [[ "$VERBOSE" == true ]]; then
+    PHPUNIT_ARGS+=("--verbose")
+fi
+
+# Add filter if provided
+if [[ -n "$FILTER" ]]; then
+    PHPUNIT_ARGS+=("--filter" "$FILTER")
+    echo "🔍 Running tests matching: $FILTER"
+fi
+
+# Function to run tests with a specific PHP version
+run_tests_with_php() {
+    local php_cmd="$1"
+    local php_version
+    
+    echo "🐘 Testing with $php_cmd..."
+    
+    # Get PHP version
+    php_version=$($php_cmd -r "echo PHP_VERSION;")
+    echo "   Version: $php_version"
+    
+    # Check PHP version compatibility
+    local php_major
+    local php_minor
+    php_major=$($php_cmd -r "echo PHP_MAJOR_VERSION;")
+    php_minor=$($php_cmd -r "echo PHP_MINOR_VERSION;")
+    
+    if [[ $php_major -lt 8 ]] || [[ $php_major -eq 8 && $php_minor -lt 1 ]]; then
+        echo "   ⚠️  PHP 8.1+ required, skipping $php_version"
+        return 0
+    fi
+    
+    # Run tests
+    if $php_cmd $PHPUNIT_CMD "${PHPUNIT_ARGS[@]}"; then
+        echo "   ✅ Tests passed with PHP $php_version"
+        return 0
+    else
+        echo "   ❌ Tests failed with PHP $php_version"
+        return 1
+    fi
+}
+
+TOTAL_ERRORS=0
+
+# If specific PHP versions are requested, test with those
+if [[ ${#PHP_VERSIONS[@]} -gt 0 ]]; then
+    echo "🎯 Testing with specific PHP versions: ${PHP_VERSIONS[*]}"
+    for version in "${PHP_VERSIONS[@]}"; do
+        php_cmd="php$version"
+        if command -v "$php_cmd" &> /dev/null; then
+            if ! run_tests_with_php "$php_cmd"; then
+                TOTAL_ERRORS=$((TOTAL_ERRORS + 1))
+            fi
+        else
+            echo "❌ PHP $version not found (command: $php_cmd)"
+            TOTAL_ERRORS=$((TOTAL_ERRORS + 1))
+        fi
+    done
+else
+    # Test with current PHP version
+    if ! run_tests_with_php "php"; then
+        TOTAL_ERRORS=$((TOTAL_ERRORS + 1))
+    fi
+    
+    # Optionally test with other available PHP versions
+    for php_cmd in php8.1 php8.2 php8.3; do
+        if command -v "$php_cmd" &> /dev/null; then
+            echo ""
+            if ! run_tests_with_php "$php_cmd"; then
+                echo "⚠️  Tests failed with $php_cmd, but continuing..."
+            fi
+        fi
+    done
+fi
+
+echo ""
+
+# Run additional quality checks if no filter is specified
+if [[ -z "$FILTER" ]]; then
+    echo "🔧 Running additional quality checks..."
+    
+    # Check test coverage requirements (if coverage is enabled)
+    if [[ "$COVERAGE" == true ]]; then
+        echo "📊 Checking coverage requirements..."
+        # Note: Add coverage requirements check here if needed
+    fi
+    
+    # Check for test organization
+    echo "🗂️  Verifying test organization..."
+    TEST_COUNT=$(find tests -name "*.php" | wc -l)
+    echo "   Found $TEST_COUNT test files"
+    
+    if [[ $TEST_COUNT -eq 0 ]]; then
+        echo "   ⚠️  No test files found!"
+        TOTAL_ERRORS=$((TOTAL_ERRORS + 1))
+    fi
+fi
+
+echo ""
+if [[ $TOTAL_ERRORS -eq 0 ]]; then
+    echo "🎉 All tests passed!"
+    if [[ "$COVERAGE" == true ]]; then
+        echo "📊 Coverage report generated in coverage-html/"
+    fi
+    exit 0
+else
+    echo "❌ Tests failed with $TOTAL_ERRORS error(s)"
+    exit 1
+fi

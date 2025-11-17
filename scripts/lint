@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Lint script for Claude PHP SDK
+# Equivalent to Python SDK's lint script using Ruff + Pyright + Mypy
+
+echo "🔍 Linting Claude PHP SDK code..."
+
+ERRORS=0
+
+# Define directories to lint
+DIRS_TO_LINT=(
+    "src"
+    "tests"
+)
+
+echo "🧹 Running PHP CodeSniffer (PSR-12 compliance)..."
+for DIR in "${DIRS_TO_LINT[@]}"; do
+    if [[ -d "$DIR" ]]; then
+        echo "  📁 Checking $DIR..."
+        if ! ./vendor/bin/phpcs --standard=PSR12 "$DIR" --ignore=vendor; then
+            ERRORS=$((ERRORS + 1))
+            echo "❌ PHP CodeSniffer found issues in $DIR"
+        else
+            echo "✅ $DIR passes PSR-12 compliance"
+        fi
+    fi
+done
+
+echo ""
+echo "🔬 Running PHPStan (Static Analysis)..."
+for DIR in "${DIRS_TO_LINT[@]}"; do
+    if [[ -d "$DIR" ]]; then
+        echo "  📁 Analyzing $DIR..."
+        if ! ./vendor/bin/phpstan analyse "$DIR" --level=9 --no-progress; then
+            ERRORS=$((ERRORS + 1))
+            echo "❌ PHPStan found issues in $DIR"
+        else
+            echo "✅ $DIR passes static analysis"
+        fi
+    fi
+done
+
+echo ""
+echo "🔧 Running PHP-CS-Fixer (dry-run)..."
+for DIR in "${DIRS_TO_LINT[@]}"; do
+    if [[ -d "$DIR" ]]; then
+        echo "  📁 Checking $DIR..."
+        if ! ./vendor/bin/php-cs-fixer fix "$DIR" --config=.php-cs-fixer.php --dry-run --diff; then
+            ERRORS=$((ERRORS + 1))
+            echo "❌ PHP-CS-Fixer found formatting issues in $DIR"
+            echo "💡 Run './scripts/format' to fix formatting issues"
+        else
+            echo "✅ $DIR has proper formatting"
+        fi
+    fi
+done
+
+echo ""
+echo "📦 Verifying autoload integrity..."
+if ! composer dump-autoload --optimize --strict-psr; then
+    ERRORS=$((ERRORS + 1))
+    echo "❌ Autoload verification failed"
+else
+    echo "✅ Autoload integrity verified"
+fi
+
+echo ""
+echo "🔍 Checking for common PHP issues..."
+
+# Check for PHP syntax errors
+for DIR in "${DIRS_TO_LINT[@]}"; do
+    if [[ -d "$DIR" ]]; then
+        echo "  📁 Syntax check for $DIR..."
+        if ! find "$DIR" -name "*.php" -exec php -l {} \; | grep -v "No syntax errors detected"; then
+            ERRORS=$((ERRORS + 1))
+            echo "❌ Syntax errors found in $DIR"
+        else
+            echo "✅ No syntax errors in $DIR"
+        fi
+    fi
+done
+
+# Check for TODO/FIXME comments (informational)
+echo ""
+echo "📝 Checking for TODO/FIXME comments..."
+TODO_COUNT=$(find "${DIRS_TO_LINT[@]}" -name "*.php" -exec grep -l "TODO\|FIXME" {} \; 2>/dev/null | wc -l || echo "0")
+if [[ $TODO_COUNT -gt 0 ]]; then
+    echo "ℹ️  Found $TODO_COUNT files with TODO/FIXME comments"
+    find "${DIRS_TO_LINT[@]}" -name "*.php" -exec grep -Hn "TODO\|FIXME" {} \; 2>/dev/null || true
+fi
+
+echo ""
+if [[ $ERRORS -eq 0 ]]; then
+    echo "🎉 All linting checks passed!"
+    exit 0
+else
+    echo "❌ Linting failed with $ERRORS error(s)"
+    echo ""
+    echo "💡 Quick fixes:"
+    echo "  - Run './scripts/format' to fix formatting issues"
+    echo "  - Check PHPStan errors and fix type issues"
+    echo "  - Ensure PSR-12 compliance"
+    exit 1
+fi

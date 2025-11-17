@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Format script for Claude PHP SDK
+# Equivalent to Python SDK's format script using Ruff
+
+echo "🎨 Formatting Claude PHP SDK code..."
+
+# Check if php-cs-fixer is available
+if [[ ! -f "./vendor/bin/php-cs-fixer" ]]; then
+    echo "❌ PHP-CS-Fixer not found. Run './scripts/bootstrap' first."
+    exit 1
+fi
+
+# Define directories to format
+DIRS_TO_FORMAT=(
+    "src"
+    "tests"
+)
+
+# Check if directories exist and format them
+for DIR in "${DIRS_TO_FORMAT[@]}"; do
+    if [[ -d "$DIR" ]]; then
+        echo "📁 Formatting $DIR..."
+        ./vendor/bin/php-cs-fixer fix "$DIR" \
+            --config=.php-cs-fixer.php \
+            --verbose \
+            --diff \
+            || echo "⚠️  Warning: Some files in $DIR could not be formatted"
+    else
+        echo "⚠️  Directory $DIR not found, skipping..."
+    fi
+done
+
+# Format any standalone PHP files in the root
+if ls ./*.php 1> /dev/null 2>&1; then
+    echo "📁 Formatting root PHP files..."
+    ./vendor/bin/php-cs-fixer fix ./*.php \
+        --config=.php-cs-fixer.php \
+        --verbose \
+        --diff \
+        || echo "⚠️  Warning: Some root PHP files could not be formatted"
+fi
+
+# Also run basic PSR-12 formatting as a backup
+echo "🔧 Running PSR-12 compliance check..."
+for DIR in "${DIRS_TO_FORMAT[@]}"; do
+    if [[ -d "$DIR" ]]; then
+        ./vendor/bin/phpcbf --standard=PSR12 "$DIR" --ignore=vendor || true
+    fi
+done
+
+echo "✅ Code formatting completed!"
+echo ""
+echo "💡 Tip: Configure your IDE to run php-cs-fixer on save for automatic formatting."

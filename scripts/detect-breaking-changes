@@ -1,0 +1,201 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Breaking changes detection script for Claude PHP SDK
+# Equivalent to Python SDK's detect-breaking-changes script
+
+echo "🔍 Detecting breaking changes in Claude PHP SDK..."
+
+# Default values
+BASE_REF="origin/main"
+HEAD_REF="HEAD"
+CHECK_COMPATIBILITY=true
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --base)
+            BASE_REF="$2"
+            shift 2
+            ;;
+        --head)
+            HEAD_REF="$2"
+            shift 2
+            ;;
+        --no-compatibility-check)
+            CHECK_COMPATIBILITY=false
+            shift
+            ;;
+        --help|-h)
+            echo "Usage: $0 [--base <ref>] [--head <ref>] [--no-compatibility-check]"
+            echo ""
+            echo "Options:"
+            echo "  --base <ref>               Base git reference (default: origin/main)"
+            echo "  --head <ref>               Head git reference (default: HEAD)"
+            echo "  --no-compatibility-check  Skip backward compatibility checks"
+            echo "  --help, -h                Show this help message"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
+echo "📍 Comparing $BASE_REF...$HEAD_REF"
+
+# Check if we're in a git repository
+if ! git rev-parse --git-dir &> /dev/null; then
+    echo "❌ Not in a git repository"
+    exit 1
+fi
+
+# Check if base reference exists
+if ! git rev-parse --verify "$BASE_REF" &> /dev/null; then
+    echo "❌ Base reference '$BASE_REF' does not exist"
+    exit 1
+fi
+
+# Check if head reference exists
+if ! git rev-parse --verify "$HEAD_REF" &> /dev/null; then
+    echo "❌ Head reference '$HEAD_REF' does not exist"
+    exit 1
+fi
+
+ISSUES_FOUND=0
+
+echo ""
+echo "🔍 Analyzing public API changes..."
+
+# Get list of changed PHP files
+CHANGED_FILES=$(git diff --name-only "$BASE_REF" "$HEAD_REF" -- "*.php" | grep -E "^src/" || echo "")
+
+if [[ -z "$CHANGED_FILES" ]]; then
+    echo "✅ No PHP files changed in src/"
+    exit 0
+fi
+
+echo "📁 Changed files:"
+echo "$CHANGED_FILES" | sed 's/^/  /'
+
+echo ""
+echo "🔍 Checking for potential breaking changes..."
+
+# Check for removed classes
+echo "  🏗️  Checking for removed classes..."
+REMOVED_CLASSES=$(git diff "$BASE_REF" "$HEAD_REF" -- "*.php" | grep "^-class " | grep -v "^--" | sed 's/^-class //' | awk '{print $1}' || echo "")
+if [[ -n "$REMOVED_CLASSES" ]]; then
+    echo "    ❌ Removed classes detected:"
+    echo "$REMOVED_CLASSES" | sed 's/^/      /'
+    ISSUES_FOUND=$((ISSUES_FOUND + 1))
+else
+    echo "    ✅ No removed classes"
+fi
+
+# Check for removed public methods
+echo "  🔧 Checking for removed public methods..."
+REMOVED_METHODS=$(git diff "$BASE_REF" "$HEAD_REF" -- "*.php" | grep "^-.*public function" | grep -v "^--" || echo "")
+if [[ -n "$REMOVED_METHODS" ]]; then
+    echo "    ❌ Removed public methods detected:"
+    echo "$REMOVED_METHODS" | sed 's/^-/      /' | sed 's/public function//' | awk '{print $1}' | sed 's/(.*$//'
+    ISSUES_FOUND=$((ISSUES_FOUND + 1))
+else
+    echo "    ✅ No removed public methods"
+fi
+
+# Check for removed public properties
+echo "  📊 Checking for removed public properties..."
+REMOVED_PROPERTIES=$(git diff "$BASE_REF" "$HEAD_REF" -- "*.php" | grep "^-.*public \$" | grep -v "^--" || echo "")
+if [[ -n "$REMOVED_PROPERTIES" ]]; then
+    echo "    ❌ Removed public properties detected:"
+    echo "$REMOVED_PROPERTIES" | sed 's/^-/      /'
+    ISSUES_FOUND=$((ISSUES_FOUND + 1))
+else
+    echo "    ✅ No removed public properties"
+fi
+
+# Check for namespace changes
+echo "  📦 Checking for namespace changes..."
+NAMESPACE_CHANGES=$(git diff "$BASE_REF" "$HEAD_REF" -- "*.php" | grep "^[+-]namespace" | grep -v "^+++" | grep -v "^---" || echo "")
+if [[ -n "$NAMESPACE_CHANGES" ]]; then
+    echo "    ⚠️  Namespace changes detected:"
+    echo "$NAMESPACE_CHANGES" | sed 's/^/      /'
+    # Namespace changes might be breaking, but not always
+    echo "    ℹ️  Please verify these changes maintain backward compatibility"
+else
+    echo "    ✅ No namespace changes"
+fi
+
+# Check for parameter changes in public methods
+echo "  🔧 Checking for parameter changes..."
+METHOD_CHANGES=$(git diff "$BASE_REF" "$HEAD_REF" -- "*.php" | grep "^[+-].*public function" | grep -v "^+++" | grep -v "^---" || echo "")
+if [[ -n "$METHOD_CHANGES" ]]; then
+    echo "    ⚠️  Public method changes detected:"
+    echo "$METHOD_CHANGES" | sed 's/^/      /'
+    echo "    ℹ️  Please verify parameter changes maintain backward compatibility"
+fi
+
+# Run compatibility check if requested
+if [[ "$CHECK_COMPATIBILITY" == true ]]; then
+    echo ""
+    echo "🧪 Running backward compatibility tests..."
+    
+    # Create temporary directory for compatibility check
+    TEMP_DIR=$(mktemp -d)
+    trap "rm -rf $TEMP_DIR" EXIT
+    
+    # Export base version
+    echo "  📤 Exporting base version..."
+    git archive "$BASE_REF" | tar -x -C "$TEMP_DIR"
+    
+    # Check if we can still autoload the old classes with new code
+    echo "  🔍 Testing autoload compatibility..."
+    if php -r "
+        require_once 'vendor/autoload.php';
+        \$oldClasses = [];
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator('$TEMP_DIR/src')) as \$file) {
+            if (\$file->getExtension() === 'php') {
+                \$content = file_get_contents(\$file);
+                if (preg_match('/^namespace\s+(.+);/m', \$content, \$ns) && 
+                    preg_match('/^(?:abstract\s+|final\s+)?class\s+(\w+)/m', \$content, \$class)) {
+                    \$oldClasses[] = \$ns[1] . '\\\\' . \$class[1];
+                }
+            }
+        }
+        foreach (\$oldClasses as \$class) {
+            if (class_exists(\$class)) {
+                echo \"✅ \$class still available\\n\";
+            } else {
+                echo \"❌ \$class no longer available\\n\";
+                exit(1);
+            }
+        }
+    "; then
+        echo "    ✅ Autoload compatibility maintained"
+    else
+        echo "    ❌ Autoload compatibility broken"
+        ISSUES_FOUND=$((ISSUES_FOUND + 1))
+    fi
+fi
+
+echo ""
+if [[ $ISSUES_FOUND -eq 0 ]]; then
+    echo "🎉 No breaking changes detected!"
+    echo ""
+    echo "✅ API appears to maintain backward compatibility"
+    exit 0
+else
+    echo "❌ Potential breaking changes detected!"
+    echo ""
+    echo "⚠️  Found $ISSUES_FOUND potential issue(s)"
+    echo ""
+    echo "Please review the changes above and ensure:"
+    echo "  - Removed public APIs have deprecation notices"
+    echo "  - New required parameters have default values"
+    echo "  - Namespace changes include class aliases"
+    echo "  - Major version bump if breaking changes are intentional"
+    exit 1
+fi

@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Bootstrap script for Claude PHP SDK development environment
+# Equivalent to Python SDK's bootstrap script
+
+echo "🚀 Bootstrapping Claude PHP SDK development environment..."
+
+# Check if PHP is installed
+if ! command -v php &> /dev/null; then
+    echo "❌ PHP is not installed. Please install PHP 8.1 or later."
+    exit 1
+fi
+
+# Check PHP version
+PHP_VERSION=$(php -r "echo PHP_VERSION;")
+PHP_MAJOR=$(php -r "echo PHP_MAJOR_VERSION;")
+PHP_MINOR=$(php -r "echo PHP_MINOR_VERSION;")
+
+if [[ $PHP_MAJOR -lt 8 ]] || [[ $PHP_MAJOR -eq 8 && $PHP_MINOR -lt 1 ]]; then
+    echo "❌ PHP 8.1 or later is required. Found: $PHP_VERSION"
+    exit 1
+fi
+
+echo "✅ PHP $PHP_VERSION detected"
+
+# Check if Composer is installed
+if ! command -v composer &> /dev/null; then
+    echo "❌ Composer is not installed."
+    echo "   Please install Composer from https://getcomposer.org/"
+    exit 1
+fi
+
+echo "✅ Composer detected: $(composer --version)"
+
+# Install dependencies
+echo "📦 Installing PHP dependencies..."
+if ! composer install --dev; then
+    echo "❌ Failed to install dependencies"
+    exit 1
+fi
+
+echo "✅ Dependencies installed successfully"
+
+# Check if all dev tools are available
+echo "🔧 Verifying development tools..."
+
+# Check PHPUnit
+if ! ./vendor/bin/phpunit --version &> /dev/null; then
+    echo "❌ PHPUnit not available"
+    exit 1
+fi
+echo "✅ PHPUnit: $(./vendor/bin/phpunit --version)"
+
+# Check PHPStan
+if ! ./vendor/bin/phpstan --version &> /dev/null; then
+    echo "❌ PHPStan not available"
+    exit 1
+fi
+echo "✅ PHPStan: $(./vendor/bin/phpstan --version)"
+
+# Check PHP-CS-Fixer
+if ! ./vendor/bin/php-cs-fixer --version &> /dev/null; then
+    echo "❌ PHP-CS-Fixer not available"
+    exit 1
+fi
+echo "✅ PHP-CS-Fixer: $(./vendor/bin/php-cs-fixer --version)"
+
+# Check PHP CodeSniffer
+if ! ./vendor/bin/phpcs --version &> /dev/null; then
+    echo "❌ PHP CodeSniffer not available"
+    exit 1
+fi
+echo "✅ PHP CodeSniffer: $(./vendor/bin/phpcs --version)"
+
+echo ""
+echo "🎉 Bootstrap completed successfully!"
+echo ""
+echo "Available commands:"
+echo "  composer test     - Run tests"
+echo "  composer lint     - Run linting"  
+echo "  composer format   - Format code"
+echo "  composer stan     - Run static analysis"
+echo ""
+echo "Or use the scripts directly:"
+echo "  ./scripts/test    - Enhanced test runner"
+echo "  ./scripts/lint    - Enhanced linting"
+echo "  ./scripts/format  - Enhanced formatting"
