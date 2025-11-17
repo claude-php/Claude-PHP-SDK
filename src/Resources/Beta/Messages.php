@@ -12,6 +12,7 @@ use ClaudePhp\Resources\Resource;
 use ClaudePhp\Responses\Message;
 use ClaudePhp\Responses\StreamResponse;
 use ClaudePhp\Responses\Usage;
+use ClaudePhp\Types\MessageTokensCount;
 use ClaudePhp\Utils\FileExtraction;
 use ClaudePhp\Utils\Transform;
 
@@ -66,6 +67,29 @@ class Messages extends Resource
         }
 
         return $response;
+    }
+
+    /**
+     * Count the tokens for a beta message request.
+     *
+     * @param array<string, mixed> $params
+     */
+    public function countTokens(array $params = []): MessageTokensCount
+    {
+        $required = ['model', 'messages'];
+        foreach ($required as $key) {
+            if (!isset($params[$key])) {
+                throw new \InvalidArgumentException("Missing required parameter: {$key}");
+            }
+        }
+
+        $body = Transform::transform($params, $this->getCountTokensParamTypes());
+        $response = $this->_post('/v1/messages/count_tokens', $body);
+        if (!\is_array($response)) {
+            throw new \RuntimeException('Unexpected response payload from beta messages countTokens');
+        }
+
+        return $this->createTokensCountFromArray($response);
     }
 
     /**
@@ -166,6 +190,23 @@ class Messages extends Resource
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    private function getCountTokensParamTypes(): array
+    {
+        return [
+            'model' => ['type' => 'string'],
+            'messages' => ['type' => 'array'],
+            'system' => ['type' => 'string|array'],
+            'tools' => ['type' => 'array'],
+            'tool_choice' => ['type' => 'string|array'],
+            'thinking' => ['type' => 'array'],
+            'betas' => ['type' => 'array'],
+            'context_management' => ['type' => 'array'],
+        ];
+    }
+
+    /**
      * Normalize output_format input to JSON schema.
      *
      * @param class-string|array<string, mixed> $format
@@ -224,6 +265,20 @@ class Messages extends Resource
                 cache_read_input_tokens: $data['usage']['cache_read_input_tokens'] ?? null,
                 server_tool_use: $data['usage']['server_tool_use'] ?? null,
             ),
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function createTokensCountFromArray(array $data): MessageTokensCount
+    {
+        return new MessageTokensCount(
+            input_tokens: $data['input_tokens'] ?? 0,
+            output_tokens: $data['output_tokens'] ?? 0,
+            cache_creation_input_tokens: $data['cache_creation_input_tokens'] ?? null,
+            cache_read_input_tokens: $data['cache_read_input_tokens'] ?? null,
+            context_management: $data['context_management'] ?? null,
         );
     }
 }

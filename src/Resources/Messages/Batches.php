@@ -51,7 +51,7 @@ class Batches extends Resource
             throw new \InvalidArgumentException('batch_id is required');
         }
 
-        return $this->_get("/v1/messages/batches/{$batchId}");
+        return $this->_get("/messages/batches/{$batchId}");
     }
 
     /**

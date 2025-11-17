@@ -206,6 +206,7 @@ class Messages extends Resource
             output_tokens: $data['output_tokens'] ?? 0,
             cache_creation_input_tokens: $data['cache_creation_input_tokens'] ?? null,
             cache_read_input_tokens: $data['cache_read_input_tokens'] ?? null,
+            context_management: $data['context_management'] ?? null,
         );
     }
 }

@@ -192,6 +192,10 @@ foreach ($runner as $message) {
 }
 ```
 
+> **Note on Beta Feature Verification**
+>
+> Some beta-only capabilities (context-management edits, interleaved thinking, memories, etc.) require Anthropic Tier&nbsp;4 access and special feature flags. We aren’t able to fully integration-test those flows without that elevated account tier. If someone from the Anthropic Claude team can help enable those betas for this project, we’d love to run the full automated suite and report any edge cases directly.
+
 ### Vision (Image Analysis)
 
 ```php
