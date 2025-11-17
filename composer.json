@@ -58,7 +58,6 @@
         "test": "phpunit",
         "lint": "phpcs --standard=PSR12 src/ tests/",
         "format": "php-cs-fixer fix src/ tests/",
-        "stan": "phpstan analyse src/ --level=9",
         "dev:bootstrap": "./scripts/bootstrap",
         "dev:test": "./scripts/test",
         "dev:lint": "./scripts/lint",

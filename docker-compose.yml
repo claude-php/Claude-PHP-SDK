@@ -1,0 +1,14 @@
+services:
+  sdk:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      CLAUDE_API_KEY: ${CLAUDE_API_KEY:-}
+    tty: true
+    stdin_open: true
+    command: ["bash"]

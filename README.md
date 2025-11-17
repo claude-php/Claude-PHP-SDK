@@ -308,8 +308,17 @@ composer lint
 # Fix code style
 composer format
 
-# Run static analysis
-composer stan
+```
+
+### Docker
+
+```bash
+# Build the dev image
+docker compose build
+
+# Run commands inside the container (mounted source tree)
+docker compose run --rm sdk composer test
+docker compose run --rm sdk php examples/messages.php
 ```
 
 ### Project Structure
@@ -331,34 +340,45 @@ Claude-PHP-SDK/
 
 ## Integration with Frameworks
 
+Full-length guides live in [.docs/framework_integration.md](.docs/framework_integration.md).
+
 ### Laravel
 
 ```php
 // config/services.php
-'anthropic' => [
+'claude' => [
     'api_key' => env('ANTHROPIC_API_KEY'),
-    'timeout' => 30,
-],
+    'timeout' => (float) env('CLAUDE_TIMEOUT', 30),
+    'max_retries' => (int) env('CLAUDE_MAX_RETRIES', 2),
+];
 
-// app/Providers/AppServiceProvider.php
-public function register()
+// app/Providers/ClaudeServiceProvider.php
+use ClaudePhp\ClaudePhp;
+
+public function register(): void
 {
-    $this->app->singleton('anthropic', fn() => new Anthropic(
-        apiKey: config('services.anthropic.api_key'),
-        timeout: config('services.anthropic.timeout')
-    ));
+    $this->app->singleton(ClaudePhp::class, function ($app) {
+        $config = $app['config']['services.claude'];
+
+        return new ClaudePhp(
+            apiKey: $config['api_key'],
+            timeout: $config['timeout'],
+            maxRetries: $config['max_retries']
+        );
+    });
 }
 ```
 
 ### Symfony
 
-```php
-// services.yaml
+```yaml
+# config/services.yaml
 services:
-    Anthropic\Anthropic:
+    ClaudePhp\ClaudePhp:
         arguments:
-            apiKey: '%env(ANTHROPIC_API_KEY)%'
-            timeout: 30
+            $apiKey: '%env(string:ANTHROPIC_API_KEY)%'
+            $timeout: '%env(float:CLAUDE_TIMEOUT)%'
+            $maxRetries: '%env(int:CLAUDE_MAX_RETRIES)%'
 ```
 
 ## Contributing
@@ -367,7 +387,7 @@ Contributions are welcome! Please ensure:
 - Code follows PSR-12 standards
 - All tests pass: `composer test`
 - No style issues: `composer lint`
-- Static analysis passes: `composer stan`
+- Static analysis passes: `composer stan` and `composer psalm`
 
 ## License
 

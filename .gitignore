@@ -27,6 +27,10 @@ coverage/
 
 # PHPStan
 phpstan.baseline.neon
+.phpstan-cache/
+
+# Psalm
+.psalm-cache/
 
 # IDE specific files
 *.iml
