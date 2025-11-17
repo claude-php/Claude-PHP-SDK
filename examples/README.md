@@ -16,10 +16,32 @@ php examples/messages.php
 
 ## Examples
 
+### Getting Started
+
+- **quickstart.php** - The simplest possible example to get started (matches the docs homepage example)
+- **get_started.php** - Complete getting started guide with examples from the Claude documentation, including:
+  - Simple web search assistant
+  - Basic hello world
+  - Multiple conversational turns
+  - System prompts
+  - Response prefilling
+  - Temperature control
+
 ### Basic Usage
 
 - **messages.php** - Basic message creation and multi-turn conversations
 - **messages_stream.php** - Streaming message responses in real-time
+- **error_handling.php** - Comprehensive error handling patterns including:
+  - Basic try-catch patterns
+  - Specific exception types (AuthenticationError, RateLimitError, etc.)
+  - Validation error handling
+  - Retry logic with exponential backoff
+- **model_comparison.php** - Compare different Claude models:
+  - Haiku (fast and cost-effective)
+  - Sonnet (balanced performance)
+  - Opus (highest quality)
+  - Model selection helper function
+  - Temperature comparison
 
 ### Vision
 

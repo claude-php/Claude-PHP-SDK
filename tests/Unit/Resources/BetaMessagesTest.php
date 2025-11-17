@@ -4,76 +4,16 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Unit\Resources;
 
-use ClaudePhp\ClaudePhp;
-use ClaudePhp\Client\HttpClient;
-use ClaudePhp\Resources\Beta\Messages;
+use ClaudePhp\Tests\TestCase;
 use ClaudePhp\Responses\Message;
-use PHPUnit\Framework\TestCase;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamFactoryInterface;
-use Psr\Http\Message\StreamInterface;
 
 class BetaMessagesTest extends TestCase
 {
-    private function createMockClient(callable $responseCallback): ClaudePhp
-    {
-        $mockHttpClient = $this->createMock(ClientInterface::class);
-        $mockRequestFactory = $this->createMock(RequestFactoryInterface::class);
-        $mockStreamFactory = $this->createMock(StreamFactoryInterface::class);
-
-        $mockRequest = $this->createMock(RequestInterface::class);
-        $mockRequest->method('withHeader')->willReturnSelf();
-        $mockRequest->method('withBody')->willReturnSelf();
-
-        $mockRequestFactory->method('createRequest')->willReturn($mockRequest);
-
-        $mockStream = $this->createMock(StreamInterface::class);
-        $mockStreamFactory->method('createStream')->willReturn($mockStream);
-
-        $mockResponse = $this->createMock(ResponseInterface::class);
-        $mockResponse->method('getStatusCode')->willReturn(200);
-        $responseCallback($mockResponse, $mockRequest);
-
-        $mockHttpClient->method('sendRequest')->willReturn($mockResponse);
-
-        return new ClaudePhp(
-            apiKey: 'test-api-key',
-            httpClient: $mockHttpClient,
-            requestFactory: $mockRequestFactory,
-            streamFactory: $mockStreamFactory
-        );
-    }
-
     public function testBetaHeaderIsSetWhenBetasProvided(): void
     {
-        $headersSent = [];
+        $this->addMockResponse(200, [], $this->createMessageResponse());
 
-        $client = $this->createMockClient(function ($mockResponse, $mockRequest) use (&$headersSent) {
-            $mockRequest->method('withHeader')
-                ->willReturnCallback(function ($name, $value) use ($mockRequest, &$headersSent) {
-                    $headersSent[$name] = $value;
-                    return $mockRequest;
-                });
-
-            $mockResponse->method('getBody')->willReturn($this->createMock(StreamInterface::class));
-            $mockResponse->getBody()->method('__toString')->willReturn(json_encode([
-                'id' => 'msg_123',
-                'type' => 'message',
-                'role' => 'assistant',
-                'content' => [['type' => 'text', 'text' => 'Hello!']],
-                'model' => 'claude-sonnet-4-5',
-                'stop_reason' => 'end_turn',
-                'usage' => [
-                    'input_tokens' => 10,
-                    'output_tokens' => 20,
-                ],
-            ]));
-        });
-
-        $result = $client->beta()->messages()->create([
+        $result = $this->testClient->beta()->messages()->create([
             'model' => 'claude-sonnet-4-5',
             'max_tokens' => 1024,
             'messages' => [
@@ -83,37 +23,16 @@ class BetaMessagesTest extends TestCase
         ]);
 
         $this->assertInstanceOf(Message::class, $result);
-        $this->assertArrayHasKey('anthropic-beta', $headersSent);
-        $this->assertEquals('test-feature-2024-01-01,another-feature-2024-02-01', $headersSent['anthropic-beta']);
+        $this->assertHttpHeadersPresent([
+            'anthropic-beta' => 'test-feature-2024-01-01,another-feature-2024-02-01',
+        ]);
     }
 
     public function testBetaHeaderNotSetWhenNoBetas(): void
     {
-        $headersSent = [];
+        $this->addMockResponse(200, [], $this->createMessageResponse());
 
-        $client = $this->createMockClient(function ($mockResponse, $mockRequest) use (&$headersSent) {
-            $mockRequest->method('withHeader')
-                ->willReturnCallback(function ($name, $value) use ($mockRequest, &$headersSent) {
-                    $headersSent[$name] = $value;
-                    return $mockRequest;
-                });
-
-            $mockResponse->method('getBody')->willReturn($this->createMock(StreamInterface::class));
-            $mockResponse->getBody()->method('__toString')->willReturn(json_encode([
-                'id' => 'msg_123',
-                'type' => 'message',
-                'role' => 'assistant',
-                'content' => [['type' => 'text', 'text' => 'Hello!']],
-                'model' => 'claude-sonnet-4-5',
-                'stop_reason' => 'end_turn',
-                'usage' => [
-                    'input_tokens' => 10,
-                    'output_tokens' => 20,
-                ],
-            ]));
-        });
-
-        $result = $client->beta()->messages()->create([
+        $result = $this->testClient->beta()->messages()->create([
             'model' => 'claude-sonnet-4-5',
             'max_tokens' => 1024,
             'messages' => [
@@ -122,36 +41,17 @@ class BetaMessagesTest extends TestCase
         ]);
 
         $this->assertInstanceOf(Message::class, $result);
-        $this->assertArrayNotHasKey('anthropic-beta', $headersSent);
+
+        $lastRequest = $this->getLastRequest();
+        $this->assertNotNull($lastRequest);
+        $this->assertFalse($lastRequest->hasHeader('anthropic-beta'));
     }
 
     public function testSingleBetaFeature(): void
     {
-        $headersSent = [];
+        $this->addMockResponse(200, [], $this->createMessageResponse());
 
-        $client = $this->createMockClient(function ($mockResponse, $mockRequest) use (&$headersSent) {
-            $mockRequest->method('withHeader')
-                ->willReturnCallback(function ($name, $value) use ($mockRequest, &$headersSent) {
-                    $headersSent[$name] = $value;
-                    return $mockRequest;
-                });
-
-            $mockResponse->method('getBody')->willReturn($this->createMock(StreamInterface::class));
-            $mockResponse->getBody()->method('__toString')->willReturn(json_encode([
-                'id' => 'msg_123',
-                'type' => 'message',
-                'role' => 'assistant',
-                'content' => [['type' => 'text', 'text' => 'Hello!']],
-                'model' => 'claude-sonnet-4-5',
-                'stop_reason' => 'end_turn',
-                'usage' => [
-                    'input_tokens' => 10,
-                    'output_tokens' => 20,
-                ],
-            ]));
-        });
-
-        $result = $client->beta()->messages()->create([
+        $result = $this->testClient->beta()->messages()->create([
             'model' => 'claude-sonnet-4-5',
             'max_tokens' => 1024,
             'messages' => [
@@ -161,37 +61,16 @@ class BetaMessagesTest extends TestCase
         ]);
 
         $this->assertInstanceOf(Message::class, $result);
-        $this->assertArrayHasKey('anthropic-beta', $headersSent);
-        $this->assertEquals('structured-outputs-2025-09-17', $headersSent['anthropic-beta']);
+        $this->assertHttpHeadersPresent([
+            'anthropic-beta' => 'structured-outputs-2025-09-17',
+        ]);
     }
 
     public function testBetasNotInRequestBody(): void
     {
-        $requestBodySent = null;
+        $this->addMockResponse(200, [], $this->createMessageResponse());
 
-        $client = $this->createMockClient(function ($mockResponse, $mockRequest) use (&$requestBodySent) {
-            $mockRequest->method('withBody')
-                ->willReturnCallback(function ($body) use ($mockRequest, &$requestBodySent) {
-                    $requestBodySent = (string) $body;
-                    return $mockRequest;
-                });
-
-            $mockResponse->method('getBody')->willReturn($this->createMock(StreamInterface::class));
-            $mockResponse->getBody()->method('__toString')->willReturn(json_encode([
-                'id' => 'msg_123',
-                'type' => 'message',
-                'role' => 'assistant',
-                'content' => [['type' => 'text', 'text' => 'Hello!']],
-                'model' => 'claude-sonnet-4-5',
-                'stop_reason' => 'end_turn',
-                'usage' => [
-                    'input_tokens' => 10,
-                    'output_tokens' => 20,
-                ],
-            ]));
-        });
-
-        $client->beta()->messages()->create([
+        $this->testClient->beta()->messages()->create([
             'model' => 'claude-sonnet-4-5',
             'max_tokens' => 1024,
             'messages' => [
@@ -200,39 +79,19 @@ class BetaMessagesTest extends TestCase
             'betas' => ['test-feature-2024-01-01'],
         ]);
 
-        $this->assertNotNull($requestBodySent);
-        $bodyArray = json_decode($requestBodySent, true);
-        $this->assertIsArray($bodyArray);
+        $lastRequest = $this->getLastRequest();
+        $this->assertNotNull($lastRequest, 'Request should have been made');
+
+        $bodyArray = json_decode((string) $lastRequest->getBody(), true);
+        $this->assertIsArray($bodyArray, 'Request body should be valid JSON');
         $this->assertArrayNotHasKey('betas', $bodyArray, 'betas should not be in request body');
     }
 
     public function testEmptyBetasArrayDoesNotSetHeader(): void
     {
-        $headersSent = [];
+        $this->addMockResponse(200, [], $this->createMessageResponse());
 
-        $client = $this->createMockClient(function ($mockResponse, $mockRequest) use (&$headersSent) {
-            $mockRequest->method('withHeader')
-                ->willReturnCallback(function ($name, $value) use ($mockRequest, &$headersSent) {
-                    $headersSent[$name] = $value;
-                    return $mockRequest;
-                });
-
-            $mockResponse->method('getBody')->willReturn($this->createMock(StreamInterface::class));
-            $mockResponse->getBody()->method('__toString')->willReturn(json_encode([
-                'id' => 'msg_123',
-                'type' => 'message',
-                'role' => 'assistant',
-                'content' => [['type' => 'text', 'text' => 'Hello!']],
-                'model' => 'claude-sonnet-4-5',
-                'stop_reason' => 'end_turn',
-                'usage' => [
-                    'input_tokens' => 10,
-                    'output_tokens' => 20,
-                ],
-            ]));
-        });
-
-        $result = $client->beta()->messages()->create([
+        $result = $this->testClient->beta()->messages()->create([
             'model' => 'claude-sonnet-4-5',
             'max_tokens' => 1024,
             'messages' => [
@@ -242,6 +101,9 @@ class BetaMessagesTest extends TestCase
         ]);
 
         $this->assertInstanceOf(Message::class, $result);
-        $this->assertArrayNotHasKey('anthropic-beta', $headersSent);
+
+        $lastRequest = $this->getLastRequest();
+        $this->assertNotNull($lastRequest);
+        $this->assertFalse($lastRequest->hasHeader('anthropic-beta'));
     }
 }

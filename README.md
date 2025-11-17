@@ -62,6 +62,14 @@ $client = new ClaudePhp(
 );
 ```
 
+> 💡 **More Examples**: Check out the [`examples/`](examples/) directory for comprehensive, working examples including:
+>
+> - **[quickstart.php](examples/quickstart.php)** - Simplest possible example (matches the Claude docs)
+> - **[get_started.php](examples/get_started.php)** - Complete getting started guide
+> - **[error_handling.php](examples/error_handling.php)** - Error handling and retry patterns
+> - **[model_comparison.php](examples/model_comparison.php)** - Compare Haiku, Sonnet, and Opus
+> - Plus: streaming, vision, tools, thinking, and more!
+
 ## Framework Integrations
 
 Need a pre-wired client inside your container? See the

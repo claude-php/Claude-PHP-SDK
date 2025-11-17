@@ -18,6 +18,26 @@ echo "=================================================\n\n";
 
 $tests = [
     [
+        'name' => 'Quickstart',
+        'file' => 'quickstart.php',
+        'description' => 'Testing the quickstart example from docs',
+    ],
+    [
+        'name' => 'Getting Started',
+        'file' => 'get_started.php',
+        'description' => 'Testing complete getting started guide',
+    ],
+    [
+        'name' => 'Error Handling',
+        'file' => 'error_handling.php',
+        'description' => 'Testing error handling patterns',
+    ],
+    [
+        'name' => 'Model Comparison',
+        'file' => 'model_comparison.php',
+        'description' => 'Testing different Claude models',
+    ],
+    [
         'name' => 'Basic Message Creation',
         'file' => 'messages.php',
         'description' => 'Testing basic message creation and multi-turn conversation',
