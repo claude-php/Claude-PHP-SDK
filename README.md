@@ -26,13 +26,13 @@ composer require claude-php/claude-php-sdk
 <?php
 require 'vendor/autoload.php';
 
-use Anthropic\Anthropic;
+use ClaudePhp\ClaudePhp;
 
-$client = new Anthropic(
+$client = new ClaudePhp(
     apiKey: $_ENV['ANTHROPIC_API_KEY']
 );
 
-$response = $client->messages->create([
+$response = $client->messages()->create([
     'model' => 'claude-sonnet-4-5-20250929',
     'max_tokens' => 1024,
     'messages' => [
@@ -45,12 +45,13 @@ $response = $client->messages->create([
 
 echo $response->content[0]->text;
 ```
-$response = $client->messages->create([
 
 ### Configuration
 
 ```php
-$client = new Anthropic(
+use ClaudePhp\ClaudePhp;
+
+$client = new ClaudePhp(
     apiKey: $_ENV['ANTHROPIC_API_KEY'],      // Or defaults to ANTHROPIC_API_KEY env var
     baseUrl: 'https://api.anthropic.com/v1',  // Default URL
     timeout: 30.0,                             // Request timeout in seconds
@@ -83,13 +84,15 @@ Use model aliases (`claude-sonnet-4-5`, `claude-haiku-4-5`) for automatic update
 ### Streaming Messages
 
 ```php
-foreach ($client->messages->stream([
+$stream = $client->messages()->stream([
     'model' => 'claude-sonnet-4-5-20250929',
     'max_tokens' => 1024,
     'messages' => [['role' => 'user', 'content' => 'Tell me a story']]
-]) as $event) {
-    if ($event instanceof ContentBlockDelta) {
-        echo $event->delta->text;
+]);
+
+foreach ($stream as $event) {
+    if (($event['type'] ?? null) === 'content_block_delta') {
+        echo $event['delta']['text'] ?? '';
     }
 }
 ```
@@ -97,7 +100,7 @@ foreach ($client->messages->stream([
 ### Tool Use (Function Calling)
 
 ```php
-$response = $client->messages->create([
+$response = $client->messages()->create([
     'model' => 'claude-sonnet-4-5-20250929',
     'tools' => [
         [
@@ -192,7 +195,7 @@ foreach ($runner as $message) {
 ### Vision (Image Analysis)
 
 ```php
-$response = $client->messages->create([
+$response = $client->messages()->create([
     'model' => 'claude-sonnet-4-5-20250929',
     'max_tokens' => 1024,
     'messages' => [
@@ -210,7 +213,7 @@ $response = $client->messages->create([
 ### Token Counting
 
 ```php
-$count = $client->messages->countTokens([
+$count = $client->messages()->countTokens([
     'model' => 'claude-sonnet-4-5-20250929',
     'messages' => [['role' => 'user', 'content' => 'Hello!']]
 ]);
@@ -222,7 +225,7 @@ echo "Token count: " . $count->input_tokens;
 
 ```php
 // Create batch (50% cost savings!)
-$batch = $client->messages->batches->create([
+$batch = $client->messages()->batches()->create([
     'requests' => [
         ['custom_id' => '1', 'params' => ['model' => 'claude-sonnet-4-5-20250929', 'messages' => [...]]],
         ['custom_id' => '2', 'params' => ['model' => 'claude-sonnet-4-5-20250929', 'messages' => [...]]]
@@ -230,7 +233,7 @@ $batch = $client->messages->batches->create([
 ]);
 
 // Poll for results
-$batch = $client->messages->batches->retrieve($batch->id);
+$batch = $client->messages()->batches()->retrieve($batch->id);
 echo "Status: " . $batch->processing_status;
 ```
 
@@ -248,13 +251,13 @@ classes ship with the SDK:
 use ClaudePhp\Responses\Helpers\MessageContentHelper;
 use ClaudePhp\Responses\Helpers\StreamEventHelper;
 
-$message = $client->messages->create([...]);
+$message = $client->messages()->create([...]);
 
 foreach (MessageContentHelper::toolUses($message) as $toolCall) {
     // $toolCall is a ToolUseContent value object
 }
 
-$stream = $client->messages->stream([...]);
+$stream = $client->messages()->stream([...]);
 foreach ($stream as $event) {
     if (StreamEventHelper::isTextDelta($event)) {
         echo StreamEventHelper::textDelta($event);
@@ -267,7 +270,7 @@ foreach ($stream as $event) {
 The SDK provides a comprehensive exception hierarchy for proper error handling:
 
 ```php
-use Anthropic\Exceptions\{
+use ClaudePhp\Exceptions\{
     APIConnectionError,
     RateLimitError,
     AuthenticationError,
@@ -275,7 +278,7 @@ use Anthropic\Exceptions\{
 };
 
 try {
-    $response = $client->messages->create([...]);
+    $response = $client->messages()->create([...]);
 } catch (RateLimitError $e) {
     // Handle rate limiting - implement backoff
     echo "Rate limited. Retry after: " . $e->response->getHeaderLine('retry-after');
@@ -326,7 +329,7 @@ docker compose run --rm sdk php examples/messages.php
 ```
 Claude-PHP-SDK/
 ├── src/
-│   ├── Anthropic.php           # Main client class
+│   ├── ClaudePhp.php           # Main client class
 │   ├── Exceptions/              # Exception hierarchy
 │   ├── Client/                  # HTTP client implementation
 │   ├── Resources/               # API resource classes
