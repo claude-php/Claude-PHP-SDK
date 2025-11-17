@@ -15,7 +15,7 @@ A universal, framework-agnostic PHP SDK for the Anthropic Claude API with full P
 ## Installation
 
 ```bash
-composer require dalehurley/claude-php-sdk
+composer require claude-php/claude-php-sdk
 ```
 
 ## Quick Start
@@ -396,5 +396,5 @@ MIT License - see LICENSE file for details
 ## Support
 
 - 📚 [Anthropic API Documentation](https://docs.claude.com/en/api/overview)
-- 🐛 [Issue Tracker](https://github.com/dalehurley/claude-php-sdk/issues)
-- 💬 [Discussions](https://github.com/dalehurley/claude-php-sdk/discussions)
+- 🐛 [Issue Tracker](https://github.com/claude-php/claude-php-sdk/issues)
+- 💬 [Discussions](https://github.com/claude-php/claude-php-sdk/discussions)

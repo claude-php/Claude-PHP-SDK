@@ -62,4 +62,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-See [milestones](https://github.com/dalehurley/claude-php-sdk/milestones) for planned releases.
+See [milestones](https://github.com/claude-php/claude-php-sdk/milestones) for planned releases.
