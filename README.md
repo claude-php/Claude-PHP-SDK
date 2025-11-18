@@ -113,6 +113,54 @@ $client = new ClaudePhp(
 >
 > 📖 **See [COMPLETE_EXAMPLES.md](COMPLETE_EXAMPLES.md) for the full list of 29 examples covering 27 documentation pages**
 
+## 🎓 Agentic AI Tutorial Series
+
+> 🤖 **EXPANDED**: Complete tutorial series - 15 comprehensive tutorials from basics to autonomous agents!
+
+**[Start the Tutorial Series →](tutorials/)**
+
+Learn to build sophisticated AI agents through 15 progressive tutorials covering all major agentic patterns:
+
+### Foundation (Tutorials 0-6)
+
+| Tutorial                                          | Topic                      | Time   | Level        |
+| ------------------------------------------------- | -------------------------- | ------ | ------------ |
+| **[Tutorial 0](tutorials/00-introduction/)**      | Introduction to Agentic AI | 20 min | Beginner     |
+| **[Tutorial 1](tutorials/01-first-agent/)**       | Your First Agent           | 30 min | Beginner     |
+| **[Tutorial 2](tutorials/02-react-basics/)**      | ReAct Loop Basics          | 45 min | Intermediate |
+| **[Tutorial 3](tutorials/03-multi-tool-agent/)**  | Multi-Tool Agent           | 45 min | Intermediate |
+| **[Tutorial 4](tutorials/04-production-ready/)**  | Production-Ready Agent     | 60 min | Intermediate |
+| **[Tutorial 5](tutorials/05-advanced-react/)**    | Advanced ReAct Patterns    | 60 min | Advanced     |
+| **[Tutorial 6](tutorials/06-agentic-framework/)** | Complete Agentic Framework | 90 min | Advanced     |
+
+### Advanced Patterns (Tutorials 7-14)
+
+| Tutorial                                             | Topic                       | Time   | Level        |
+| ---------------------------------------------------- | --------------------------- | ------ | ------------ |
+| **[Tutorial 7](tutorials/07-chain-of-thought/)**     | Chain of Thought (CoT)      | 45 min | Intermediate |
+| **[Tutorial 8](tutorials/08-tree-of-thoughts/)**     | Tree of Thoughts (ToT)      | 60 min | Advanced     |
+| **[Tutorial 9](tutorials/09-plan-and-execute/)**     | Plan-and-Execute            | 45 min | Intermediate |
+| **[Tutorial 10](tutorials/10-reflection/)**          | Reflection & Self-Critique  | 45 min | Intermediate |
+| **[Tutorial 11](tutorials/11-hierarchical-agents/)** | Hierarchical Agents         | 60 min | Advanced     |
+| **[Tutorial 12](tutorials/12-multi-agent-debate/)**  | Multi-Agent Debate          | 60 min | Advanced     |
+| **[Tutorial 13](tutorials/13-rag-pattern/)**         | RAG Pattern                 | 60 min | Advanced     |
+| **[Tutorial 14](tutorials/14-autonomous-agents/)**   | Autonomous Agents           | 90 min | Advanced     |
+
+**What You'll Learn:**
+
+- **Foundation**: Core concepts, ReAct pattern, tool use, production patterns
+- **Reasoning**: Chain of Thought, Tree of Thoughts, planning and reflection
+- **Multi-Agent**: Hierarchical systems, debate protocols, consensus building
+- **Advanced**: RAG integration, autonomous goal-directed agents
+
+**Perfect For:**
+
+- PHP developers new to AI agents
+- Anyone wanting to build autonomous AI systems
+- Developers exploring advanced agentic patterns
+
+📖 **[View Full Tutorial Series →](tutorials/)**
+
 ## Framework Integrations
 
 Need a pre-wired client inside your container? See the
