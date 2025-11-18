@@ -431,6 +431,9 @@ composer lint
 # Fix code style
 composer format
 
+# Run static analysis
+composer stan
+
 ```
 
 ### Docker
@@ -511,7 +514,7 @@ Contributions are welcome! Please ensure:
 - Code follows PSR-12 standards
 - All tests pass: `composer test`
 - No style issues: `composer lint`
-- Static analysis passes: `composer stan` and `composer psalm`
+- Static analysis passes: `composer stan`
 
 ## License
 
