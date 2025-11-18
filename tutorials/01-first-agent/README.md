@@ -446,3 +446,4 @@ function executeToolSafely($toolUse) {
 - [SDK Example: tool_use_overview.php](../../examples/tool_use_overview.php)
 - [SDK Example: tool_use_implementation.php](../../examples/tool_use_implementation.php)
 - [Claude Docs: Tool Use](https://docs.anthropic.com/en/docs/agents-and-tools/tool-use/overview)
+

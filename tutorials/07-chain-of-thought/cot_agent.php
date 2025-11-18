@@ -344,3 +344,4 @@ echo "🚀 CoT is powerful for pure reasoning tasks!\n\n";
 echo "Next: Tutorial 8 - Tree of Thoughts for multi-path exploration\n";
 echo "→ tutorials/08-tree-of-thoughts/\n\n";
 
+

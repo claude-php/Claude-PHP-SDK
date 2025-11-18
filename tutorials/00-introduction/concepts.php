@@ -329,3 +329,4 @@ echo "   ✓ The ReAct loop pattern\n";
 echo "   ✓ Stop reasons and their meanings\n";
 echo "   ✓ Multi-step problem solving\n\n";
 
+

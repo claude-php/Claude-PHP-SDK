@@ -489,3 +489,4 @@ The script demonstrates:
 - [ReAct Paper](https://arxiv.org/abs/2210.03629) - Original research
 - [SDK Example: tool_use_implementation.php](../../examples/tool_use_implementation.php)
 - [Claude Docs: Multi-turn Conversations](https://docs.anthropic.com/en/docs/build-with-claude/working-with-messages)
+
