@@ -23,18 +23,25 @@ $client = new ClaudePhp(apiKey: getApiKey());
 
 echo "=== Beta Features Example ===\n\n";
 
-// Example 1: Using a single beta feature
-echo "1. Using a single beta feature:\n";
+// Example 1: Using prompt caching beta feature
+echo "1. Using prompt caching beta feature:\n";
 echo "   Requesting with betas=['prompt-caching-2024-07-31']\n\n";
 
 try {
     $response = $client->beta()->messages()->create([
         'model' => 'claude-sonnet-4-5-20250929',
         'max_tokens' => 1024,
+        'system' => [
+            [
+                'type' => 'text',
+                'text' => 'You are a helpful assistant.',
+                'cache_control' => ['type' => 'ephemeral']
+            ]
+        ],
         'messages' => [
             [
                 'role' => 'user',
-                'content' => 'Hello! Tell me about beta features.',
+                'content' => 'Hello! Tell me about prompt caching.',
             ],
         ],
         'betas' => ['prompt-caching-2024-07-31'],
@@ -43,99 +50,110 @@ try {
     echo "Response received:\n";
     echo "ID: {$response->id}\n";
     echo "Model: {$response->model}\n";
-    echo "Content: " . json_encode($response->content) . "\n\n";
-} catch (\Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n\n";
-}
-
-// Example 2: Using multiple beta features
-echo "2. Using multiple beta features:\n";
-echo "   Requesting with betas=['feature-1', 'feature-2']\n";
-echo "   (Note: These are example feature names)\n\n";
-
-try {
-    $response = $client->beta()->messages()->create([
-        'model' => 'claude-sonnet-4-5-20250929',
-        'max_tokens' => 1024,
-        'messages' => [
-            [
-                'role' => 'user',
-                'content' => 'What can you tell me?',
-            ],
-        ],
-        'betas' => ['prompt-caching-2024-07-31', 'thinking-2024-11-28'],
-    ]);
-
-    echo "Response received successfully.\n\n";
-} catch (\Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n\n";
-}
-
-// Example 3: Structured outputs with automatic beta injection
-echo "3. Structured outputs (automatically adds structured-outputs beta):\n\n";
-
-try {
-    $schema = [
-        'type' => 'object',
-        'properties' => [
-            'name' => ['type' => 'string'],
-            'age' => ['type' => 'integer'],
-        ],
-        'required' => ['name', 'age'],
-    ];
-
-    // The parse() method automatically adds the structured-outputs beta
-    $result = $client->beta()->messages()->parse([
-        'model' => 'claude-sonnet-4-5-20250929',
-        'max_tokens' => 1024,
-        'messages' => [
-            [
-                'role' => 'user',
-                'content' => 'Extract: John Smith is 30 years old',
-            ],
-        ],
-        'output_format' => $schema,
-        // Note: structured-outputs-2025-09-17 beta is automatically added
-    ]);
-
-    echo "Parsed result:\n";
-    print_r($result);
+    if (isset($response->usage->cache_creation_input_tokens)) {
+        echo "Cache tokens created: {$response->usage->cache_creation_input_tokens}\n";
+    }
+    foreach ($response->content as $block) {
+        if ($block['type'] === 'text') {
+            echo "Content: " . substr($block['text'], 0, 100) . "...\n";
+        }
+    }
     echo "\n";
 } catch (\Exception $e) {
     echo "Error: " . $e->getMessage() . "\n\n";
 }
 
-// Example 4: Combining custom betas with structured outputs
-echo "4. Combining custom betas with structured outputs:\n\n";
+// Example 2: Using multiple API calls with caching
+echo "2. Making multiple requests with prompt caching:\n";
+echo "   First request creates cache, second request reads from cache\n\n";
 
 try {
-    $schema = [
-        'type' => 'object',
-        'properties' => [
-            'summary' => ['type' => 'string'],
-        ],
-        'required' => ['summary'],
-    ];
-
-    $result = $client->beta()->messages()->parse([
+    // First request - creates cache
+    $response1 = $client->beta()->messages()->create([
         'model' => 'claude-sonnet-4-5-20250929',
-        'max_tokens' => 1024,
-        'messages' => [
+        'max_tokens' => 100,
+        'system' => [
             [
-                'role' => 'user',
-                'content' => 'Summarize: The quick brown fox jumps over the lazy dog.',
-            ],
+                'type' => 'text',
+                'text' => 'You are an expert in mathematics. Always show your work.',
+                'cache_control' => ['type' => 'ephemeral']
+            ]
         ],
-        'output_format' => $schema,
-        'betas' => ['prompt-caching-2024-07-31'], // Will be merged with structured-outputs
+        'messages' => [
+            ['role' => 'user', 'content' => 'What is 25 * 47?'],
+        ],
+        'betas' => ['prompt-caching-2024-07-31'],
     ]);
 
-    echo "Parsed result with custom beta:\n";
-    print_r($result);
+    echo "First request:\n";
+    if (isset($response1->usage->cache_creation_input_tokens)) {
+        echo "  Cache created: {$response1->usage->cache_creation_input_tokens} tokens\n";
+    }
+
+    // Second request - uses cache
+    $response2 = $client->beta()->messages()->create([
+        'model' => 'claude-sonnet-4-5-20250929',
+        'max_tokens' => 100,
+        'system' => [
+            [
+                'type' => 'text',
+                'text' => 'You are an expert in mathematics. Always show your work.',
+                'cache_control' => ['type' => 'ephemeral']
+            ]
+        ],
+        'messages' => [
+            ['role' => 'user', 'content' => 'What is 12 * 34?'],
+        ],
+        'betas' => ['prompt-caching-2024-07-31'],
+    ]);
+
+    echo "Second request:\n";
+    if (isset($response2->usage->cache_read_input_tokens)) {
+        echo "  Cache read: {$response2->usage->cache_read_input_tokens} tokens (90% cost savings!)\n";
+    }
     echo "\n";
 } catch (\Exception $e) {
     echo "Error: " . $e->getMessage() . "\n\n";
 }
+
+// Example 3: Available beta features
+echo "3. Current available beta features:\n\n";
+
+echo "✓ prompt-caching-2024-07-31\n";
+echo "  - Enables prompt caching for 90% cost reduction on repeated content\n";
+echo "  - Use cache_control parameter on system prompts\n\n";
+
+echo "✓ Other beta features:\n";
+echo "  - Check docs.anthropic.com for current beta features\n";
+echo "  - Beta feature names follow pattern: feature-name-YYYY-MM-DD\n";
+echo "  - Examples from docs:\n";
+echo "    • web-fetch-2025-09-10 (not in header, tool type)\n";
+echo "    • context-management-2025-06-27 (for context editing)\n";
+echo "    • structured-outputs-2025-09-17 (for guaranteed JSON)\n\n";
+
+echo "Note: Not all features require the anthropic-beta header.\n";
+echo "Server-side tools (web_fetch, memory, etc.) use tool 'type' field instead.\n";
+
+// Example 4: How to find current beta features
+echo "\n4. Finding and using beta features:\n\n";
+
+echo "Documentation:\n";
+echo "  • https://docs.anthropic.com/en/api/beta-headers\n";
+echo "  • Check for 'anthropic-beta' header requirements\n\n";
+
+echo "SDK Usage:\n";
+echo "  \$client->beta()->messages()->create([\n";
+echo "      'model' => 'claude-sonnet-4-5-20250929',\n";
+echo "      'max_tokens' => 1024,\n";
+echo "      'messages' => [...],\n";
+echo "      'betas' => ['feature-name-YYYY-MM-DD'],\n";
+echo "  ]);\n\n";
+
+echo "The SDK automatically:\n";
+echo "  ✓ Converts 'betas' array to 'anthropic-beta' header\n";
+echo "  ✓ Joins multiple features with commas\n";
+echo "  ✓ Removes 'betas' from request body\n";
+echo "  ✓ Sends header: anthropic-beta: feature1,feature2\n";
 
 echo "=== Examples Complete ===\n";
 echo "\nNOTE: The SDK automatically converts the 'betas' parameter to the 'anthropic-beta' HTTP header.\n";

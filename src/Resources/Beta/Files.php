@@ -77,6 +77,6 @@ class Files extends Resource
             throw new \InvalidArgumentException('file_id is required');
         }
 
-        $this->_delete("/v1/files/{$fileId}");
+        $this->_delete("/files/{$fileId}");
     }
 }

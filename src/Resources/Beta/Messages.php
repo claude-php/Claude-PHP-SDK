@@ -44,10 +44,10 @@ class Messages extends Resource
         $headers = $this->extractBetaHeaders($body);
 
         if (!empty($params['stream'])) {
-            return $this->_postStream('/v1/messages', $body, $headers);
+            return $this->_postStream('/messages', $body, $headers);
         }
 
-        $response = $this->_post('/v1/messages', $body, $headers);
+        $response = $this->_post('/messages', $body, $headers);
         if (!\is_array($response)) {
             throw new \RuntimeException('Unexpected response payload from beta messages API');
         }
