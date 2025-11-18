@@ -28,6 +28,81 @@ $tests = [
         'description' => 'Testing complete getting started guide',
     ],
     [
+        'name' => 'Working with Messages',
+        'file' => 'working_with_messages.php',
+        'description' => 'Testing practical Messages API patterns',
+    ],
+    [
+        'name' => 'Context Windows',
+        'file' => 'context_windows.php',
+        'description' => 'Testing context window management',
+    ],
+    [
+        'name' => 'Prompt Caching',
+        'file' => 'prompt_caching.php',
+        'description' => 'Testing prompt caching for cost reduction',
+    ],
+    [
+        'name' => 'Context Editing (Beta)',
+        'file' => 'context_editing.php',
+        'description' => 'Testing automatic context management',
+    ],
+    [
+        'name' => 'Extended Thinking',
+        'file' => 'extended_thinking.php',
+        'description' => 'Testing enhanced reasoning capabilities',
+    ],
+    [
+        'name' => 'Streaming (Comprehensive)',
+        'file' => 'streaming_comprehensive.php',
+        'description' => 'Testing all streaming patterns',
+    ],
+    [
+        'name' => 'Batch Processing',
+        'file' => 'batch_processing.php',
+        'description' => 'Testing batch API for cost savings',
+    ],
+    [
+        'name' => 'Citations (Beta)',
+        'file' => 'citations.php',
+        'description' => 'Testing source attribution',
+    ],
+    [
+        'name' => 'Token Counting',
+        'file' => 'token_counting.php',
+        'description' => 'Testing token estimation',
+    ],
+    [
+        'name' => 'Embeddings',
+        'file' => 'embeddings.php',
+        'description' => 'Testing embeddings concepts',
+    ],
+    [
+        'name' => 'Vision (Comprehensive)',
+        'file' => 'vision_comprehensive.php',
+        'description' => 'Testing complete vision capabilities',
+    ],
+    [
+        'name' => 'PDF Support',
+        'file' => 'pdf_support.php',
+        'description' => 'Testing PDF document handling',
+    ],
+    [
+        'name' => 'Files API (Beta)',
+        'file' => 'files_api.php',
+        'description' => 'Testing file management',
+    ],
+    [
+        'name' => 'Search Results',
+        'file' => 'search_results.php',
+        'description' => 'Testing manual search result provision',
+    ],
+    [
+        'name' => 'Structured Outputs',
+        'file' => 'structured_outputs.php',
+        'description' => 'Testing guaranteed JSON schema',
+    ],
+    [
         'name' => 'Error Handling',
         'file' => 'error_handling.php',
         'description' => 'Testing error handling patterns',
@@ -40,37 +115,87 @@ $tests = [
     [
         'name' => 'Basic Message Creation',
         'file' => 'messages.php',
-        'description' => 'Testing basic message creation and multi-turn conversation',
+        'description' => 'Testing basic message creation',
     ],
     [
-        'name' => 'Streaming Messages',
+        'name' => 'Basic Streaming',
         'file' => 'messages_stream.php',
-        'description' => 'Testing real-time streaming responses',
+        'description' => 'Testing basic streaming',
     ],
     [
-        'name' => 'Vision (Images)',
+        'name' => 'Basic Images',
         'file' => 'images.php',
-        'description' => 'Testing image analysis with base64 encoding',
+        'description' => 'Testing basic image handling',
     ],
     [
-        'name' => 'Extended Thinking',
+        'name' => 'Basic Thinking',
         'file' => 'thinking.php',
-        'description' => 'Testing extended thinking with budget_tokens',
+        'description' => 'Testing basic extended thinking',
     ],
     [
         'name' => 'Thinking Stream',
         'file' => 'thinking_stream.php',
-        'description' => 'Testing streaming extended thinking',
+        'description' => 'Testing streaming thinking',
     ],
     [
-        'name' => 'Tool Use',
+        'name' => 'Tool Use Overview',
+        'file' => 'tool_use_overview.php',
+        'description' => 'Testing complete tool use guide',
+    ],
+    [
+        'name' => 'Tool Use Implementation',
+        'file' => 'tool_use_implementation.php',
+        'description' => 'Testing tool implementation patterns',
+    ],
+    [
+        'name' => 'Token Efficient Tools',
+        'file' => 'token_efficient_tool_use.php',
+        'description' => 'Testing token optimization for tools',
+    ],
+    [
+        'name' => 'Fine-grained Tool Streaming',
+        'file' => 'fine_grained_tool_streaming.php',
+        'description' => 'Testing real-time tool parameter streaming',
+    ],
+    [
+        'name' => 'Bash Tool',
+        'file' => 'bash_tool.php',
+        'description' => 'Testing bash command execution',
+    ],
+    [
+        'name' => 'Code Execution Tool',
+        'file' => 'code_execution_tool.php',
+        'description' => 'Testing Python code execution',
+    ],
+    [
+        'name' => 'Computer Use Tool',
+        'file' => 'computer_use_tool.php',
+        'description' => 'Testing desktop automation',
+    ],
+    [
+        'name' => 'Text Editor Tool',
+        'file' => 'text_editor_tool.php',
+        'description' => 'Testing file editing',
+    ],
+    [
+        'name' => 'Web Fetch Tool',
+        'file' => 'web_fetch_tool.php',
+        'description' => 'Testing web content fetching',
+    ],
+    [
+        'name' => 'Memory Tool',
+        'file' => 'memory_tool.php',
+        'description' => 'Testing persistent memory',
+    ],
+    [
+        'name' => 'Basic Tool Use',
         'file' => 'tools.php',
-        'description' => 'Testing function calling with tools',
+        'description' => 'Testing basic tool example',
     ],
     [
-        'name' => 'Web Search',
+        'name' => 'Web Search Tool',
         'file' => 'web_search.php',
-        'description' => 'Testing built-in web search tool',
+        'description' => 'Testing built-in web search',
     ],
 ];
 
