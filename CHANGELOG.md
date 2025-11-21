@@ -5,6 +5,33 @@ All notable changes to the Claude PHP SDK will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2025-11-22
+
+### Added
+
+- **50+ Comprehensive Examples**: Expanded from 29 to 80+ examples (11,000+ lines)
+  - **Streaming Examples (8)**: Basic streaming, event handling, tool use, extended thinking, error recovery, web search, message accumulation
+  - **Batch Processing Examples (8)**: Create, list, poll, cancel, retrieve results, complete workflow, with caching
+  - **Citations Examples (7)**: Basic citations, multiple documents, streaming citations, large documents, context handling, disabled citations
+  - **Extended Thinking Examples (6)**: Thinking with tools, interleaved thinking, redacted thinking, thinking block clearing, continuation patterns
+  - **Context Management Examples (4)**: Advanced configuration, combining strategies, tool result clearing, thinking block clearing
+  - **Basic Examples (4)**: Basic request, multi-turn conversations, response prefilling, vision
+  - **Caching Examples (2)**: Message-level caching, system prompt caching
+  - **Test Runners (4)**: Test suites for streaming, batch, and citations examples
+- **Helper Functions**: Added `createClient()` helper function in `examples/helpers.php`
+- **Documentation**: Updated README with comprehensive example listings and statistics
+
+### Changed
+
+- Updated README.md to reflect 80+ examples covering all Claude documentation pages
+- Improved examples organization with clear categorization
+- Enhanced examples/README.md with streaming examples section
+
+### Fixed
+
+- Resolved merge conflicts in examples (extended_thinking.php, memory_tool.php, prompt_caching.php, quickstart.php, token_counting.php, README.md)
+- Removed trailing whitespace from example files
+
 ## [0.1.0] - 2025-11-17
 
 ### Added
