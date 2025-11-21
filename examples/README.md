@@ -99,6 +99,19 @@ php examples/messages.php
 - **error_handling.php** - Comprehensive error handling patterns
 - **model_comparison.php** - Compare different Claude models
 
+### Streaming Examples
+
+See [STREAMING_EXAMPLES.md](STREAMING_EXAMPLES.md) for comprehensive streaming documentation based on the [official Claude streaming docs](https://docs.claude.com/en/docs/build-with-claude/streaming).
+
+- **streaming_basic.php** - Simple text streaming
+- **streaming_with_events.php** - Event-driven streaming with all event types
+- **streaming_with_tools.php** - Streaming with tool use (function calling)
+- **streaming_extended_thinking.php** - Streaming with extended thinking
+- **streaming_message_accumulation.php** - Building complete messages from stream
+- **streaming_error_recovery.php** - Error handling and retry logic
+- **streaming_web_search.php** - Streaming with web search capability
+- **test_streaming_examples.php** - Test runner for all streaming examples
+
 ### Vision & Documents
 
 - **vision_comprehensive.php** - Complete vision guide (from the [Vision](https://docs.claude.com/en/docs/build-with-claude/vision) guide):

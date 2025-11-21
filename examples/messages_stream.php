@@ -18,7 +18,6 @@ echo "==========================\n\n";
 $rawStream = $client->messages()->stream([
     'model' => 'claude-sonnet-4-5-20250929',
     'max_tokens' => 800,
-    'metadata' => ['run_id' => uniqid('example_', true)],
     'messages' => [
         [
             'role' => 'user',

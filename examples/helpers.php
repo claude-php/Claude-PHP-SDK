@@ -44,3 +44,12 @@ function getApiKey(): string
         'API key not found. Set ANTHROPIC_API_KEY or ANTHROPIC_API_KEY in .env file'
     );
 }
+
+/**
+ * Create a ClaudePhp client with API key from environment
+ */
+function createClient(): ClaudePhp\ClaudePhp
+{
+    loadEnv(__DIR__ . '/../.env');
+    return new ClaudePhp\ClaudePhp(apiKey: getApiKey());
+}

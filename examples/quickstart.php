@@ -40,4 +40,3 @@ foreach ($response->content as $block) {
 echo "\nUsage:\n";
 echo "  Input tokens: {$response->usage->input_tokens}\n";
 echo "  Output tokens: {$response->usage->output_tokens}\n";
-

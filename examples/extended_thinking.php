@@ -38,12 +38,12 @@ try {
     ]);
 
     echo "Question: Are there an infinite number of prime numbers such that n mod 4 == 3?\n\n";
-    
+
     foreach ($response->content as $block) {
         if ($block['type'] === 'thinking') {
             echo "Thinking (summarized):\n";
             echo substr($block['thinking'], 0, 300) . "...\n\n";
-            
+
             if (isset($block['signature'])) {
                 echo "Signature present: " . substr($block['signature'], 0, 50) . "...\n\n";
             }
@@ -52,7 +52,7 @@ try {
             echo $block['text'] . "\n";
         }
     }
-    
+
     echo "\nToken usage:\n";
     echo "  Input:  {$response->usage->input_tokens}\n";
     echo "  Output: {$response->usage->output_tokens} (includes thinking tokens)\n";
@@ -88,10 +88,10 @@ try {
 
     echo "Logic puzzle: A bat and a ball cost $1.10 in total.\n";
     echo "The bat costs $1.00 more than the ball. How much does the ball cost?\n\n";
-    
+
     $thinkingTokens = 0;
     $textTokens = 0;
-    
+
     foreach ($response->content as $block) {
         if ($block['type'] === 'thinking') {
             echo "Claude's thinking process (summarized):\n";
@@ -101,7 +101,7 @@ try {
             echo $block['text'] . "\n";
         }
     }
-    
+
     echo "\n💰 Billing Note:\n";
     echo "  Output tokens billed: {$response->usage->output_tokens}\n";
     echo "  This is the FULL thinking + text output (not just what you see)\n";
@@ -174,7 +174,7 @@ try {
     ]);
 
     echo "Turn 1: What is 137 * 89?\n";
-    
+
     $firstAnswer = '';
     foreach ($response1->content as $block) {
         if ($block['type'] === 'text') {
@@ -182,7 +182,7 @@ try {
             echo "Answer: {$firstAnswer}\n\n";
         }
     }
-    
+
     // Second turn - include complete response from turn 1
     $response2 = $client->messages()->create([
         'model' => 'claude-sonnet-4-5',
@@ -197,15 +197,15 @@ try {
             ['role' => 'user', 'content' => 'Now divide that by 3']
         ]
     ]);
-    
+
     echo "Turn 2: Now divide that by 3\n";
-    
+
     foreach ($response2->content as $block) {
         if ($block['type'] === 'text') {
             echo "Answer: {$block['text']}\n";
         }
     }
-    
+
     echo "\nNote: Thinking blocks from turn 1 were included but not counted toward context\n";
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
@@ -274,7 +274,7 @@ try {
 
     echo "Request with tools and thinking enabled\n";
     echo "Claude can think before/between/after tool calls\n\n";
-    
+
     foreach ($response->content as $block) {
         if ($block['type'] === 'thinking') {
             echo "Thinking: " . substr($block['thinking'], 0, 100) . "...\n";
@@ -284,7 +284,7 @@ try {
             echo "Text: {$block['text']}\n";
         }
     }
-    
+
     echo "\nNote: With interleaved thinking, budget can exceed budget_tokens\n";
     echo "up to the full context window (200K tokens)\n";
 } catch (Exception $e) {
@@ -456,4 +456,3 @@ echo "  • examples/thinking_stream.php - Streaming extended thinking\n";
 echo "  • examples/context_windows.php - Token management\n";
 echo "  • examples/prompt_caching.php - Cache optimization\n";
 echo "  • examples/tools.php - Tool use with thinking\n";
-
