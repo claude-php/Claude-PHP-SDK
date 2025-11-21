@@ -27,17 +27,17 @@ class BetaToolRunner implements \IteratorAggregate
     public function __construct(
         private readonly ClaudePhp $client,
         private readonly array $baseParams,
-        array $tools = []
+        array $tools = [],
     ) {
         $this->toolMap = $this->normalizeTools($tools);
         $this->apiToolDefinitions = array_map(
-            static fn(BetaToolDefinition $tool): array => $tool->toApiDefinition(),
-            $this->toolMap
+            static fn (BetaToolDefinition $tool): array => $tool->toApiDefinition(),
+            $this->toolMap,
         );
     }
 
     /**
-     * @return \Traversable<int, Message|array<string, mixed>>
+     * @return \Traversable<int, array<string, mixed>|Message>
      */
     public function getIterator(): \Traversable
     {
@@ -48,15 +48,16 @@ class BetaToolRunner implements \IteratorAggregate
             $payload = $this->baseParams;
             $payload['messages'] = $messages;
 
-            if ($this->apiToolDefinitions !== []) {
+            if ([] !== $this->apiToolDefinitions) {
                 $payload['tools'] = $this->apiToolDefinitions;
             }
 
             $response = $this->client->beta()->messages()->create($payload);
+
             yield $response;
 
             $toolUses = $this->extractToolUses($response);
-            if ($toolUses === []) {
+            if ([] === $toolUses) {
                 break;
             }
 
@@ -69,7 +70,7 @@ class BetaToolRunner implements \IteratorAggregate
                 'content' => $this->buildToolResults($toolUses),
             ];
 
-            $iterations++;
+            ++$iterations;
             if ($iterations >= ($this->baseParams['max_iterations'] ?? 16)) {
                 throw new \RuntimeException('Beta tool runner exceeded maximum iterations');
             }
@@ -77,7 +78,8 @@ class BetaToolRunner implements \IteratorAggregate
     }
 
     /**
-     * @param array<int, BetaToolDefinition|array<string, mixed>> $tools
+     * @param array<int, array<string, mixed>|BetaToolDefinition> $tools
+     *
      * @return array<string, BetaToolDefinition>
      */
     private function normalizeTools(array $tools): array
@@ -86,12 +88,14 @@ class BetaToolRunner implements \IteratorAggregate
         foreach ($tools as $tool) {
             if ($tool instanceof BetaToolDefinition) {
                 $normalized[$tool->name] = $tool;
+
                 continue;
             }
 
             if (\is_array($tool) && isset($tool['handler']) && \is_callable($tool['handler'])) {
                 $definition = BetaToolDefinition::fromCallable($tool['handler'], $tool);
                 $normalized[$definition->name] = $definition;
+
                 continue;
             }
 
@@ -102,10 +106,11 @@ class BetaToolRunner implements \IteratorAggregate
     }
 
     /**
-     * @param Message|array<string, mixed> $response
+     * @param array<string, mixed>|Message $response
+     *
      * @return array<int, array<string, mixed>>
      */
-    private function extractToolUses(Message|array $response): array
+    private function extractToolUses(array|Message $response): array
     {
         $content = $this->getResponseContent($response);
         $toolUses = [];
@@ -120,10 +125,11 @@ class BetaToolRunner implements \IteratorAggregate
     }
 
     /**
-     * @param Message|array<string, mixed> $response
+     * @param array<string, mixed>|Message $response
+     *
      * @return array<int, array<string, mixed>>
      */
-    private function getResponseContent(Message|array $response): array
+    private function getResponseContent(array|Message $response): array
     {
         if ($response instanceof Message) {
             return $response->content ?? [];
@@ -134,6 +140,7 @@ class BetaToolRunner implements \IteratorAggregate
 
     /**
      * @param array<int, array<string, mixed>> $toolUses
+     *
      * @return array<int, array<string, mixed>>
      */
     private function buildToolResults(array $toolUses): array
@@ -144,8 +151,9 @@ class BetaToolRunner implements \IteratorAggregate
             $name = $toolUse['name'] ?? '';
             $tool = $this->toolMap[$name] ?? null;
 
-            if ($tool === null) {
+            if (null === $tool) {
                 $results[] = $this->formatToolError($toolUse, 'No handler registered for tool ' . $name);
+
                 continue;
             }
 
@@ -163,7 +171,7 @@ class BetaToolRunner implements \IteratorAggregate
 
     /**
      * @param array<string, mixed> $toolUse
-     * @param mixed $result
+     *
      * @return array<string, mixed>
      */
     private function formatToolResult(array $toolUse, mixed $result): array
@@ -178,7 +186,6 @@ class BetaToolRunner implements \IteratorAggregate
     }
 
     /**
-     * @param mixed $result
      * @return array<int, array<string, mixed>>
      */
     private function normalizeToolResultContent(mixed $result): array
@@ -188,7 +195,7 @@ class BetaToolRunner implements \IteratorAggregate
         }
 
         if (\is_array($result) && isset($result[0]['type'])) {
-            /** @var array<int, array<string, mixed>> $result */
+            // @var array<int, array<string, mixed>> $result
             return $result;
         }
 
@@ -200,6 +207,7 @@ class BetaToolRunner implements \IteratorAggregate
 
     /**
      * @param array<string, mixed> $toolUse
+     *
      * @return array<string, mixed>
      */
     private function formatToolError(array $toolUse, string $message): array

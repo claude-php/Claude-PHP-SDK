@@ -14,16 +14,18 @@ use ClaudePhp\Responses\ToolUseContent;
  */
 final class MessageContentHelper
 {
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
      * Concatenate all text blocks into a single string.
      */
-    public static function text(Message|array $message, string $glue = "\n\n"): string
+    public static function text(array|Message $message, string $glue = "\n\n"): string
     {
         $segments = array_map(
-            static fn(TextContent $block): string => $block->text,
-            self::textBlocks($message)
+            static fn (TextContent $block): string => $block->text,
+            self::textBlocks($message),
         );
 
         return implode($glue, $segments);
@@ -32,47 +34,47 @@ final class MessageContentHelper
     /**
      * @return list<TextContent>
      */
-    public static function textBlocks(Message|array $message): array
+    public static function textBlocks(array|Message $message): array
     {
         return array_values(array_filter(
             self::hydratedBlocks($message),
-            static fn($block): bool => $block instanceof TextContent
+            static fn ($block): bool => $block instanceof TextContent,
         ));
     }
 
     /**
      * @return list<ToolUseContent>
      */
-    public static function toolUses(Message|array $message): array
+    public static function toolUses(array|Message $message): array
     {
         return array_values(array_filter(
             self::hydratedBlocks($message),
-            static fn($block): bool => $block instanceof ToolUseContent
+            static fn ($block): bool => $block instanceof ToolUseContent,
         ));
     }
 
     /**
      * @return list<ToolResultContent>
      */
-    public static function toolResults(Message|array $message): array
+    public static function toolResults(array|Message $message): array
     {
         return array_values(array_filter(
             self::hydratedBlocks($message),
-            static fn($block): bool => $block instanceof ToolResultContent
+            static fn ($block): bool => $block instanceof ToolResultContent,
         ));
     }
 
     /**
-     * @return list<TextContent|ToolUseContent|ToolResultContent>
+     * @return list<TextContent|ToolResultContent|ToolUseContent>
      */
-    private static function hydratedBlocks(Message|array $message): array
+    private static function hydratedBlocks(array|Message $message): array
     {
         $content = self::rawContent($message);
 
         $hydrated = [];
         foreach ($content as $block) {
             $valueObject = self::toValueObject($block);
-            if ($valueObject !== null) {
+            if (null !== $valueObject) {
                 $hydrated[] = $valueObject;
             }
         }
@@ -81,27 +83,28 @@ final class MessageContentHelper
     }
 
     /**
-     * @param Message|array<string, mixed> $message
+     * @param array<string, mixed>|Message $message
+     *
      * @return array<int, mixed>
      */
-    private static function rawContent(Message|array $message): array
+    private static function rawContent(array|Message $message): array
     {
         if ($message instanceof Message) {
             return $message->content;
         }
 
         $content = $message['content'] ?? [];
+
         return \is_array($content) ? $content : [];
     }
 
-    /**
-     * @param mixed $block
-     */
-    private static function toValueObject(mixed $block): TextContent|ToolUseContent|ToolResultContent|null
+    private static function toValueObject(mixed $block): TextContent|ToolResultContent|ToolUseContent|null
     {
-        if ($block instanceof TextContent
+        if (
+            $block instanceof TextContent
             || $block instanceof ToolUseContent
-            || $block instanceof ToolResultContent) {
+            || $block instanceof ToolResultContent
+        ) {
             return $block;
         }
 
@@ -111,17 +114,17 @@ final class MessageContentHelper
 
         return match ($block['type'] ?? null) {
             'text' => new TextContent(
-                text: (string) ($block['text'] ?? '')
+                text: (string) ($block['text'] ?? ''),
             ),
             'tool_use' => new ToolUseContent(
                 id: (string) ($block['id'] ?? ''),
                 name: (string) ($block['name'] ?? ''),
-                input: \is_array($block['input'] ?? null) ? $block['input'] : []
+                input: \is_array($block['input'] ?? null) ? $block['input'] : [],
             ),
             'tool_result' => new ToolResultContent(
                 tool_use_id: (string) ($block['tool_use_id'] ?? ''),
                 content: isset($block['content']) ? (string) $block['content'] : null,
-                is_error: (bool) ($block['is_error'] ?? false)
+                is_error: (bool) ($block['is_error'] ?? false),
             ),
             default => null,
         };

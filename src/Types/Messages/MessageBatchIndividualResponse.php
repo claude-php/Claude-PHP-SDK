@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Types\Messages;
 
-use ClaudePhp\Types\Messages\MessageBatchResult;
-
 /**
  * Individual response in a message batch
  *
@@ -20,5 +18,6 @@ class MessageBatchIndividualResponse
     public function __construct(
         public readonly string $custom_id,
         public readonly MessageBatchResult $result,
-    ) {}
+    ) {
+    }
 }

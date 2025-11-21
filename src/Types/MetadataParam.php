@@ -16,5 +16,6 @@ class MetadataParam
      */
     public function __construct(
         public readonly array $metadata,
-    ) {}
+    ) {
+    }
 }

@@ -9,5 +9,6 @@ class GatewayTimeoutError
     public function __construct(
         public readonly string $type,
         public readonly string $message,
-    ) {}
+    ) {
+    }
 }

@@ -20,6 +20,7 @@ final class Utils
      * Flatten a multi-level iterable into a single level list.
      *
      * @param iterable<int, iterable<int, mixed>> $items
+     *
      * @return list<mixed>
      */
     public static function flatten(iterable $items): array
@@ -30,14 +31,12 @@ final class Utils
                 $result[] = $item;
             }
         }
+
         return $result;
     }
 
     /**
      * Check if a value is a mapping/associative array.
-     *
-     * @param mixed $obj
-     * @return bool
      */
     public static function isMapping(mixed $obj): bool
     {
@@ -46,9 +45,6 @@ final class Utils
 
     /**
      * Check if a value is a list/sequential array.
-     *
-     * @param mixed $obj
-     * @return bool
      */
     public static function isList(mixed $obj): bool
     {
@@ -57,9 +53,6 @@ final class Utils
 
     /**
      * Check if a value is a dict (associative array).
-     *
-     * @param mixed $obj
-     * @return bool
      */
     public static function isDict(mixed $obj): bool
     {
@@ -68,20 +61,14 @@ final class Utils
 
     /**
      * Check if a value is a tuple-like structure.
-     *
-     * @param mixed $obj
-     * @return bool
      */
     public static function isTuple(mixed $obj): bool
     {
-        return is_array($obj) && static::isList($obj);
+        return is_array($obj) && self::isList($obj);
     }
 
     /**
      * Check if a value is iterable.
-     *
-     * @param mixed $obj
-     * @return bool
      */
     public static function isIterable(mixed $obj): bool
     {
@@ -90,9 +77,6 @@ final class Utils
 
     /**
      * Check if a value is a sequence (array or Traversable).
-     *
-     * @param mixed $obj
-     * @return bool
      */
     public static function isSequence(mixed $obj): bool
     {
@@ -106,24 +90,28 @@ final class Utils
      * This is more performant than full deepcopy.
      *
      * @template T
+     *
      * @param T $item
+     *
      * @return T
      */
     public static function deepcopyMinimal(mixed $item): mixed
     {
-        if (static::isMapping($item)) {
+        if (self::isMapping($item)) {
             $result = [];
             foreach ($item as $k => $v) {
-                $result[$k] = static::deepcopyMinimal($v);
+                $result[$k] = self::deepcopyMinimal($v);
             }
+
             return $result;
         }
 
-        if (static::isList($item)) {
+        if (self::isList($item)) {
             $result = [];
             foreach ($item as $entry) {
-                $result[] = static::deepcopyMinimal($entry);
+                $result[] = self::deepcopyMinimal($entry);
             }
+
             return $result;
         }
 
@@ -138,24 +126,24 @@ final class Utils
      * @param string[] $seq
      * @param string $delim The delimiter between items
      * @param string $final The connector before the last item
-     * @return string
      */
     public static function humanJoin(array $seq, string $delim = ', ', string $final = 'or'): string
     {
         $size = count($seq);
-        if ($size === 0) {
+        if (0 === $size) {
             return '';
         }
 
-        if ($size === 1) {
+        if (1 === $size) {
             return $seq[0];
         }
 
-        if ($size === 2) {
+        if (2 === $size) {
             return "{$seq[0]} {$final} {$seq[1]}";
         }
 
         $last = array_pop($seq);
+
         return implode($delim, $seq) . "{$delim}{$final} {$last}";
     }
 
@@ -163,9 +151,6 @@ final class Utils
      * Add single quotation marks around a string.
      *
      * Does not perform any escaping.
-     *
-     * @param string $string
-     * @return string
      */
     public static function quote(string $string): string
     {
@@ -174,39 +159,31 @@ final class Utils
 
     /**
      * Remove a prefix from a string.
-     *
-     * @param string $string
-     * @param string $prefix
-     * @return string
      */
     public static function removePrefix(string $string, string $prefix): string
     {
         if (str_starts_with($string, $prefix)) {
             return substr($string, strlen($prefix));
         }
+
         return $string;
     }
 
     /**
      * Remove a suffix from a string.
-     *
-     * @param string $string
-     * @param string $suffix
-     * @return string
      */
     public static function removeSuffix(string $string, string $suffix): string
     {
         if (str_ends_with($string, $suffix)) {
             return substr($string, 0, -strlen($suffix));
         }
+
         return $string;
     }
 
     /**
      * Coerce a string value to an integer.
      *
-     * @param string $val
-     * @return int
      * @throws \ValueError If the string cannot be converted to an integer
      */
     public static function coerceInteger(string $val): int
@@ -217,8 +194,6 @@ final class Utils
     /**
      * Coerce a string value to a float.
      *
-     * @param string $val
-     * @return float
      * @throws \ValueError If the string cannot be converted to a float
      */
     public static function coerceFloat(string $val): float
@@ -230,72 +205,60 @@ final class Utils
      * Coerce a string value to a boolean.
      *
      * Recognizes 'true', '1', 'on' as true values.
-     *
-     * @param string $val
-     * @return bool
      */
     public static function coerceBoolean(string $val): bool
     {
         $lower = strtolower($val);
-        return $lower === 'true' || $lower === '1' || $lower === 'on';
+
+        return 'true' === $lower || '1' === $lower || 'on' === $lower;
     }
 
     /**
      * Coerce a nullable string value to a nullable integer.
-     *
-     * @param string|null $val
-     * @return int|null
      */
     public static function maybeCoerceInteger(?string $val): ?int
     {
-        return $val === null ? null : static::coerceInteger($val);
+        return null === $val ? null : self::coerceInteger($val);
     }
 
     /**
      * Coerce a nullable string value to a nullable float.
-     *
-     * @param string|null $val
-     * @return float|null
      */
     public static function maybeCoerceFloat(?string $val): ?float
     {
-        return $val === null ? null : static::coerceFloat($val);
+        return null === $val ? null : self::coerceFloat($val);
     }
 
     /**
      * Coerce a nullable string value to a nullable boolean.
-     *
-     * @param string|null $val
-     * @return bool|null
      */
     public static function maybeCoerceBoolean(?string $val): ?bool
     {
-        return $val === null ? null : static::coerceBoolean($val);
+        return null === $val ? null : self::coerceBoolean($val);
     }
 
     /**
      * Make a value JSON-safe by converting objects and special types to serializable format.
      *
      * Recursively processes mappings, sequences, DateTime objects, etc.
-     *
-     * @param mixed $data
-     * @return mixed
      */
     public static function jsonSafe(mixed $data): mixed
     {
-        if (static::isMapping($data)) {
+        if (self::isMapping($data)) {
             $result = [];
             foreach ($data as $key => $value) {
-                $result[static::jsonSafe($key)] = static::jsonSafe($value);
+                $result[self::jsonSafe($key)] = self::jsonSafe($value);
             }
+
             return $result;
         }
 
-        if (static::isIterable($data) && !is_string($data) && !$data instanceof DateTimeInterface) {
+        if (self::isIterable($data) && !is_string($data) && !$data instanceof DateTimeInterface) {
             $result = [];
             foreach ($data as $item) {
-                $result[] = static::jsonSafe($item);
+                $result[] = self::jsonSafe($item);
             }
+
             return $result;
         }
 
@@ -313,8 +276,10 @@ final class Utils
      *
      * @param array<string, string> $headers
      * @param string $header The header name to find
-     * @return string The header value
+     *
      * @throws \ValueError If the header is not found
+     *
+     * @return string The header value
      */
     public static function getRequiredHeader(array $headers, string $header): string
     {
@@ -348,14 +313,16 @@ final class Utils
      * Read a file from disk and return its contents.
      *
      * @param string $path The file path
+     *
      * @return string The file contents
      */
     public static function fileFromPath(string $path): string
     {
         $contents = @file_get_contents($path);
-        if ($contents === false) {
+        if (false === $contents) {
             throw new \RuntimeException("Could not read file at path: {$path}");
         }
+
         return $contents;
     }
 }

@@ -12,5 +12,6 @@ class ToolTextEditor20250429
     public function __construct(
         public readonly string $type,
         public readonly string $name,
-    ) {}
+    ) {
+    }
 }

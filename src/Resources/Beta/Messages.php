@@ -27,7 +27,6 @@ class Messages extends Resource
      * Create a message using the beta API.
      *
      * @param array<string, mixed> $params Message parameters
-     * @return Message|StreamResponse
      */
     public function create(array $params = []): Message|StreamResponse
     {
@@ -99,6 +98,7 @@ class Messages extends Resource
      * Parse a structured output response into PHP arrays.
      *
      * @param array<string, mixed> $params
+     *
      * @return array<string, mixed>
      */
     public function parse(array $params = []): array
@@ -147,7 +147,6 @@ class Messages extends Resource
      * Automatically run beta tool loops until completion.
      *
      * @param array<string, mixed> $params Message parameters
-     * @return BetaToolRunner
      */
     public function toolRunner(array $params = []): BetaToolRunner
     {
@@ -159,8 +158,6 @@ class Messages extends Resource
 
     /**
      * Get batches sub-resource.
-     *
-     * @return Batches
      */
     public function batches(): Batches
     {
@@ -212,7 +209,8 @@ class Messages extends Resource
     /**
      * Normalize output_format input to JSON schema.
      *
-     * @param class-string|array<string, mixed> $format
+     * @param array<string, mixed>|class-string $format
+     *
      * @return array<string, mixed>
      */
     private function normalizeOutputFormat(array|string $format): array
@@ -221,6 +219,7 @@ class Messages extends Resource
             if (!class_exists($format)) {
                 throw new \InvalidArgumentException("output_format class {$format} does not exist");
             }
+
             return SchemaTransformer::fromClass($format);
         }
 
@@ -235,12 +234,13 @@ class Messages extends Resource
      * Ensure the structured outputs beta flag is present.
      *
      * @param array<int, string> $betas
+     *
      * @return array<int, string>
      */
     private function ensureStructuredOutputsBeta(array $betas): array
     {
-        if (!\in_array('structured-outputs-2025-09-17', $betas, true)) {
-            $betas[] = 'structured-outputs-2025-09-17';
+        if (!\in_array('structured-outputs-2025-11-13', $betas, true)) {
+            $betas[] = 'structured-outputs-2025-11-13';
         }
 
         return $betas;
@@ -294,12 +294,14 @@ class Messages extends Resource
      * the anthropic-beta HTTP header, not in the request body.
      *
      * @param array<string, mixed> &$body Request body (passed by reference to remove betas)
+     *
      * @return array<string, string> Headers to add to the request
      */
     private function extractBetaHeaders(array &$body): array
     {
         if (!isset($body['betas']) || !is_array($body['betas']) || empty($body['betas'])) {
             unset($body['betas']);
+
             return [];
         }
 

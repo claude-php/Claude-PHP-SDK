@@ -13,5 +13,6 @@ class BetaTextBlock
         public readonly string $type,
         public readonly string $text,
         public readonly ?array $citations = null,
-    ) {}
+    ) {
+    }
 }

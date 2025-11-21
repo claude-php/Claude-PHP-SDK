@@ -18,6 +18,7 @@ class Versions extends Resource
      *
      * @param string $skillId Skill ID
      * @param array<string, mixed> $params Version parameters
+     *
      * @return array Version response
      */
     public function create(string $skillId, array $params = []): array
@@ -34,6 +35,7 @@ class Versions extends Resource
      *
      * @param string $skillId Skill ID
      * @param array<string, mixed> $params Query parameters
+     *
      * @return array List of versions
      */
     public function list(string $skillId, array $params = []): array
@@ -46,6 +48,7 @@ class Versions extends Resource
      *
      * @param string $skillId Skill ID
      * @param string $versionId Version ID
+     *
      * @return array Version details
      */
     public function retrieve(string $skillId, string $versionId): array
@@ -62,7 +65,6 @@ class Versions extends Resource
      *
      * @param string $skillId Skill ID
      * @param string $versionId Version ID
-     * @return void
      */
     public function delete(string $skillId, string $versionId): void
     {

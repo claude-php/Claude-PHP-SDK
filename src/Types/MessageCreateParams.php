@@ -13,15 +13,15 @@ class MessageCreateParams
 {
     /**
      * @param string $model The model to use for the message
-     * @param array<MessageParam|array<string, mixed>> $messages The message history
+     * @param array<array<string, mixed>|MessageParam> $messages The message history
      * @param int $max_tokens The maximum tokens to generate
-     * @param array<string, mixed>|null $tools Optional tools available to the model
-     * @param array<string, mixed>|null $tool_choice Tool choice constraint
-     * @param array<string>|null $stop_sequences Sequences where generation stops
-     * @param array<string, mixed>|null $thinking Extended thinking configuration
-     * @param array<string, mixed>|null $temperature Sampling temperature (if using batches)
-     * @param array<string, mixed>|null $system System prompt or instructions
-     * @param array<string, mixed>|null $metadata Optional metadata
+     * @param null|array<string, mixed> $tools Optional tools available to the model
+     * @param null|array<string, mixed> $tool_choice Tool choice constraint
+     * @param null|array<string> $stop_sequences Sequences where generation stops
+     * @param null|array<string, mixed> $thinking Extended thinking configuration
+     * @param null|array<string, mixed> $temperature Sampling temperature (if using batches)
+     * @param null|array<string, mixed> $system System prompt or instructions
+     * @param null|array<string, mixed> $metadata Optional metadata
      */
     public function __construct(
         public readonly string $model,
@@ -34,5 +34,6 @@ class MessageCreateParams
         public readonly ?array $temperature = null,
         public readonly ?array $system = null,
         public readonly ?array $metadata = null,
-    ) {}
+    ) {
+    }
 }

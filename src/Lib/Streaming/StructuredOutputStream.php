@@ -28,7 +28,7 @@ class StructuredOutputStream implements \IteratorAggregate
      */
     public function __construct(
         StreamResponse $response,
-        private readonly array $schema
+        private readonly array $schema,
     ) {
         $this->messageStream = new MessageStream($response);
     }
@@ -47,7 +47,7 @@ class StructuredOutputStream implements \IteratorAggregate
                 $this->buffers[$index] = ($this->buffers[$index] ?? '') . $text;
 
                 $parsed = ResponseParser::tryParseText($this->buffers[$index], $this->schema);
-                if ($parsed !== null) {
+                if (null !== $parsed) {
                     $event['parsed_output'] = $parsed;
                 }
             }

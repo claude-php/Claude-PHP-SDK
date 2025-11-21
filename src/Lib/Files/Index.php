@@ -22,8 +22,6 @@ function getFilesLibrary(): array
 
 /**
  * Get the files library version.
- *
- * @return string
  */
 function getFilesLibraryVersion(): string
 {

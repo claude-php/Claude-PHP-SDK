@@ -21,16 +21,18 @@ final class RequiredArgs
      *
      * @param callable $func The function to validate
      * @param string[] $requiredArgs Names of arguments that must be provided
-     * @param string[]|null $onlyIfPresent Args that are only required if specific args are present
+     * @param null|string[] $onlyIfPresent Args that are only required if specific args are present
+     *
      * @return callable The wrapped function with argument validation
      */
     public static function validate(
         callable $func,
         array $requiredArgs,
-        ?array $onlyIfPresent = null
+        ?array $onlyIfPresent = null,
     ): callable {
         return function (...$args) use ($func, $requiredArgs, $onlyIfPresent) {
             self::checkRequiredArgs($func, $requiredArgs, $onlyIfPresent, $args);
+
             return $func(...$args);
         };
     }
@@ -40,15 +42,16 @@ final class RequiredArgs
      *
      * @param callable $func The function being called
      * @param string[] $requiredArgs Names of required arguments
-     * @param string[]|null $onlyIfPresent Conditional requirements
+     * @param null|string[] $onlyIfPresent Conditional requirements
      * @param mixed[] $args The actual arguments passed
+     *
      * @throws \InvalidArgumentException If required arguments are missing
      */
     public static function checkRequiredArgs(
         callable $func,
         array $requiredArgs,
         ?array $onlyIfPresent = null,
-        array $args = []
+        array $args = [],
     ): void {
         // Get function parameter names
         try {
@@ -63,7 +66,7 @@ final class RequiredArgs
         }
 
         $params = $reflection->getParameters();
-        $paramNames = array_map(fn($p) => $p->getName(), $params);
+        $paramNames = array_map(fn ($p) => $p->getName(), $params);
 
         // Map positional arguments to parameter names
         $providedArgs = [];
@@ -84,11 +87,11 @@ final class RequiredArgs
         if ($missing) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    "Missing required arguments: %s. When calling %s, you must provide one of: %s",
+                    'Missing required arguments: %s. When calling %s, you must provide one of: %s',
                     implode(', ', $missing),
                     self::getFunctionName($func),
-                    implode(', ', $requiredArgs)
-                )
+                    implode(', ', $requiredArgs),
+                ),
             );
         }
 
@@ -96,15 +99,15 @@ final class RequiredArgs
         if ($onlyIfPresent) {
             foreach ($onlyIfPresent as $conditionalArg => $dependentArgs) {
                 if (isset($providedArgs[$conditionalArg]) && SpecialTypeUtils::isGiven($providedArgs[$conditionalArg])) {
-                    foreach ((array)$dependentArgs as $dependent) {
+                    foreach ((array) $dependentArgs as $dependent) {
                         if (!isset($providedArgs[$dependent]) || SpecialTypeUtils::isNotGiven($providedArgs[$dependent])) {
                             throw new \InvalidArgumentException(
                                 sprintf(
                                     "When '%s' is provided to %s, you must also provide '%s'",
                                     $conditionalArg,
                                     self::getFunctionName($func),
-                                    $dependent
-                                )
+                                    $dependent,
+                                ),
                             );
                         }
                     }
@@ -115,9 +118,6 @@ final class RequiredArgs
 
     /**
      * Get a human-readable function name.
-     *
-     * @param callable $func
-     * @return string
      */
     private static function getFunctionName(callable $func): string
     {

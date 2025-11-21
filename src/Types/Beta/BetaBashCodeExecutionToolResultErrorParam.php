@@ -14,11 +14,12 @@ class BetaBashCodeExecutionToolResultErrorParam
     /**
      * @param string $type Error type ("bash_code_execution_error")
      * @param string $message Error message
-     * @param string|null $code Optional error code
+     * @param null|string $code Optional error code
      */
     public function __construct(
         public readonly string $type,
         public readonly string $message,
         public readonly ?string $code = null,
-    ) {}
+    ) {
+    }
 }

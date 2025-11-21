@@ -12,5 +12,6 @@ class RawMessageStartEvent
     public function __construct(
         public readonly string $type,
         public readonly mixed $message,
-    ) {}
+    ) {
+    }
 }

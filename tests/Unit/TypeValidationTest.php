@@ -7,10 +7,9 @@ namespace ClaudePhp\Tests\Unit;
 use ClaudePhp\Tests\TestCase;
 use ClaudePhp\Tests\TestUtils;
 use ClaudePhp\Types\Message;
-use ClaudePhp\Types\Usage;
-use ClaudePhp\Types\TextBlock;
-use ClaudePhp\Types\ToolUseBlock;
 use ClaudePhp\Types\MessageTokensCount;
+use ClaudePhp\Types\Usage;
+use PHPUnit\Framework\AssertionFailedError;
 
 /**
  * Comprehensive type validation tests
@@ -23,29 +22,29 @@ class TypeValidationTest extends TestCase
         // String validation
         TestUtils::assertMatchesType('string', 'hello');
         TestUtils::assertMatchesType('string', '');
-        
+
         // Integer validation
         TestUtils::assertMatchesType('int', 42);
         TestUtils::assertMatchesType('integer', 0);
         TestUtils::assertMatchesType('int', -10);
-        
+
         // Float validation
         TestUtils::assertMatchesType('float', 3.14);
         TestUtils::assertMatchesType('double', 0.0);
-        
+
         // Boolean validation
         TestUtils::assertMatchesType('bool', true);
         TestUtils::assertMatchesType('boolean', false);
-        
+
         // Array validation
         TestUtils::assertMatchesType('array', []);
         TestUtils::assertMatchesType('array', [1, 2, 3]);
         TestUtils::assertMatchesType('array', ['key' => 'value']);
-        
+
         // Object validation
         TestUtils::assertMatchesType('object', new \stdClass());
         TestUtils::assertMatchesType('object', new Message('id', 'message', 'assistant', [], 'claude-sonnet-4-5-20250929', 'end_turn', null, new Usage(10, 20)));
-        
+
         // Null validation
         TestUtils::assertMatchesType('null', null);
     }
@@ -54,7 +53,7 @@ class TypeValidationTest extends TestCase
     {
         $message = new Message('test', 'message', 'assistant', [], 'claude-sonnet-4-5-20250929', 'end_turn', null, new Usage(10, 20));
         $usage = new Usage(10, 20);
-        
+
         TestUtils::assertMatchesType(Message::class, $message);
         TestUtils::assertMatchesType(Usage::class, $usage);
         TestUtils::assertMatchesType(\stdClass::class, new \stdClass());
@@ -65,33 +64,34 @@ class TypeValidationTest extends TestCase
         // String or null
         TestUtils::assertMatchesType(['string', 'null'], 'hello');
         TestUtils::assertMatchesType(['string', 'null'], null);
-        
+
         // Int or float
         TestUtils::assertMatchesType(['int', 'float'], 42);
         TestUtils::assertMatchesType(['int', 'float'], 3.14);
-        
+
         // Array or object
         TestUtils::assertMatchesType(['array', 'object'], [1, 2, 3]);
         TestUtils::assertMatchesType(['array', 'object'], new \stdClass());
-        
+
         // Class or null
         TestUtils::assertMatchesType([Message::class, 'null'], null);
-        TestUtils::assertMatchesType([Message::class, 'null'], 
-            new Message('test', 'message', 'assistant', [], 'claude-sonnet-4-5-20250929', 'end_turn', null, new Usage(10, 20))
+        TestUtils::assertMatchesType(
+            [Message::class, 'null'],
+            new Message('test', 'message', 'assistant', [], 'claude-sonnet-4-5-20250929', 'end_turn', null, new Usage(10, 20)),
         );
     }
 
     public function testAssertMatchesTypeFailures(): void
     {
         // Wrong basic type
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         TestUtils::assertMatchesType('string', 42);
     }
 
     public function testAssertMatchesTypeUnionFailure(): void
     {
         // None of the union types match
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Value does not match any of the union types');
         TestUtils::assertMatchesType(['string', 'int'], 3.14);
     }
@@ -100,13 +100,13 @@ class TypeValidationTest extends TestCase
     {
         $message = new Message(
             'msg_123',
-            'message', 
+            'message',
             'assistant',
             [['type' => 'text', 'text' => 'Hello']],
             'claude-sonnet-4-5-20250929',
             'end_turn',
             null,
-            new Usage(10, 20)
+            new Usage(10, 20),
         );
 
         TestUtils::assertMatchesModel($message, [
@@ -138,9 +138,9 @@ class TypeValidationTest extends TestCase
         $object = new \stdClass();
         $object->name = 'test';
 
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage("Property 'missing_prop' does not exist on object");
-        
+
         TestUtils::assertMatchesModel($object, [
             'name' => 'string',
             'missing_prop' => 'string',
@@ -152,9 +152,9 @@ class TypeValidationTest extends TestCase
         $object = new \stdClass();
         $object->name = 123;
 
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage("Property 'name' has incorrect type");
-        
+
         TestUtils::assertMatchesModel($object, [
             'name' => 'string',
         ]);
@@ -195,7 +195,7 @@ class TypeValidationTest extends TestCase
             'claude-sonnet-4-5-20250929',
             'tool_use',
             null,
-            new Usage(25, 15, 5, 2)
+            new Usage(25, 15, 5, 2),
         );
 
         // Validate top-level structure
@@ -212,7 +212,7 @@ class TypeValidationTest extends TestCase
         // Validate content array structure
         $this->assertIsArray($message->content);
         $this->assertCount(2, $message->content);
-        
+
         // Validate first content block (text)
         $textBlock = $message->content[0];
         TestUtils::assertArrayStructure($textBlock, [
@@ -221,18 +221,18 @@ class TypeValidationTest extends TestCase
         ]);
         $this->assertEquals('text', $textBlock['type']);
         $this->assertEquals('Hello world', $textBlock['text']);
-        
+
         // Validate second content block (tool_use)
         $toolBlock = $message->content[1];
         TestUtils::assertArrayStructure($toolBlock, [
             'type' => 'string',
-            'id' => 'string', 
+            'id' => 'string',
             'name' => 'string',
             'input' => 'array',
         ]);
         $this->assertEquals('tool_use', $toolBlock['type']);
         $this->assertEquals('calculator', $toolBlock['name']);
-        
+
         // Validate tool input structure
         TestUtils::assertArrayStructure($toolBlock['input'], [
             'operation' => 'string',
@@ -278,9 +278,9 @@ class TypeValidationTest extends TestCase
     {
         $jsonString = '{"name": 123}'; // name should be string, not int
 
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage("Key 'name' has incorrect type");
-        
+
         TestUtils::assertJsonStructure($jsonString, [
             'name' => 'string',
         ]);
@@ -290,9 +290,9 @@ class TypeValidationTest extends TestCase
     {
         $invalidJson = '{invalid json}';
 
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Invalid JSON string');
-        
+
         TestUtils::assertJsonStructure($invalidJson, []);
     }
 
@@ -317,9 +317,9 @@ class TypeValidationTest extends TestCase
             'type' => 'message_start', // Mismatch between event type and data type
         ]) . "\n\n";
 
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Event type mismatch');
-        
+
         TestUtils::assertStreamingEvent($eventData, 'message_start');
     }
 
@@ -359,17 +359,17 @@ class TypeValidationTest extends TestCase
 
     public function testInvalidExpectedType(): void
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Unknown type: invalid_type');
-        
+
         TestUtils::assertMatchesType('invalid_type', 'test');
     }
 
     public function testInvalidExpectedTypeFormat(): void
     {
-        $this->expectException(\PHPUnit\Framework\AssertionFailedError::class);
+        $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Invalid expected type provided');
-        
+
         TestUtils::assertMatchesType(123, 'test'); // Invalid type format
     }
 }

@@ -12,5 +12,6 @@ class ImageBlockParam
     public function __construct(
         public readonly string $type,
         public readonly mixed $source,
-    ) {}
+    ) {
+    }
 }

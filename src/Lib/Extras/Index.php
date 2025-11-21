@@ -22,8 +22,6 @@ function getExtrasLibrary(): array
 
 /**
  * Get the extras library version.
- *
- * @return string
  */
 function getExtrasLibraryVersion(): string
 {

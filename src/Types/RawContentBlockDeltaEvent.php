@@ -13,5 +13,6 @@ class RawContentBlockDeltaEvent
         public readonly string $type,
         public readonly int $index,
         public readonly mixed $delta,
-    ) {}
+    ) {
+    }
 }

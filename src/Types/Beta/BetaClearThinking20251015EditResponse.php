@@ -14,11 +14,12 @@ class BetaClearThinking20251015EditResponse
     /**
      * @param string $type Response type ("clear_thinking_response")
      * @param string $content The clear thinking content
-     * @param array<string, mixed>|null $metadata Optional metadata
+     * @param null|array<string, mixed> $metadata Optional metadata
      */
     public function __construct(
         public readonly string $type,
         public readonly string $content,
         public readonly ?array $metadata = null,
-    ) {}
+    ) {
+    }
 }

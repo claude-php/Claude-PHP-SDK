@@ -20,5 +20,6 @@ class ContentBlockDeltaEvent
         public readonly string $type,
         public readonly int $index,
         public readonly array $delta,
-    ) {}
+    ) {
+    }
 }

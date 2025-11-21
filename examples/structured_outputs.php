@@ -5,7 +5,7 @@
  * https://docs.claude.com/en/docs/build-with-claude/structured-outputs
  * 
  * Get JSON responses that conform to your schema with guaranteed structure.
- * Requires 'structured-outputs-2025-09-17' beta header (auto-added by parse()).
+ * Requires 'structured-outputs-2025-11-13' beta header (auto-added by parse()).
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -50,7 +50,7 @@ try {
     echo "Schema: name (string), age (integer), email (string)\n\n";
     echo "Parsed output:\n";
     print_r($result);
-    echo "\nNote: parse() automatically adds 'structured-outputs-2025-09-17' beta header\n";
+    echo "\nNote: parse() automatically adds 'structured-outputs-2025-11-13' beta header\n";
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
 }
@@ -218,7 +218,7 @@ echo "Key Takeaways:\n";
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
 echo "• Use \$client->beta()->messages()->parse() for structured outputs\n";
 echo "• Requires 'output_format' parameter with JSON schema\n";
-echo "• Beta header 'structured-outputs-2025-09-17' auto-added\n";
+echo "• Beta header 'structured-outputs-2025-11-13' auto-added\n";
 echo "• Guaranteed schema compliance (no manual validation needed)\n";
 echo "• Supports streaming with streamStructured()\n";
 echo "• Works with complex nested schemas\n";

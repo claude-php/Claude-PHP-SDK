@@ -14,5 +14,6 @@ class ModelInfo
         public readonly string $type,
         public readonly ?string $display_name = null,
         public readonly ?int $max_tokens = null,
-    ) {}
+    ) {
+    }
 }

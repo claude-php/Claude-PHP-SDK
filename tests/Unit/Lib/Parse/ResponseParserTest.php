@@ -20,7 +20,7 @@ final class ResponseParserTest extends TestCase
                 ['type' => 'text', 'text' => '{"name": "John", "age": 30}'],
             ],
             model: 'claude-sonnet-4-5-20250929',
-            stop_reason: 'end_turn'
+            stop_reason: 'end_turn',
         );
 
         $schema = [
@@ -48,7 +48,7 @@ final class ResponseParserTest extends TestCase
                 ['type' => 'text', 'text' => '{"name": "John"}'],
             ],
             model: 'claude-sonnet-4-5-20250929',
-            stop_reason: 'end_turn'
+            stop_reason: 'end_turn',
         );
 
         $schema = [
@@ -76,7 +76,7 @@ final class ResponseParserTest extends TestCase
                 ['type' => 'text', 'text' => 'Not valid JSON'],
             ],
             model: 'claude-sonnet-4-5-20250929',
-            stop_reason: 'end_turn'
+            stop_reason: 'end_turn',
         );
 
         $schema = ['type' => 'object'];

@@ -16,5 +16,6 @@ abstract class ContentBlock
      */
     public function __construct(
         public readonly string $type,
-    ) {}
+    ) {
+    }
 }

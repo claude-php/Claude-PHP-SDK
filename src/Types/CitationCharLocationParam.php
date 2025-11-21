@@ -16,5 +16,6 @@ class CitationCharLocationParam
         public readonly int $start_char_index,
         public readonly int $end_char_index,
         public readonly ?string $document_title = null,
-    ) {}
+    ) {
+    }
 }

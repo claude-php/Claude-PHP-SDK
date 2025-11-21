@@ -27,6 +27,7 @@ function getAllLibraries(): array
         'extras' => Extras\getExtrasLibrary(),
         'bedrock' => Bedrock\getBedrockLibrary(),
         'vertex' => Vertex\getVertexLibrary(),
+        'foundry' => Foundry\getFoundryLibrary(),
     ];
 }
 
@@ -45,13 +46,12 @@ function getLibraryVersions(): array
         'extras' => '1.0.0',
         'bedrock' => '1.0.0',
         'vertex' => '1.0.0',
+        'foundry' => '1.0.0',
     ];
 }
 
 /**
  * Get main library version.
- *
- * @return string
  */
 function getLibVersion(): string
 {

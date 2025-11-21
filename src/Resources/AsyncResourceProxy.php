@@ -20,11 +20,6 @@ final class AsyncResourceProxy extends LazyProxy
     {
     }
 
-    protected function load(): object
-    {
-        return $this->resource;
-    }
-
     /**
      * Forward method calls to the proxied resource and wrap the invocation in an Amp Future.
      *
@@ -38,13 +33,18 @@ final class AsyncResourceProxy extends LazyProxy
                 'Method %s::%s does not exist on resource of type %s',
                 $resource::class,
                 $name,
-                $resource::class
+                $resource::class,
             ));
         }
 
         $wrapped = AsyncUtils::asyncify([$resource, $name]);
 
-        /** @var Future<mixed> */
+        // @var Future<mixed>
         return $wrapped(...$arguments);
+    }
+
+    protected function load(): object
+    {
+        return $this->resource;
     }
 }

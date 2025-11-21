@@ -13,7 +13,7 @@ class TextContent
      * @param string $text The text content
      */
     public function __construct(
-        public readonly string $text
+        public readonly string $text,
     ) {
     }
 }

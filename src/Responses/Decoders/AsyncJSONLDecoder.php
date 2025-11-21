@@ -19,9 +19,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class AsyncJSONLDecoder
 {
-    /**
-     * @var ResponseInterface
-     */
     private ResponseInterface $response;
 
     /**
@@ -38,6 +35,7 @@ class AsyncJSONLDecoder
      * Create a new async JSONL decoder.
      *
      * @template T
+     *
      * @param iterable<int, string> $rawIterator Async or sync iterable over byte chunks
      * @param class-string<T> $lineType The class type to deserialize each line into
      * @param ResponseInterface $response The HTTP response object
@@ -45,7 +43,7 @@ class AsyncJSONLDecoder
     public function __construct(
         iterable $rawIterator,
         string $lineType,
-        ResponseInterface $response
+        ResponseInterface $response,
     ) {
         $this->rawIterator = $rawIterator;
         $this->lineType = $lineType;
@@ -101,18 +99,18 @@ class AsyncJSONLDecoder
                 $endPosition = -1;
                 $endingLength = 0;
 
-                if ($crlfPos !== false) {
+                if (false !== $crlfPos) {
                     $endPosition = $crlfPos;
                     $endingLength = 2;
-                } elseif ($lfPos !== false) {
+                } elseif (false !== $lfPos) {
                     $endPosition = $lfPos;
                     $endingLength = 1;
-                } elseif ($crPos !== false) {
+                } elseif (false !== $crPos) {
                     $endPosition = $crPos;
                     $endingLength = 1;
                 }
 
-                if ($endPosition === -1) {
+                if (-1 === $endPosition) {
                     // No complete line yet, wait for more data
                     break;
                 }
@@ -142,8 +140,6 @@ class AsyncJSONLDecoder
     /**
      * Parse a single JSON line.
      *
-     * @param string $line
-     * @return mixed
      * @throws \JsonException
      */
     private function parseLine(string $line): mixed
@@ -152,7 +148,7 @@ class AsyncJSONLDecoder
 
         // If a specific type is required, instantiate it from the data
         // This is a simple approach; for more complex types, use a proper deserializer
-        if ($this->lineType !== 'array' && class_exists($this->lineType)) {
+        if ('array' !== $this->lineType && class_exists($this->lineType)) {
             return new ($this->lineType)($data);
         }
 

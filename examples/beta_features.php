@@ -129,7 +129,7 @@ echo "  - Beta feature names follow pattern: feature-name-YYYY-MM-DD\n";
 echo "  - Examples from docs:\n";
 echo "    • web-fetch-2025-09-10 (not in header, tool type)\n";
 echo "    • context-management-2025-06-27 (for context editing)\n";
-echo "    • structured-outputs-2025-09-17 (for guaranteed JSON)\n\n";
+echo "    • structured-outputs-2025-11-13 (for guaranteed JSON)\n\n";
 
 echo "Note: Not all features require the anthropic-beta header.\n";
 echo "Server-side tools (web_fetch, memory, etc.) use tool 'type' field instead.\n";

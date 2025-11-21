@@ -16,5 +16,6 @@ class CitationContentBlockLocationParam
         public readonly int $start_block_index,
         public readonly int $end_block_index,
         public readonly ?string $document_title = null,
-    ) {}
+    ) {
+    }
 }

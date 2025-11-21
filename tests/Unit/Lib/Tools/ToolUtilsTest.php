@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Lib\Tools;
 
-use ClaudePhp\Lib\Tools\ToolRunner;
 use ClaudePhp\Lib\Tools\ToolUtils;
 use PHPUnit\Framework\TestCase;
 
@@ -21,7 +20,7 @@ class ToolUtilsTest extends TestCase
                     'location' => ['type' => 'string'],
                 ],
                 'required' => ['location'],
-            ]
+            ],
         );
 
         $this->assertSame('get_weather', $tool['name']);

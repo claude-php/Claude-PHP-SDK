@@ -12,5 +12,6 @@ class TextBlockParam
     public function __construct(
         public readonly string $type,
         public readonly string $text,
-    ) {}
+    ) {
+    }
 }

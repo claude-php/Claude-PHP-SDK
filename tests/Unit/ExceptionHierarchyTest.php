@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests;
 
-use ClaudePhp\Exceptions\{
-    AnthropicException,
-    APIError,
-    APIConnectionError,
-    APITimeoutError,
-    APIStatusError,
-    AuthenticationError,
-    BadRequestError,
-    RateLimitError,
-};
+use ClaudePhp\Exceptions\AnthropicException;
+use ClaudePhp\Exceptions\APIConnectionError;
+use ClaudePhp\Exceptions\APIError;
+use ClaudePhp\Exceptions\APIStatusError;
+use ClaudePhp\Exceptions\APITimeoutError;
+use ClaudePhp\Exceptions\AuthenticationError;
+use ClaudePhp\Exceptions\RateLimitError;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Tests for exception hierarchy
@@ -69,7 +68,7 @@ class ExceptionHierarchyTest extends TestCase
             $request,
             $response,
             $body,
-            $requestId
+            $requestId,
         );
 
         $this->assertEquals($statusCode, $e->status_code);
@@ -85,7 +84,7 @@ class ExceptionHierarchyTest extends TestCase
      */
     private function createMockRequest()
     {
-        return $this->createMock(\Psr\Http\Message\RequestInterface::class);
+        return $this->createMock(RequestInterface::class);
     }
 
     /**
@@ -93,6 +92,6 @@ class ExceptionHierarchyTest extends TestCase
      */
     private function createMockResponse()
     {
-        return $this->createMock(\Psr\Http\Message\ResponseInterface::class);
+        return $this->createMock(ResponseInterface::class);
     }
 }

@@ -18,6 +18,7 @@ use Psr\Http\Message\ResponseInterface;
  * incomplete lines across chunk boundaries.
  *
  * @template T
+ *
  * @implements Iterator<int, T>
  */
 class JSONLDecoder implements Iterator
@@ -33,12 +34,12 @@ class JSONLDecoder implements Iterator
     private Iterator $rawIterator;
 
     /**
-     * @var class-string<T>|'array' The class type to deserialize each line into, or 'array' for associative arrays
+     * @var 'array'|class-string<T> The class type to deserialize each line into, or 'array' for associative arrays
      */
     private string $lineType;
 
     /**
-     * @var \Generator<int, mixed>|null The internal generator for line parsing
+     * @var null|\Generator<int, mixed> The internal generator for line parsing
      */
     private ?\Generator $generator = null;
 
@@ -61,9 +62,10 @@ class JSONLDecoder implements Iterator
      * Create a new JSONL decoder.
      *
      * @template T
+     *
      * @param Iterator<int, string> $rawIterator Iterator over byte chunks from the response stream
-     * @param class-string<T>|'array' $lineType The class type to deserialize each line into.
-     *                                            Use 'array' for arrays, or a class name for objects.
+     * @param 'array'|class-string<T> $lineType The class type to deserialize each line into.
+     *                                          Use 'array' for arrays, or a class name for objects.
      * @param ResponseInterface $response The HTTP response object
      *
      * @example
@@ -82,7 +84,7 @@ class JSONLDecoder implements Iterator
     public function __construct(
         Iterator $rawIterator,
         string $lineType,
-        ResponseInterface $response
+        ResponseInterface $response,
     ) {
         $this->rawIterator = $rawIterator;
         $this->lineType = $lineType;
@@ -94,8 +96,6 @@ class JSONLDecoder implements Iterator
      *
      * This is called automatically when iteration completes or can be called manually
      * to release resources early.
-     *
-     * @return void
      */
     public function close(): void
     {
@@ -107,119 +107,7 @@ class JSONLDecoder implements Iterator
     }
 
     /**
-     * Internal generator that parses JSONL from raw byte chunks.
-     *
-     * This generator handles:
-     * - Buffering incomplete lines across chunk boundaries
-     * - Multiple line ending styles (\r\n, \n, \r)
-     * - Yielding deserialized objects
-     *
-     * @return \Generator<int, mixed> Generator yielding parsed line objects
-     * @throws \JsonException If a line contains invalid JSON
-     */
-    private function decode(): \Generator
-    {
-        $buffer = '';
-
-        foreach ($this->rawIterator as $chunk) {
-            $buffer .= $chunk;
-
-            // Process all complete lines in the buffer
-            while (true) {
-                $endingLength = 0;
-                $endPosition = $this->findLineEnd($buffer, $endingLength);
-
-                if ($endPosition === -1) {
-                    // No complete line found, wait for more data
-                    break;
-                }
-
-                // Extract the line (without line ending)
-                $line = substr($buffer, 0, $endPosition);
-                $buffer = substr($buffer, $endPosition + $endingLength);
-
-                // Deserialize non-empty lines
-                $trimmedLine = trim($line);
-                if ($trimmedLine !== '') {
-                    yield $this->deserializeLine($trimmedLine);
-                }
-            }
-        }
-
-        // Process any remaining data in the buffer after all chunks are consumed
-        $trimmedBuffer = trim($buffer);
-        if ($trimmedBuffer !== '') {
-            yield $this->deserializeLine($trimmedBuffer);
-        }
-    }
-
-    /**
-     * Find the position of the next line ending in the buffer.
-     *
-     * Detects line endings in order of preference: \r\n, \n, \r
-     *
-     * @param string $buffer The buffer to search
-     * @param int &$endingLength Output parameter: length of the detected line ending (1 or 2)
-     * @return int Position of line ending, or -1 if not found
-     */
-    private function findLineEnd(string $buffer, int &$endingLength): int
-    {
-        $crlfPos = strpos($buffer, "\r\n");
-        $lfPos = strpos($buffer, "\n");
-        $crPos = strpos($buffer, "\r");
-
-        // Check \r\n first (Windows/HTTP standard)
-        if ($crlfPos !== false) {
-            $endingLength = 2;
-            return $crlfPos;
-        }
-
-        // Check \n (Unix)
-        if ($lfPos !== false) {
-            $endingLength = 1;
-            return $lfPos;
-        }
-
-        // Check \r (legacy Mac, but could appear if \r\n was partially read)
-        if ($crPos !== false) {
-            $endingLength = 1;
-            return $crPos;
-        }
-
-        return -1;
-    }
-
-    /**
-     * Deserialize a single JSONL line into the target type.
-     *
-     * @param string $line The JSON string to deserialize
-     * @return mixed The deserialized value (array or object instance)
-     * @throws \JsonException If the JSON is invalid
-     */
-    private function deserializeLine(string $line): mixed
-    {
-        $data = json_decode($line, true, 512, JSON_THROW_ON_ERROR);
-
-        // If the target type is 'array', return the associative array as-is
-        if ($this->lineType === 'array') {
-            return $data;
-        }
-
-        // If a class name is specified and it exists, instantiate it
-        // Assumes the class has a constructor that accepts array data
-        if (class_exists($this->lineType)) {
-            return new ($this->lineType)($data);
-        }
-
-        // Fallback: return the array if the class doesn't exist
-        // (allows graceful degradation in some scenarios)
-        return $data;
-    }
-
-    /**
      * Get the current value in the iteration.
-     *
-     * @return mixed
      */
     public function current(): mixed
     {
@@ -238,12 +126,10 @@ class JSONLDecoder implements Iterator
 
     /**
      * Move to the next element.
-     *
-     * @return void
      */
     public function next(): void
     {
-        if ($this->generator === null) {
+        if (null === $this->generator) {
             return;
         }
 
@@ -252,14 +138,12 @@ class JSONLDecoder implements Iterator
 
         if ($this->valid) {
             $this->currentValue = $this->generator->current();
-            $this->currentKey++;
+            ++$this->currentKey;
         }
     }
 
     /**
      * Rewind the iterator to the beginning.
-     *
-     * @return void
      */
     public function rewind(): void
     {
@@ -277,11 +161,126 @@ class JSONLDecoder implements Iterator
 
     /**
      * Check if the current position is valid.
-     *
-     * @return bool
      */
     public function valid(): bool
     {
         return $this->valid;
+    }
+
+    /**
+     * Internal generator that parses JSONL from raw byte chunks.
+     *
+     * This generator handles:
+     * - Buffering incomplete lines across chunk boundaries
+     * - Multiple line ending styles (\r\n, \n, \r)
+     * - Yielding deserialized objects
+     *
+     * @throws \JsonException If a line contains invalid JSON
+     *
+     * @return \Generator<int, mixed> Generator yielding parsed line objects
+     */
+    private function decode(): \Generator
+    {
+        $buffer = '';
+
+        foreach ($this->rawIterator as $chunk) {
+            $buffer .= $chunk;
+
+            // Process all complete lines in the buffer
+            while (true) {
+                $endingLength = 0;
+                $endPosition = $this->findLineEnd($buffer, $endingLength);
+
+                if (-1 === $endPosition) {
+                    // No complete line found, wait for more data
+                    break;
+                }
+
+                // Extract the line (without line ending)
+                $line = substr($buffer, 0, $endPosition);
+                $buffer = substr($buffer, $endPosition + $endingLength);
+
+                // Deserialize non-empty lines
+                $trimmedLine = trim($line);
+                if ('' !== $trimmedLine) {
+                    yield $this->deserializeLine($trimmedLine);
+                }
+            }
+        }
+
+        // Process any remaining data in the buffer after all chunks are consumed
+        $trimmedBuffer = trim($buffer);
+        if ('' !== $trimmedBuffer) {
+            yield $this->deserializeLine($trimmedBuffer);
+        }
+    }
+
+    /**
+     * Find the position of the next line ending in the buffer.
+     *
+     * Detects line endings in order of preference: \r\n, \n, \r
+     *
+     * @param string $buffer The buffer to search
+     * @param int &$endingLength Output parameter: length of the detected line ending (1 or 2)
+     *
+     * @return int Position of line ending, or -1 if not found
+     */
+    private function findLineEnd(string $buffer, int &$endingLength): int
+    {
+        $crlfPos = strpos($buffer, "\r\n");
+        $lfPos = strpos($buffer, "\n");
+        $crPos = strpos($buffer, "\r");
+
+        // Check \r\n first (Windows/HTTP standard)
+        if (false !== $crlfPos) {
+            $endingLength = 2;
+
+            return $crlfPos;
+        }
+
+        // Check \n (Unix)
+        if (false !== $lfPos) {
+            $endingLength = 1;
+
+            return $lfPos;
+        }
+
+        // Check \r (legacy Mac, but could appear if \r\n was partially read)
+        if (false !== $crPos) {
+            $endingLength = 1;
+
+            return $crPos;
+        }
+
+        return -1;
+    }
+
+    /**
+     * Deserialize a single JSONL line into the target type.
+     *
+     * @param string $line The JSON string to deserialize
+     *
+     * @throws \JsonException If the JSON is invalid
+     *
+     * @return mixed The deserialized value (array or object instance)
+     */
+    private function deserializeLine(string $line): mixed
+    {
+        $data = json_decode($line, true, 512, JSON_THROW_ON_ERROR);
+
+        // If the target type is 'array', return the associative array as-is
+        if ('array' === $this->lineType) {
+            return $data;
+        }
+
+        // If a class name is specified and it exists, instantiate it
+        // Assumes the class has a constructor that accepts array data
+        if (class_exists($this->lineType)) {
+            return new ($this->lineType)($data);
+        }
+
+        // Fallback: return the array if the class doesn't exist
+        // (allows graceful degradation in some scenarios)
+        return $data;
     }
 }

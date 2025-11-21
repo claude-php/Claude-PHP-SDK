@@ -12,10 +12,10 @@ use ClaudePhp\Tests\TestCase;
 
 class ResourceAsyncTest extends TestCase
 {
-    public function test_async_returns_proxy_and_wraps_methods(): void
+    public function testAsyncReturnsProxyAndWrapsMethods(): void
     {
         $client = new ClaudePhp(apiKey: 'test-key');
-        $resource = new class($client) extends Resource {
+        $resource = new class ($client) extends Resource {
             public function ping(): string
             {
                 return 'pong';

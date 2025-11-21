@@ -14,5 +14,6 @@ class BetaUsage
         public readonly int $output_tokens,
         public readonly ?int $cache_creation_input_tokens = null,
         public readonly ?int $cache_read_input_tokens = null,
-    ) {}
+    ) {
+    }
 }

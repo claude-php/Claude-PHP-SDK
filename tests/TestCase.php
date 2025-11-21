@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests;
 
-use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 use ClaudePhp\ClaudePhp;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\TestCase as PHPUnitTestCase;
+use Psr\Http\Message\RequestInterface;
 
 /**
  * Enhanced base test case for all SDK tests
@@ -50,17 +51,17 @@ class TestCase extends PHPUnitTestCase
     {
         $this->mockHandler = new MockHandler();
         $handlerStack = HandlerStack::create($this->mockHandler);
-        
+
         // Add history middleware to track requests
         $history = Middleware::history($this->httpHistory);
         $handlerStack->push($history);
-        
+
         $httpClient = new Client(['handler' => $handlerStack]);
-        
+
         $this->testClient = new ClaudePhp(
             apiKey: TestUtils::getTestApiKey(),
             baseUrl: TestUtils::getTestBaseUrl(),
-            httpClient: $httpClient
+            httpClient: $httpClient,
         );
     }
 
@@ -76,7 +77,7 @@ class TestCase extends PHPUnitTestCase
         if (!$this->mockHandler) {
             $this->setupMockClient();
         }
-        
+
         $this->mockHandler->append(new Response($status, $headers, $body));
     }
 
@@ -91,33 +92,31 @@ class TestCase extends PHPUnitTestCase
             $this->addMockResponse(
                 $response['status'] ?? 200,
                 $response['headers'] ?? [],
-                $response['body'] ?? ''
+                $response['body'] ?? '',
             );
         }
     }
 
     /**
      * Get the last HTTP request made
-     *
-     * @return ?\Psr\Http\Message\RequestInterface
      */
-    protected function getLastRequest(): ?\Psr\Http\Message\RequestInterface
+    protected function getLastRequest(): ?RequestInterface
     {
         if (empty($this->httpHistory)) {
             return null;
         }
-        
+
         return $this->httpHistory[count($this->httpHistory) - 1]['request'];
     }
 
     /**
      * Get all HTTP requests made
      *
-     * @return array<\Psr\Http\Message\RequestInterface>
+     * @return array<RequestInterface>
      */
     protected function getAllRequests(): array
     {
-        return array_map(fn($entry) => $entry['request'], $this->httpHistory);
+        return array_map(fn ($entry) => $entry['request'], $this->httpHistory);
     }
 
     /**
@@ -131,10 +130,10 @@ class TestCase extends PHPUnitTestCase
     {
         $lastRequest = $this->getLastRequest();
         $this->assertNotNull($lastRequest, 'No HTTP request was made');
-        
+
         $this->assertEquals($method, $lastRequest->getMethod());
         $this->assertStringContainsString($uri, (string) $lastRequest->getUri());
-        
+
         if (!empty($expectedBody)) {
             $actualBody = json_decode((string) $lastRequest->getBody(), true);
             $this->assertEquals($expectedBody, $actualBody);
@@ -150,7 +149,7 @@ class TestCase extends PHPUnitTestCase
     {
         $lastRequest = $this->getLastRequest();
         $this->assertNotNull($lastRequest, 'No HTTP request was made');
-        
+
         foreach ($expectedHeaders as $header => $value) {
             $this->assertTrue($lastRequest->hasHeader($header));
             $this->assertEquals($value, $lastRequest->getHeaderLine($header));
@@ -162,6 +161,7 @@ class TestCase extends PHPUnitTestCase
      *
      * @param string $content The message content
      * @param string $model The model used
+     *
      * @return string JSON response
      */
     protected function createMessageResponse(string $content = 'Hello!', string $model = 'claude-sonnet-4-5-20250929'): string
@@ -191,12 +191,14 @@ class TestCase extends PHPUnitTestCase
      *
      * @param string $event_type Event type
      * @param array<string, mixed> $data Event data
+     *
      * @return string SSE formatted event
      */
     protected function createStreamingEvent(string $event_type, array $data): string
     {
         $json_data = json_encode($data);
-        return "event: $event_type\ndata: $json_data\n\n";
+
+        return "event: {$event_type}\ndata: {$json_data}\n\n";
     }
 
     /**
@@ -205,6 +207,7 @@ class TestCase extends PHPUnitTestCase
      * @param string $message Error message
      * @param string $type Error type
      * @param int $status HTTP status code
+     *
      * @return string JSON error response
      */
     protected function createErrorResponse(string $message = 'Test error', string $type = 'invalid_request_error', int $status = 400): string

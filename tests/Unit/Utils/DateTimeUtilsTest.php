@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ClaudePhp\Tests\Unit\Utils;
 
 use ClaudePhp\Utils\DateTimeUtils;
-use PHPUnit\Framework\TestCase;
 use DateTimeImmutable;
+use PHPUnit\Framework\TestCase;
 
 class DateTimeUtilsTest extends TestCase
 {

@@ -20,7 +20,7 @@ class AsyncMessageStream
     private mixed $eventStream;
 
     /**
-     * @var Message|null The accumulated final message
+     * @var null|Message The accumulated final message
      */
     private ?Message $finalMessage = null;
 
@@ -42,7 +42,7 @@ class AsyncMessageStream
     /**
      * Get the final accumulated message.
      *
-     * @return Message|null The final message if available
+     * @return null|Message The final message if available
      */
     public function finalMessage(): ?Message
     {
@@ -66,7 +66,7 @@ class AsyncMessageStream
      */
     public function getFinalMessage(): Message
     {
-        if ($this->finalMessage === null) {
+        if (null === $this->finalMessage) {
             throw new \RuntimeException('Stream ended without producing a final message');
         }
 

@@ -29,6 +29,14 @@ abstract class Resource
     }
 
     /**
+     * Get an asynchronous proxy for this resource.
+     */
+    public function async(): AsyncResourceProxy
+    {
+        return new AsyncResourceProxy($this);
+    }
+
+    /**
      * Get the base URL from the client
      */
     protected function getBaseUrl(): string
@@ -65,23 +73,25 @@ abstract class Resource
     /**
      * Make a GET request to the API.
      *
-     * @param array<string, mixed>|null $query Query parameters
+     * @param null|array<string, mixed> $query Query parameters
      */
     protected function _get(string $path, ?array $query = null): mixed
     {
         $url = $this->getBaseUrl() . $path;
+
         return $this->makeRequest('GET', $url, $query ?? []);
     }
 
     /**
      * Make a POST request to the API.
      *
-     * @param array<string, mixed>|null $body Request body
+     * @param null|array<string, mixed> $body Request body
      * @param array<string, string> $additionalHeaders Extra headers for this request
      */
     protected function _post(string $path, ?array $body = null, array $additionalHeaders = []): mixed
     {
         $url = $this->getBaseUrl() . $path;
+
         return $this->makeRequest('POST', $url, $body ?? [], $additionalHeaders);
     }
 
@@ -91,6 +101,7 @@ abstract class Resource
     protected function _delete(string $path): mixed
     {
         $url = $this->getBaseUrl() . $path;
+
         return $this->makeRequest('DELETE', $url);
     }
 
@@ -99,7 +110,7 @@ abstract class Resource
      *
      * @param string $method HTTP method (GET, POST, DELETE, etc.)
      * @param string $url Full URL
-     * @param array<string, mixed>|null $params Parameters (query for GET, body for POST)
+     * @param null|array<string, mixed> $params Parameters (query for GET, body for POST)
      * @param array<string, string> $additionalHeaders Extra headers for this request
      */
     protected function makeRequest(string $method, string $url, ?array $params = null, array $additionalHeaders = []): mixed
@@ -129,13 +140,5 @@ abstract class Resource
         $response = $transport->postStream($url, $body ?? [], $headers);
 
         return new StreamResponse($response);
-    }
-
-    /**
-     * Get an asynchronous proxy for this resource.
-     */
-    public function async(): AsyncResourceProxy
-    {
-        return new AsyncResourceProxy($this);
     }
 }

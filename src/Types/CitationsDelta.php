@@ -12,5 +12,6 @@ class CitationsDelta
     public function __construct(
         public readonly string $type,
         public readonly array $citations,
-    ) {}
+    ) {
+    }
 }

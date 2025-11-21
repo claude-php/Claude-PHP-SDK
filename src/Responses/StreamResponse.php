@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ClaudePhp\Responses;
 
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
 /**
  * Iterator wrapper around Anthropic's server-sent event stream responses.
@@ -28,7 +27,7 @@ class StreamResponse implements \IteratorAggregate
      */
     public function getIterator(): \Traversable
     {
-        if ($this->generator === null) {
+        if (null === $this->generator) {
             $this->generator = $this->createGenerator();
         }
 
@@ -66,9 +65,10 @@ class StreamResponse implements \IteratorAggregate
 
         while (!$body->eof()) {
             $chunk = $body->read(8192);
-            if ($chunk === '') {
+            if ('' === $chunk) {
                 // Avoid tight loops if the transport is non-blocking
                 usleep(1000);
+
                 continue;
             }
 
@@ -80,14 +80,14 @@ class StreamResponse implements \IteratorAggregate
                 $buffer = substr($buffer, $position + $length);
 
                 $parsed = $this->parseEventChunk($rawEvent);
-                if ($parsed !== null) {
+                if (null !== $parsed) {
                     yield $parsed;
                 }
             }
         }
 
         $parsed = $this->parseEventChunk($buffer);
-        if ($parsed !== null) {
+        if (null !== $parsed) {
             yield $parsed;
         }
 
@@ -97,13 +97,13 @@ class StreamResponse implements \IteratorAggregate
     /**
      * Find the location of the next SSE event delimiter.
      *
-     * @return array{0:int,1:int}|null
+     * @return null|array{0:int,1:int}
      */
     private function findEventDelimiter(string $buffer): ?array
     {
         foreach (["\r\n\r\n", "\n\n", "\r\r"] as $delimiter) {
             $pos = strpos($buffer, $delimiter);
-            if ($pos !== false) {
+            if (false !== $pos) {
                 return [$pos, strlen($delimiter)];
             }
         }
@@ -114,12 +114,12 @@ class StreamResponse implements \IteratorAggregate
     /**
      * Parse a raw SSE event chunk into an array payload.
      *
-     * @return array<string, mixed>|null
+     * @return null|array<string, mixed>
      */
     private function parseEventChunk(string $chunk): ?array
     {
         $trimmed = trim($chunk);
-        if ($trimmed === '' || $trimmed === 'data: [DONE]') {
+        if ('' === $trimmed || 'data: [DONE]' === $trimmed) {
             return null;
         }
 
@@ -128,12 +128,13 @@ class StreamResponse implements \IteratorAggregate
         $dataLines = [];
 
         foreach ($lines as $line) {
-            if ($line === '' || str_starts_with($line, ':')) {
+            if ('' === $line || str_starts_with($line, ':')) {
                 continue;
             }
 
             if (str_starts_with($line, 'event:')) {
                 $eventType = trim(substr($line, 6));
+
                 continue;
             }
 
@@ -142,12 +143,12 @@ class StreamResponse implements \IteratorAggregate
             }
         }
 
-        if ($dataLines === []) {
+        if ([] === $dataLines) {
             return null;
         }
 
         $payload = implode("\n", $dataLines);
-        if ($payload === '[DONE]') {
+        if ('[DONE]' === $payload) {
             return null;
         }
 
@@ -158,7 +159,7 @@ class StreamResponse implements \IteratorAggregate
             throw new \RuntimeException('Failed to decode SSE payload: ' . $e->getMessage(), 0, $e);
         }
 
-        if ($eventType !== null && !isset($decoded['type'])) {
+        if (null !== $eventType && !isset($decoded['type'])) {
             $decoded['type'] = $eventType;
         }
 

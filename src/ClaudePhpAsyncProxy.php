@@ -20,11 +20,6 @@ final class ClaudePhpAsyncProxy extends LazyProxy
     {
     }
 
-    protected function load(): object
-    {
-        return $this->client;
-    }
-
     public function __call(string $name, array $arguments): mixed
     {
         $client = $this->getProxied();
@@ -32,12 +27,17 @@ final class ClaudePhpAsyncProxy extends LazyProxy
             throw new \BadMethodCallException(sprintf('Method %s::%s does not exist', $client::class, $name));
         }
 
-        $result = $client->$name(...$arguments);
+        $result = $client->{$name}(...$arguments);
 
         if ($result instanceof Resource) {
             return $result->async();
         }
 
         return $result;
+    }
+
+    protected function load(): object
+    {
+        return $this->client;
     }
 }

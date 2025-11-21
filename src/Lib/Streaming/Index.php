@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Lib\Streaming;
 
-/**
+/*
  * Index of streaming library exports.
  *
  * This module provides streaming support for the Claude API, including
@@ -12,12 +12,6 @@ namespace ClaudePhp\Lib\Streaming;
  */
 
 // Export all classes and interfaces
-use ClaudePhp\Lib\Streaming\Types;
-use ClaudePhp\Lib\Streaming\MessageStream;
-use ClaudePhp\Lib\Streaming\AsyncMessageStream;
-use ClaudePhp\Lib\Streaming\MessageStreamManager;
-use ClaudePhp\Lib\Streaming\AsyncMessageStreamManager;
-use ClaudePhp\Lib\Streaming\StructuredOutputStream;
 
 /**
  * Get the streaming library.

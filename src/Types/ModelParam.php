@@ -16,5 +16,6 @@ class ModelParam
      */
     public function __construct(
         public readonly string $model,
-    ) {}
+    ) {
+    }
 }

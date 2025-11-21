@@ -15,8 +15,6 @@ class Skills extends Resource
 {
     /**
      * Get versions sub-resource.
-     *
-     * @return Versions
      */
     public function versions(): Versions
     {
@@ -27,6 +25,7 @@ class Skills extends Resource
      * Create a skill.
      *
      * @param array<string, mixed> $params Skill parameters
+     *
      * @return array Skill response
      */
     public function create(array $params = []): array
@@ -42,6 +41,7 @@ class Skills extends Resource
      * List skills.
      *
      * @param array<string, mixed> $params Query parameters
+     *
      * @return array List of skills
      */
     public function list(array $params = []): array
@@ -53,6 +53,7 @@ class Skills extends Resource
      * Retrieve a skill.
      *
      * @param string $skillId Skill ID
+     *
      * @return array Skill details
      */
     public function retrieve(string $skillId): array
@@ -64,7 +65,6 @@ class Skills extends Resource
      * Delete a skill.
      *
      * @param string $skillId Skill ID
-     * @return void
      */
     public function delete(string $skillId): void
     {
@@ -76,4 +76,4 @@ class Skills extends Resource
     }
 }
 
-class_alias(Skills::class, 'ClaudePhp\\Resources\\Beta\\Skills');
+class_alias(Skills::class, 'ClaudePhp\Resources\Beta\Skills');

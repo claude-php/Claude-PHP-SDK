@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Unit\Utils;
 
-use ClaudePhp\Utils\FileExtraction;
 use ClaudePhp\Types\NotGiven;
+use ClaudePhp\Utils\FileExtraction;
 use PHPUnit\Framework\TestCase;
 
 class FileExtractionTest extends TestCase

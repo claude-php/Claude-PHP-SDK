@@ -14,11 +14,12 @@ class BetaClearThinking20251015EditParam
     /**
      * @param string $type Parameter type ("clear_thinking")
      * @param bool $enabled Whether clear thinking is enabled
-     * @param array<string, mixed>|null $options Optional configuration options
+     * @param null|array<string, mixed> $options Optional configuration options
      */
     public function __construct(
         public readonly string $type,
         public readonly bool $enabled,
         public readonly ?array $options = null,
-    ) {}
+    ) {
+    }
 }

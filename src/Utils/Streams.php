@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Utils;
 
-use Generator;
-use Amp\Future;
-
 use function Amp\async;
+
+use Amp\Future;
+use Generator;
 
 /**
  * Stream consumption utilities.
@@ -23,7 +23,6 @@ final class Streams
      * useful for side-effect operations or resource cleanup.
      *
      * @param iterable<mixed> $iterator The iterator to consume
-     * @return void
      */
     public static function consumeSyncIterator(iterable $iterator): void
     {
@@ -36,7 +35,9 @@ final class Streams
      * Collect all items from a synchronous iterator into an array.
      *
      * @template T
+     *
      * @param iterable<T> $iterator The iterator to collect from
+     *
      * @return T[] Array of all items
      */
     public static function collectSyncIterator(iterable $iterator): array
@@ -45,6 +46,7 @@ final class Streams
         foreach ($iterator as $item) {
             $items[] = $item;
         }
+
         return $items;
     }
 
@@ -55,8 +57,10 @@ final class Streams
      *
      * @template T
      * @template U
+     *
      * @param iterable<T> $iterator The iterator to map over
      * @param callable(T): U $callback Function to apply to each item
+     *
      * @return Generator<U> Generator of transformed items
      */
     public static function mapSyncIterator(iterable $iterator, callable $callback): Generator
@@ -72,8 +76,10 @@ final class Streams
      * Returns a new generator that yields only items matching the predicate.
      *
      * @template T
+     *
      * @param iterable<T> $iterator The iterator to filter
      * @param callable(T): bool $predicate Function to test each item
+     *
      * @return Generator<T> Generator of filtered items
      */
     public static function filterSyncIterator(iterable $iterator, callable $predicate): Generator
@@ -91,8 +97,10 @@ final class Streams
      * Returns a new generator that yields at most n items.
      *
      * @template T
+     *
      * @param iterable<T> $iterator The iterator to take from
      * @param int $count Maximum number of items to yield
+     *
      * @return Generator<T> Generator of at most count items
      */
     public static function takeSyncIterator(iterable $iterator, int $count): Generator
@@ -102,8 +110,9 @@ final class Streams
             if ($taken >= $count) {
                 break;
             }
+
             yield $item;
-            $taken++;
+            ++$taken;
         }
     }
 
@@ -113,8 +122,10 @@ final class Streams
      * Returns a new generator that skips the first n items.
      *
      * @template T
+     *
      * @param iterable<T> $iterator The iterator to skip from
      * @param int $count Number of items to skip
+     *
      * @return Generator<T> Generator of items after skipping
      */
     public static function skipSyncIterator(iterable $iterator, int $count): Generator
@@ -122,9 +133,11 @@ final class Streams
         $skipped = 0;
         foreach ($iterator as $item) {
             if ($skipped < $count) {
-                $skipped++;
+                ++$skipped;
+
                 continue;
             }
+
             yield $item;
         }
     }
@@ -132,7 +145,8 @@ final class Streams
     /**
      * Consume a sequence of asynchronous values represented as Amp futures.
      *
-     * @param iterable<mixed, Future<mixed>|callable():Future<mixed>|mixed> $iterator
+     * @param iterable<mixed, callable():Future<mixed>|Future<mixed>|mixed> $iterator
+     *
      * @return Future<void>
      */
     public static function consumeAsyncIterator(iterable $iterator): Future
@@ -149,7 +163,9 @@ final class Streams
      *
      * @template TKey of array-key
      * @template TValue
-     * @param iterable<TKey, Future<TValue>|callable():Future<TValue>|TValue> $iterator
+     *
+     * @param iterable<TKey, callable():Future<TValue>|Future<TValue>|TValue> $iterator
+     *
      * @return Future<array<TKey, TValue>>
      */
     public static function collectAsyncIterator(iterable $iterator): Future

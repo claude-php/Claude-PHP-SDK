@@ -36,7 +36,9 @@ class AsyncMessageStreamManager
     /**
      * Create a new AsyncMessageStreamManager.
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     /**
      * Add a streamed event to accumulate message state.
@@ -92,10 +94,11 @@ class AsyncMessageStreamManager
     {
         $text = '';
         foreach ($this->message['content'] ?? [] as $block) {
-            if ($block['type'] === 'text') {
+            if ('text' === $block['type']) {
                 $text .= $block['text'] ?? '';
             }
         }
+
         return $text;
     }
 
@@ -144,14 +147,16 @@ class AsyncMessageStreamManager
         }
     }
 
-    private function handleMessageStop(array $event): void {}
+    private function handleMessageStop(array $event): void
+    {
+    }
 
     private function handleContentBlockStart(array $event): void
     {
         $block = $event['content_block'] ?? [];
         $this->currentBlockIndex = count($this->message['content']);
         $content = ['type' => $block['type'] ?? 'text'];
-        if ($block['type'] === 'text') {
+        if ('text' === $block['type']) {
             $content['text'] = '';
         }
         $this->message['content'][] = $content;
@@ -162,11 +167,13 @@ class AsyncMessageStreamManager
         $delta = $event['delta'] ?? [];
         if (isset($this->message['content'][$this->currentBlockIndex])) {
             $block = &$this->message['content'][$this->currentBlockIndex];
-            if ($delta['type'] === 'text_delta' && isset($delta['text'])) {
+            if ('text_delta' === $delta['type'] && isset($delta['text'])) {
                 $block['text'] = ($block['text'] ?? '') . $delta['text'];
             }
         }
     }
 
-    private function handleContentBlockStop(array $event): void {}
+    private function handleContentBlockStop(array $event): void
+    {
+    }
 }

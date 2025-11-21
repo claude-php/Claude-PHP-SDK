@@ -16,5 +16,6 @@ class ToolChoiceNoneParam
      */
     public function __construct(
         public readonly string $type,
-    ) {}
+    ) {
+    }
 }

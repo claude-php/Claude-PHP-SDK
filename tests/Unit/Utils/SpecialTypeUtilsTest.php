@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Unit\Utils;
 
-use ClaudePhp\Utils\SpecialTypeUtils;
 use ClaudePhp\Types\NotGiven;
 use ClaudePhp\Types\Omit;
+use ClaudePhp\Utils\SpecialTypeUtils;
 use PHPUnit\Framework\TestCase;
 
 class SpecialTypeUtilsTest extends TestCase

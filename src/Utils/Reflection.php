@@ -19,6 +19,7 @@ final class Reflection
      *
      * @param callable $func The function to inspect
      * @param string $argName The parameter name to check
+     *
      * @return bool True if the function has the parameter
      */
     public static function functionHasArgument(callable $func, string $argName): bool
@@ -38,6 +39,7 @@ final class Reflection
                     return true;
                 }
             }
+
             return false;
         } catch (\Throwable) {
             return false;
@@ -48,6 +50,7 @@ final class Reflection
      * Get all parameter names from a callable.
      *
      * @param callable $func The function to inspect
+     *
      * @return string[] Array of parameter names
      */
     public static function getParameterNames(callable $func): array
@@ -63,8 +66,8 @@ final class Reflection
             }
 
             return array_map(
-                static fn($param) => $param->getName(),
-                $reflection->getParameters()
+                static fn ($param) => $param->getName(),
+                $reflection->getParameters(),
             );
         } catch (\Throwable) {
             return [];
@@ -80,12 +83,13 @@ final class Reflection
      * @param callable $sourceFunc The source function to compare against
      * @param callable $checkFunc The function to check
      * @param string[] $excludeParams Parameter names to exclude from comparison
+     *
      * @return bool True if signatures are compatible
      */
     public static function signaturesInSync(
         callable $sourceFunc,
         callable $checkFunc,
-        array $excludeParams = []
+        array $excludeParams = [],
     ): bool {
         try {
             $sourceParams = self::getParameterNames($sourceFunc);
@@ -111,7 +115,8 @@ final class Reflection
      * Get type information for function parameters.
      *
      * @param callable $func The function to inspect
-     * @return array<string, string|null> Map of parameter names to type names
+     *
+     * @return array<string, null|string> Map of parameter names to type names
      */
     public static function getParameterTypes(callable $func): array
     {

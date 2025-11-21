@@ -15,7 +15,7 @@ use ClaudePhp\Responses\Message;
 class AsyncAnthropicBedrock
 {
     /**
-     * @var string|null AWS region
+     * @var null|string AWS region
      */
     private ?string $region;
 
@@ -28,7 +28,7 @@ class AsyncAnthropicBedrock
      * Create a new AsyncAnthropicBedrock client.
      *
      * @param array<string, mixed> $config AWS SDK configuration
-     * @param string|null $region AWS region
+     * @param null|string $region AWS region
      */
     public function __construct(array $config = [], ?string $region = null)
     {
@@ -40,6 +40,7 @@ class AsyncAnthropicBedrock
      * Create a message via Bedrock asynchronously.
      *
      * @param array<string, mixed> $params Message parameters
+     *
      * @return mixed Promise resolving to Message
      */
     public function createMessage(array $params): mixed
@@ -47,6 +48,7 @@ class AsyncAnthropicBedrock
         return \Amp\async(function () use ($params) {
             // In practice, this would use async AWS SDK or similar
             $bedrockClient = new AnthropicBedrock($this->awsConfig, $this->region);
+
             return $bedrockClient->createMessage($params);
         });
     }
@@ -55,12 +57,13 @@ class AsyncAnthropicBedrock
      * Create a message with streaming via Bedrock asynchronously.
      *
      * @param array<string, mixed> $params Message parameters
-     * @param callable|null $onChunk Optional async callback for each chunk
+     * @param null|callable $onChunk Optional async callback for each chunk
+     *
      * @return mixed Promise resolving to Message
      */
     public function createMessageStream(
         array $params,
-        ?callable $onChunk = null
+        ?callable $onChunk = null,
     ): mixed {
         return \Amp\async(function () use ($params, $onChunk) {
             $bedrockParams = $this->transformParams($params);
@@ -73,7 +76,7 @@ class AsyncAnthropicBedrock
             $events = [];
             foreach ($events as $event) {
                 $manager->addEvent($event);
-                if ($onChunk !== null) {
+                if (null !== $onChunk) {
                     ($onChunk)($event);
                 }
             }
@@ -86,6 +89,7 @@ class AsyncAnthropicBedrock
      * Transform SDK params to Bedrock format.
      *
      * @param array<string, mixed> $params
+     *
      * @return array<string, mixed>
      */
     private function transformParams(array $params): array

@@ -55,13 +55,13 @@ final class StreamStub implements StreamInterface
 {
     public bool $closed = false;
 
+    private int $position = 0;
+    private int $length = 0;
+
     public function __construct(private string $contents)
     {
         $this->length = strlen($contents);
     }
-
-    private int $position = 0;
-    private int $length = 0;
 
     public function __toString(): string
     {
@@ -76,6 +76,7 @@ final class StreamStub implements StreamInterface
     public function detach()
     {
         $this->close();
+
         return null;
     }
 
@@ -104,13 +105,18 @@ final class StreamStub implements StreamInterface
         switch ($whence) {
             case SEEK_CUR:
                 $this->position += (int) $offset;
+
                 break;
+
             case SEEK_END:
                 $this->position = $this->length + (int) $offset;
+
                 break;
+
             case SEEK_SET:
             default:
                 $this->position = (int) $offset;
+
                 break;
         }
 
@@ -169,19 +175,19 @@ final class StreamStub implements StreamInterface
  */
 final class ResponseStub implements ResponseInterface
 {
+    private string $protocol = '1.1';
+    private string $reasonPhrase = 'OK';
+
     /**
      * @param array<string, array<int, string>> $headers
      */
     public function __construct(
         private StreamInterface $body,
         private int $status = 200,
-        private array $headers = []
+        private array $headers = [],
     ) {
         $this->headers = $this->normalizeHeaders($this->headers);
     }
-
-    private string $protocol = '1.1';
-    private string $reasonPhrase = 'OK';
 
     public function getProtocolVersion(): string
     {
@@ -192,6 +198,7 @@ final class ResponseStub implements ResponseInterface
     {
         $clone = clone $this;
         $clone->protocol = (string) $version;
+
         return $clone;
     }
 
@@ -203,12 +210,14 @@ final class ResponseStub implements ResponseInterface
     public function hasHeader($name): bool
     {
         $key = strtolower($name);
+
         return isset($this->headers[$key]);
     }
 
     public function getHeader($name): array
     {
         $key = strtolower($name);
+
         return $this->headers[$key] ?? [];
     }
 
@@ -221,6 +230,7 @@ final class ResponseStub implements ResponseInterface
     {
         $clone = clone $this;
         $clone->headers[strtolower($name)] = (array) $value;
+
         return $clone;
     }
 
@@ -229,6 +239,7 @@ final class ResponseStub implements ResponseInterface
         $clone = clone $this;
         $key = strtolower($name);
         $clone->headers[$key] = array_merge($clone->headers[$key] ?? [], (array) $value);
+
         return $clone;
     }
 
@@ -236,6 +247,7 @@ final class ResponseStub implements ResponseInterface
     {
         $clone = clone $this;
         unset($clone->headers[strtolower($name)]);
+
         return $clone;
     }
 
@@ -248,6 +260,7 @@ final class ResponseStub implements ResponseInterface
     {
         $clone = clone $this;
         $clone->body = $body;
+
         return $clone;
     }
 
@@ -261,6 +274,7 @@ final class ResponseStub implements ResponseInterface
         $clone = clone $this;
         $clone->status = (int) $code;
         $clone->reasonPhrase = (string) $reasonPhrase;
+
         return $clone;
     }
 
@@ -271,6 +285,7 @@ final class ResponseStub implements ResponseInterface
 
     /**
      * @param array<string, array<int, string>> $headers
+     *
      * @return array<string, array<int, string>>
      */
     private function normalizeHeaders(array $headers): array

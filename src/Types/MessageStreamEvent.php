@@ -16,5 +16,6 @@ abstract class MessageStreamEvent
      */
     public function __construct(
         public readonly string $type,
-    ) {}
+    ) {
+    }
 }

@@ -41,7 +41,7 @@ class AsyncToolRunner
     public function __construct(
         ClaudePhp $client,
         array $tools = [],
-        int $maxIterations = 10
+        int $maxIterations = 10,
     ) {
         $this->client = $client;
         $this->tools = $tools;
@@ -63,6 +63,7 @@ class AsyncToolRunner
      * Run the agentic loop with the given parameters asynchronously.
      *
      * @param array<string, mixed> $params Message creation parameters
+     *
      * @return mixed Promise resolving to the final message
      */
     public function run(array $params): mixed
@@ -72,7 +73,7 @@ class AsyncToolRunner
             $iterationCount = 0;
 
             while ($iterationCount < $this->maxIterations) {
-                $iterationCount++;
+                ++$iterationCount;
 
                 // Create message
                 $response = $this->client->messages()->create([
@@ -85,7 +86,7 @@ class AsyncToolRunner
                 $toolResults = [];
 
                 foreach ($response->content ?? [] as $block) {
-                    if ($block['type'] === 'tool_use') {
+                    if ('tool_use' === $block['type']) {
                         $hasToolUse = true;
                         $toolName = $block['name'] ?? '';
                         $toolInput = $block['input'] ?? [];
@@ -97,7 +98,7 @@ class AsyncToolRunner
                                 $toolResults[] = [
                                     'type' => 'tool_result',
                                     'tool_use_id' => $toolId,
-                                    'content' => (string)$result,
+                                    'content' => (string) $result,
                                 ];
                             } catch (\Throwable $e) {
                                 $toolResults[] = [
@@ -130,7 +131,7 @@ class AsyncToolRunner
             }
 
             throw new \RuntimeException(
-                "Async tool runner reached maximum iterations ({$this->maxIterations})"
+                "Async tool runner reached maximum iterations ({$this->maxIterations})",
             );
         });
     }

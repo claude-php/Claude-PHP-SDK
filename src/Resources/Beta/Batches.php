@@ -6,7 +6,6 @@ namespace ClaudePhp\Resources\Beta;
 
 use ClaudePhp\Resources\Resource;
 use ClaudePhp\Responses\Decoders\JSONLDecoder;
-use ClaudePhp\Utils\Transform;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -20,6 +19,7 @@ class Batches extends Resource
      * Create a batch.
      *
      * @param array<string, mixed> $params Batch parameters
+     *
      * @return array Batch response
      */
     public function create(array $params = []): array
@@ -35,6 +35,7 @@ class Batches extends Resource
      * Retrieve a batch.
      *
      * @param string $batchId Batch ID
+     *
      * @return array Batch response
      */
     public function retrieve(string $batchId): array
@@ -50,6 +51,7 @@ class Batches extends Resource
      * Cancel a batch.
      *
      * @param string $batchId Batch ID
+     *
      * @return array Updated batch response
      */
     public function cancel(string $batchId): array
@@ -65,6 +67,7 @@ class Batches extends Resource
      * Get batch results.
      *
      * @param string $batchId Batch ID
+     *
      * @return JSONLDecoder Results iterator
      */
     public function results(string $batchId): JSONLDecoder
@@ -94,7 +97,7 @@ class Batches extends Resource
             $resultsUrl = $batch->results_url;
         }
 
-        if ($resultsUrl === null || $resultsUrl === '') {
+        if (null === $resultsUrl || '' === $resultsUrl) {
             $status = null;
             if (is_array($batch)) {
                 $status = $batch['processing_status'] ?? null;
@@ -103,6 +106,7 @@ class Batches extends Resource
             }
 
             $statusPart = $status ? " Current status: {$status}." : '';
+
             throw new \RuntimeException('Batch does not have a results_url yet.' . $statusPart);
         }
 
@@ -117,7 +121,7 @@ class Batches extends Resource
         $transport = $this->client->getHttpTransport();
         $response = $transport->getRaw($url, [], array_merge(
             ['Accept' => 'application/binary'],
-            $this->getCustomHeaders()
+            $this->getCustomHeaders(),
         ));
 
         $iterator = $this->createStreamIterator($response->getBody());
@@ -135,12 +139,13 @@ class Batches extends Resource
         while (!$body->eof()) {
             $chunk = $body->read(16384);
 
-            if ($chunk === '' || $chunk === false) {
+            if ('' === $chunk || false === $chunk) {
                 if ($body->eof()) {
                     break;
                 }
 
                 usleep(1000);
+
                 continue;
             }
 

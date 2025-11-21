@@ -21,12 +21,12 @@ function beta_tool(
     callable $handler,
     string $name,
     string $description = '',
-    array $inputSchema = []
+    array $inputSchema = [],
 ): BetaToolDefinition {
     return new BetaToolDefinition(
         name: $name,
         handler: $handler,
         description: $description,
-        inputSchema: $inputSchema
+        inputSchema: $inputSchema,
     );
 }

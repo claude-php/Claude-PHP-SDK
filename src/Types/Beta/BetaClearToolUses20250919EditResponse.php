@@ -20,5 +20,6 @@ class BetaClearToolUses20250919EditResponse
         public readonly string $type,
         public readonly array $cleared_tools,
         public readonly bool $success,
-    ) {}
+    ) {
+    }
 }

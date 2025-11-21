@@ -13,5 +13,6 @@ class BetaWebSearchToolResultBlock
         public readonly string $type,
         public readonly ?string $url = null,
         public readonly mixed $content = null,
-    ) {}
+    ) {
+    }
 }

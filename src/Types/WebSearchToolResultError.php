@@ -13,5 +13,6 @@ class WebSearchToolResultError
         public readonly string $type,
         public readonly ?string $error_code = null,
         public readonly ?string $error_message = null,
-    ) {}
+    ) {
+    }
 }

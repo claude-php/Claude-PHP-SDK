@@ -14,5 +14,6 @@ class ToolUseBlockParam
         public readonly string $id,
         public readonly string $name,
         public readonly mixed $input,
-    ) {}
+    ) {
+    }
 }

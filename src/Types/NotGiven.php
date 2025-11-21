@@ -17,16 +17,19 @@ final class NotGiven
 {
     private static ?self $instance = null;
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
      * Get the singleton instance of NotGiven.
      */
     public static function getInstance(): self
     {
-        if (self::$instance === null) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
+
         return self::$instance;
     }
 }

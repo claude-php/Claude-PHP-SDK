@@ -66,7 +66,9 @@ interface MessageStopEvent extends StreamEvent
  *
  * Emitted when a content block (text, tool use, etc.) completes.
  */
-interface ContentBlockStopEvent extends StreamEvent {}
+interface ContentBlockStopEvent extends StreamEvent
+{
+}
 
 /**
  * Beta parsed text event.
@@ -91,14 +93,18 @@ interface ParsedBetaTextEvent extends StreamEvent
  *
  * Beta variant for message stop with additional metadata.
  */
-interface ParsedBetaMessageStopEvent extends StreamEvent {}
+interface ParsedBetaMessageStopEvent extends StreamEvent
+{
+}
 
 /**
  * Beta parsed content block stop event.
  *
  * Beta variant for content block stop.
  */
-interface ParsedBetaContentBlockStopEvent extends StreamEvent {}
+interface ParsedBetaContentBlockStopEvent extends StreamEvent
+{
+}
 
 /**
  * Beta input JSON event.

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Utils;
 
+use ReflectionNamedType;
 use ReflectionType;
 use ReflectionUnionType;
-use ReflectionNamedType;
 
 /**
  * Type checking and reflection utilities.
@@ -17,9 +17,6 @@ final class TypeUtils
 {
     /**
      * Check if a type is a union type.
-     *
-     * @param ReflectionType|null $type
-     * @return bool
      */
     public static function isUnionType(?ReflectionType $type): bool
     {
@@ -28,9 +25,6 @@ final class TypeUtils
 
     /**
      * Check if a type is a named type (not union or intersection).
-     *
-     * @param ReflectionType|null $type
-     * @return bool
      */
     public static function isNamedType(?ReflectionType $type): bool
     {
@@ -39,9 +33,6 @@ final class TypeUtils
 
     /**
      * Extract the class name from a named type.
-     *
-     * @param ReflectionNamedType $type
-     * @return string
      */
     public static function getTypeName(ReflectionNamedType $type): string
     {
@@ -50,13 +41,10 @@ final class TypeUtils
 
     /**
      * Check if a type allows null (is nullable).
-     *
-     * @param ReflectionType|null $type
-     * @return bool
      */
     public static function isNullableType(?ReflectionType $type): bool
     {
-        if ($type === null) {
+        if (null === $type) {
             return true;
         }
 
@@ -70,7 +58,6 @@ final class TypeUtils
     /**
      * Get the type names from a union type.
      *
-     * @param ReflectionUnionType $type
      * @return string[]
      */
     public static function getUnionTypeNames(ReflectionUnionType $type): array
@@ -81,6 +68,7 @@ final class TypeUtils
                 $names[] = $t->getName();
             }
         }
+
         return $names;
     }
 
@@ -88,10 +76,6 @@ final class TypeUtils
      * Check if a variable matches a type string.
      *
      * Supports basic type strings like 'string', 'int', 'array', 'object', etc.
-     *
-     * @param mixed $value
-     * @param string $type
-     * @return bool
      */
     public static function matchesType(mixed $value, string $type): bool
     {
@@ -102,7 +86,7 @@ final class TypeUtils
             'bool', 'boolean' => is_bool($value),
             'array' => is_array($value),
             'object' => is_object($value),
-            'null' => $value === null,
+            'null' => null === $value,
             'scalar' => is_scalar($value),
             'callable' => is_callable($value),
             'iterable' => is_iterable($value),
@@ -113,13 +97,10 @@ final class TypeUtils
 
     /**
      * Check if a type is a list type.
-     *
-     * @param mixed $type
-     * @return bool
      */
     public static function isListType(mixed $type): bool
     {
-        if ($type === 'list' || $type === 'array') {
+        if ('list' === $type || 'array' === $type) {
             return true;
         }
 
@@ -132,9 +113,6 @@ final class TypeUtils
 
     /**
      * Check if a type is a sequence type.
-     *
-     * @param mixed $type
-     * @return bool
      */
     public static function isSequenceType(mixed $type): bool
     {
@@ -143,13 +121,10 @@ final class TypeUtils
 
     /**
      * Check if a type is an iterable type.
-     *
-     * @param mixed $type
-     * @return bool
      */
     public static function isIterableType(mixed $type): bool
     {
-        if ($type === 'iterable') {
+        if ('iterable' === $type) {
             return true;
         }
 
@@ -163,7 +138,8 @@ final class TypeUtils
      *
      * @param string $type The generic type string
      * @param int $index The index of the argument to extract
-     * @return string|null The type argument or null if not found
+     *
+     * @return null|string The type argument or null if not found
      */
     public static function extractTypeArg(string $type, int $index = 0): ?string
     {
@@ -172,14 +148,12 @@ final class TypeUtils
         }
 
         $args = array_map('trim', explode(',', $matches[2]));
+
         return $args[$index] ?? null;
     }
 
     /**
      * Check if a type is a TypedDict (associative array with known keys).
-     *
-     * @param mixed $type
-     * @return bool
      */
     public static function isTypeDict(mixed $type): bool
     {
@@ -193,9 +167,6 @@ final class TypeUtils
 
     /**
      * Check if a type is annotated with metadata.
-     *
-     * @param mixed $type
-     * @return bool
      */
     public static function isAnnotatedType(mixed $type): bool
     {
@@ -213,7 +184,6 @@ final class TypeUtils
     /**
      * Strip annotation wrapper from a type, returning the underlying type.
      *
-     * @param mixed $type
      * @return mixed The unwrapped type
      */
     public static function stripAnnotatedType(mixed $type): mixed

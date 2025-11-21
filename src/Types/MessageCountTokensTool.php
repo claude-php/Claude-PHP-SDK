@@ -12,5 +12,6 @@ class MessageCountTokensTool
     public function __construct(
         public readonly string $type,
         public readonly int $input_tokens,
-    ) {}
+    ) {
+    }
 }

@@ -22,5 +22,6 @@ class BetaBashCodeExecutionResultBlockParam
         public readonly int $exit_code,
         public readonly string $stdout,
         public readonly string $stderr,
-    ) {}
+    ) {
+    }
 }

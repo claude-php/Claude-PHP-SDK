@@ -11,5 +11,6 @@ class StopReason
 {
     public function __construct(
         public readonly string $value,
-    ) {}
+    ) {
+    }
 }

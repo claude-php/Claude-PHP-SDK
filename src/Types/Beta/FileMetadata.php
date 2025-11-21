@@ -15,5 +15,6 @@ class FileMetadata
         public readonly string $filename,
         public readonly int $size,
         public readonly string $created_at,
-    ) {}
+    ) {
+    }
 }

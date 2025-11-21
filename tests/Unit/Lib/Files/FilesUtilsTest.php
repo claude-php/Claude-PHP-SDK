@@ -35,21 +35,44 @@ class FilesUtilsTest extends TestCase
     {
         // Use temp dir for testing
         $tmpdir = \sys_get_temp_dir() . '/claude-test-' . \uniqid();
-        @\mkdir($tmpdir, 0777, true);
+        @\mkdir($tmpdir, 0o777, true);
 
         try {
             // Create test files
-            \file_put_contents("$tmpdir/test.txt", 'content');
-            \file_put_contents("$tmpdir/test.log", 'log content');
-            \mkdir("$tmpdir/node_modules", 0777, true);
+            \file_put_contents("{$tmpdir}/test.txt", 'content');
+            \file_put_contents("{$tmpdir}/test.log", 'log content');
+            \mkdir("{$tmpdir}/node_modules", 0o777, true);
 
             // Get files excluding .log
             $files = FilesUtils::filesFromDir($tmpdir, null, ['log']);
 
             // Should have test.txt but not test.log
-            $filenames = \array_map(fn($f) => $f['filename'], $files);
+            $filenames = \array_map(fn ($f) => $f['filename'], $files);
             $this->assertContains('test.txt', $filenames);
             $this->assertNotContains('test.log', $filenames);
+        } finally {
+            $this->removeDirectory($tmpdir);
+        }
+    }
+
+    public function testRelativePathsUsePosixFormat(): void
+    {
+        // Test that relative_path always uses forward slashes, not backslashes
+        // This ensures cross-platform compatibility (especially for Windows)
+        $tmpdir = \sys_get_temp_dir() . '/claude-test-' . \uniqid();
+        @\mkdir($tmpdir . '/subdir', 0o777, true);
+
+        try {
+            // Create nested file
+            \file_put_contents("{$tmpdir}/subdir/nested.txt", 'nested content');
+
+            $files = FilesUtils::filesFromDir($tmpdir);
+
+            // Verify relative path uses forward slashes
+            $this->assertCount(1, $files);
+            $this->assertStringContainsString('/', $files[0]['relative_path']);
+            $this->assertStringNotContainsString('\\', $files[0]['relative_path']);
+            $this->assertSame('subdir/nested.txt', $files[0]['relative_path']);
         } finally {
             $this->removeDirectory($tmpdir);
         }
@@ -65,6 +88,7 @@ class FilesUtilsTest extends TestCase
         foreach ($items as $item) {
             if ($item->isDir() && !$item->isLink()) {
                 $this->removeDirectory($item->getPathname());
+
                 continue;
             }
 

@@ -12,19 +12,16 @@ declare(strict_types=1);
 namespace ClaudePhp\Resources;
 
 // Core Resources
-use ClaudePhp\Resources\Messages\Messages;
-use ClaudePhp\Resources\Messages\Batches as MessagesBatches;
-use ClaudePhp\Resources\Models;
-use ClaudePhp\Resources\Completions;
-
-// Beta Resources
+use ClaudePhp\Resources\Beta\Batches as BetaBatches;
 use ClaudePhp\Resources\Beta\Beta;
+// Beta Resources
 use ClaudePhp\Resources\Beta\Files;
 use ClaudePhp\Resources\Beta\Messages as BetaMessages;
-use ClaudePhp\Resources\Beta\Batches as BetaBatches;
 use ClaudePhp\Resources\Beta\Models as BetaModels;
 use ClaudePhp\Resources\Beta\Skills\Skills;
 use ClaudePhp\Resources\Beta\Skills\Versions;
+use ClaudePhp\Resources\Messages\Batches as MessagesBatches;
+use ClaudePhp\Resources\Messages\Messages;
 
 /**
  * Array of all available resource classes for registry/discovery.

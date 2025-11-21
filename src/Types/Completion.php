@@ -16,7 +16,7 @@ class Completion
      * @param string $type The type of object ("completion")
      * @param string $completion The completed text
      * @param string $stop_reason Why the model stopped generating text
-     * @param string|null $model The model that generated the completion
+     * @param null|string $model The model that generated the completion
      */
     public function __construct(
         public readonly string $id,
@@ -24,5 +24,6 @@ class Completion
         public readonly string $completion,
         public readonly string $stop_reason,
         public readonly ?string $model = null,
-    ) {}
+    ) {
+    }
 }

@@ -23,8 +23,6 @@ function getVertexLibrary(): array
 
 /**
  * Get the vertex library version.
- *
- * @return string
  */
 function getVertexLibraryVersion(): string
 {

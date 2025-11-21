@@ -212,6 +212,48 @@ Learn to build sophisticated AI agents through 15 progressive tutorials covering
 
 📖 **[View Full Tutorial Series →](tutorials/)**
 
+## Cloud Platform Integrations
+
+### Microsoft Azure AI Foundry
+
+Access Claude through Microsoft's Azure AI Foundry platform with enterprise-grade security and compliance:
+
+```php
+use ClaudePhp\Lib\Foundry\AnthropicFoundry;
+
+// Using API key authentication
+$client = new AnthropicFoundry(
+    resource: 'my-foundry-resource',
+    apiKey: $_ENV['AZURE_FOUNDRY_API_KEY']
+);
+
+// Or using Azure AD authentication
+$client = new AnthropicFoundry(
+    resource: 'my-foundry-resource',
+    azureAdTokenProvider: fn() => getAzureAdToken()
+);
+
+$response = $client->createMessage([
+    'model' => 'claude-sonnet-4-5',
+    'max_tokens' => 1024,
+    'messages' => [['role' => 'user', 'content' => 'Hello!']]
+]);
+```
+
+**Features:**
+- ✅ API key and Azure AD token authentication
+- ✅ Full Claude API support (streaming, tools, vision)
+- ✅ Regional deployment options
+- ✅ Enterprise compliance and monitoring
+
+**See:** [examples/foundry.php](examples/foundry.php) for complete examples
+
+### AWS Bedrock & Google Vertex AI
+
+Similar integrations are available for AWS Bedrock and Google Cloud Vertex AI. See:
+- `ClaudePhp\Lib\Bedrock\AnthropicBedrock` for AWS Bedrock
+- `ClaudePhp\Lib\Vertex\AnthropicVertex` for Google Vertex AI
+
 ## Framework Integrations
 
 Need a pre-wired client inside your container? See the
@@ -303,13 +345,13 @@ $orderSchema = [
 ];
 
 $parsed = $client->beta()->messages()->parse([
-    'model' => 'claude-sonnet-4-5-20250929-structured-outputs',
+    'model' => 'claude-sonnet-4-5',
     'max_tokens' => 1024,
     'messages' => [
         ['role' => 'user', 'content' => 'I need 2 lattes for $4 each'],
     ],
     'output_format' => $orderSchema,
-    // Note: structured-outputs-2025-09-17 beta is automatically added
+    // Note: structured-outputs-2025-11-13 beta is automatically added
 ]);
 
 // ['product_name' => 'latte', 'quantity' => 2, 'price' => 4.0]
@@ -319,7 +361,7 @@ For live validation while streaming, use `streamStructured()`:
 
 ```php
 $stream = $client->beta()->messages()->streamStructured([
-    'model' => 'claude-sonnet-4-5-20250929-structured-outputs',
+    'model' => 'claude-sonnet-4-5',
     'max_tokens' => 1024,
     'messages' => [['role' => 'user', 'content' => 'Summarize the order log as JSON']],
     'output_format' => $orderSchema,

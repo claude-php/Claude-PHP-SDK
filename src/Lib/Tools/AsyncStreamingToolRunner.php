@@ -40,7 +40,7 @@ class AsyncStreamingToolRunner
     public function __construct(
         ClaudePhp $client,
         array $tools = [],
-        int $maxIterations = 10
+        int $maxIterations = 10,
     ) {
         $this->client = $client;
         $this->tools = $tools;
@@ -62,7 +62,8 @@ class AsyncStreamingToolRunner
      * Run the agentic loop with streaming responses asynchronously.
      *
      * @param array<string, mixed> $params Message creation parameters
-     * @param callable|null $onStream Optional async callback for stream events
+     * @param null|callable $onStream Optional async callback for stream events
+     *
      * @return mixed Promise resolving to the final message
      */
     public function run(array $params, ?callable $onStream = null): mixed
@@ -72,7 +73,7 @@ class AsyncStreamingToolRunner
             $iterationCount = 0;
 
             while ($iterationCount < $this->maxIterations) {
-                $iterationCount++;
+                ++$iterationCount;
 
                 // Create streaming message
                 $stream = $this->client->messages()->stream([
@@ -84,7 +85,7 @@ class AsyncStreamingToolRunner
                 $manager = new AsyncMessageStreamManager();
                 foreach ($stream as $event) {
                     $manager->addEvent($event);
-                    if ($onStream !== null) {
+                    if (null !== $onStream) {
                         ($onStream)($event);
                     }
                 }
@@ -96,7 +97,7 @@ class AsyncStreamingToolRunner
                 $toolResults = [];
 
                 foreach ($response->content ?? [] as $block) {
-                    if ($block['type'] === 'tool_use') {
+                    if ('tool_use' === $block['type']) {
                         $hasToolUse = true;
                         $toolName = $block['name'] ?? '';
                         $toolInput = $block['input'] ?? [];
@@ -108,7 +109,7 @@ class AsyncStreamingToolRunner
                                 $toolResults[] = [
                                     'type' => 'tool_result',
                                     'tool_use_id' => $toolId,
-                                    'content' => (string)$result,
+                                    'content' => (string) $result,
                                 ];
                             } catch (\Throwable $e) {
                                 $toolResults[] = [
@@ -141,7 +142,7 @@ class AsyncStreamingToolRunner
             }
 
             throw new \RuntimeException(
-                "Async streaming tool runner reached maximum iterations ({$this->maxIterations})"
+                "Async streaming tool runner reached maximum iterations ({$this->maxIterations})",
             );
         });
     }

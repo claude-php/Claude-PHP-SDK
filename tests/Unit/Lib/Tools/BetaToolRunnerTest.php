@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace ClaudePhp\Tests\Unit\Lib\Tools;
 
 use ClaudePhp\ClaudePhp;
+
+use function ClaudePhp\Lib\Tools\beta_tool;
+
 use ClaudePhp\Lib\Tools\BetaToolRunner;
+use ClaudePhp\Resources\Beta\Beta;
+use ClaudePhp\Resources\Beta\Messages;
 use ClaudePhp\Responses\Message;
 use ClaudePhp\Responses\Usage;
 use PHPUnit\Framework\TestCase;
-use function ClaudePhp\Lib\Tools\beta_tool;
 
 class BetaToolRunnerTest extends TestCase
 {
@@ -38,7 +42,7 @@ class BetaToolRunnerTest extends TestCase
 
         $dummyClient = new ClaudePhp(apiKey: 'sk-test');
 
-        $messagesResource = new class($dummyClient, $responses) extends \ClaudePhp\Resources\Beta\Messages {
+        $messagesResource = new class ($dummyClient, $responses) extends Messages {
             /** @var array<int, array<string, mixed>> */
             private array $queued;
 
@@ -59,18 +63,18 @@ class BetaToolRunnerTest extends TestCase
                     content: $payload['content'] ?? [],
                     model: 'claude-sonnet',
                     stop_reason: $payload['stop_reason'] ?? 'end_turn',
-                    usage: new Usage(input_tokens: 0, output_tokens: 0)
+                    usage: new Usage(input_tokens: 0, output_tokens: 0),
                 );
             }
         };
 
-        $betaStub = new class($dummyClient, $messagesResource) extends \ClaudePhp\Resources\Beta\Beta {
-            public function __construct(ClaudePhp $client, private \ClaudePhp\Resources\Beta\Messages $messages)
+        $betaStub = new class ($dummyClient, $messagesResource) extends Beta {
+            public function __construct(ClaudePhp $client, private Messages $messages)
             {
                 parent::__construct($client);
             }
 
-            public function messages(): \ClaudePhp\Resources\Beta\Messages
+            public function messages(): Messages
             {
                 return $this->messages;
             }
@@ -82,6 +86,7 @@ class BetaToolRunnerTest extends TestCase
         $tool = beta_tool(
             handler: function (array $input): string {
                 TestCase::assertSame('San Francisco', $input['location']);
+
                 return 'It is sunny.';
             },
             name: 'get_weather',
@@ -92,7 +97,7 @@ class BetaToolRunnerTest extends TestCase
                     'location' => ['type' => 'string'],
                 ],
                 'required' => ['location'],
-            ]
+            ],
         );
 
         $runner = new BetaToolRunner($client, [

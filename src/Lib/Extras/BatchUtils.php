@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Lib\Extras;
 
-use ClaudePhp\ClaudePhp;
-
 /**
  * Batch processing utilities for efficiently processing multiple requests.
  *
@@ -18,6 +16,7 @@ class BatchUtils
      * Create a batch request from multiple message creation requests.
      *
      * @param array<array<string, mixed>> $requests Array of message creation parameters
+     *
      * @return array<string, mixed> Batch request payload
      */
     public static function createBatchRequests(array $requests): array
@@ -26,7 +25,7 @@ class BatchUtils
 
         foreach ($requests as $index => $request) {
             $batchRequests[] = [
-                'custom_id' => $request['custom_id'] ?? "request-$index",
+                'custom_id' => $request['custom_id'] ?? "request-{$index}",
                 'params' => [
                     'model' => $request['model'] ?? 'claude-sonnet-4-5-20250929',
                     'max_tokens' => $request['max_tokens'] ?? 1024,
@@ -47,11 +46,12 @@ class BatchUtils
      *
      * @param mixed $client The API client
      * @param array<array<string, mixed>> $requests Batch requests
+     *
      * @return string Batch ID
      */
     public static function submitBatch(
         mixed $client,
-        array $requests
+        array $requests,
     ): string {
         $batchRequests = self::createBatchRequests($requests);
 
@@ -69,26 +69,29 @@ class BatchUtils
      * @param string $batchId Batch ID
      * @param int $maxAttempts Maximum polling attempts
      * @param int $delaySeconds Delay between polls
+     *
      * @return array<string, mixed> Completed batch response
      */
     public static function waitForBatchCompletion(
         mixed $client,
         string $batchId,
         int $maxAttempts = 60,
-        int $delaySeconds = 10
+        int $delaySeconds = 10,
     ): array {
-        for ($attempt = 0; $attempt < $maxAttempts; $attempt++) {
+        for ($attempt = 0; $attempt < $maxAttempts; ++$attempt) {
             $batch = $client->batches()->retrieve($batchId);
 
             if (isset($batch['processing_status'])) {
-                if ($batch['processing_status'] === 'succeeded') {
+                if ('succeeded' === $batch['processing_status']) {
                     return $batch;
-                } elseif ($batch['processing_status'] === 'failed') {
+                }
+                if ('failed' === $batch['processing_status']) {
                     throw new \RuntimeException(
-                        "Batch $batchId failed: " . ($batch['error_message'] ?? 'Unknown error')
+                        "Batch {$batchId} failed: " . ($batch['error_message'] ?? 'Unknown error'),
                     );
-                } elseif ($batch['processing_status'] === 'expired') {
-                    throw new \RuntimeException("Batch $batchId expired");
+                }
+                if ('expired' === $batch['processing_status']) {
+                    throw new \RuntimeException("Batch {$batchId} expired");
                 }
             }
 
@@ -99,7 +102,7 @@ class BatchUtils
         }
 
         throw new \RuntimeException(
-            "Batch $batchId did not complete within " . ($maxAttempts * $delaySeconds) . " seconds"
+            "Batch {$batchId} did not complete within " . ($maxAttempts * $delaySeconds) . ' seconds',
         );
     }
 
@@ -108,11 +111,12 @@ class BatchUtils
      *
      * @param mixed $client The API client
      * @param string $batchId Batch ID
+     *
      * @return array<array<string, mixed>> Batch results indexed by custom_id
      */
     public static function getBatchResults(
         mixed $client,
-        string $batchId
+        string $batchId,
     ): array {
         $results = [];
         $batchResults = $client->batches()->results($batchId);
@@ -130,11 +134,12 @@ class BatchUtils
      *
      * @param mixed $client The API client
      * @param array<array<string, mixed>> $requests Batch requests
+     *
      * @return array<array<string, mixed>> Results indexed by custom_id
      */
     public static function runBatch(
         mixed $client,
-        array $requests
+        array $requests,
     ): array {
         // Submit batch
         $batchId = self::submitBatch($client, $requests);

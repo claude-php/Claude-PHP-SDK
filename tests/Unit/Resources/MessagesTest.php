@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Unit\Resources;
 
-use ClaudePhp\Tests\TestCase;
-use ClaudePhp\Resources\Messages\Messages;
-use ClaudePhp\Resources\Messages\Batches;
 use ClaudePhp\ClaudePhp;
+use ClaudePhp\Resources\Messages\Batches;
+use ClaudePhp\Resources\Messages\Messages;
+use ClaudePhp\Tests\TestCase;
 
 class MessagesTest extends TestCase
 {
@@ -20,18 +20,18 @@ class MessagesTest extends TestCase
         $this->messages = new Messages($client);
     }
 
-    public function test_can_instantiate_messages_resource(): void
+    public function testCanInstantiateMessagesResource(): void
     {
         $this->assertInstanceOf(Messages::class, $this->messages);
     }
 
-    public function test_messages_has_batches_sub_resource(): void
+    public function testMessagesHasBatchesSubResource(): void
     {
         $batches = $this->messages->batches();
         $this->assertInstanceOf(Batches::class, $batches);
     }
 
-    public function test_create_validates_required_parameters(): void
+    public function testCreateValidatesRequiredParameters(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing required parameter: model');
@@ -39,7 +39,7 @@ class MessagesTest extends TestCase
         $this->messages->create([]);
     }
 
-    public function test_create_validates_all_required_parameters(): void
+    public function testCreateValidatesAllRequiredParameters(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -50,7 +50,7 @@ class MessagesTest extends TestCase
         ]);
     }
 
-    public function test_create_validates_messages_parameter(): void
+    public function testCreateValidatesMessagesParameter(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -61,7 +61,7 @@ class MessagesTest extends TestCase
         ]);
     }
 
-    public function test_count_tokens_validates_required_parameters(): void
+    public function testCountTokensValidatesRequiredParameters(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing required parameters: model, messages');
@@ -69,21 +69,21 @@ class MessagesTest extends TestCase
         $this->messages->countTokens([]);
     }
 
-    public function test_count_tokens_with_model_only_fails(): void
+    public function testCountTokensWithModelOnlyFails(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
         $this->messages->countTokens(['model' => 'claude-opus-4-1-20250805']);
     }
 
-    public function test_count_tokens_accepts_valid_parameters(): void
+    public function testCountTokensAcceptsValidParameters(): void
     {
         // This would test actual HTTP call in integration tests
         // Unit test just verifies parameter validation passes
         $params = [
             'model' => 'claude-opus-4-1-20250805',
             'messages' => [
-                ['role' => 'user', 'content' => 'Hello']
+                ['role' => 'user', 'content' => 'Hello'],
             ],
         ];
 
@@ -96,7 +96,7 @@ class MessagesTest extends TestCase
         }
     }
 
-    public function test_stream_sets_stream_flag(): void
+    public function testStreamSetsStreamFlag(): void
     {
         // Stream method should pass stream=true to create
         // This is tested indirectly through create logic

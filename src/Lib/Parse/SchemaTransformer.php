@@ -16,6 +16,7 @@ class SchemaTransformer
      * Transform a PHP class or reflection type to JSON Schema.
      *
      * @param \ReflectionClass<object>|string $class Class name or ReflectionClass
+     *
      * @return array<string, mixed> JSON Schema representation
      */
     public static function fromClass(\ReflectionClass|string $class): array
@@ -33,7 +34,7 @@ class SchemaTransformer
 
         // Extract properties from constructor parameters if available
         $constructor = $class->getConstructor();
-        if ($constructor !== null) {
+        if (null !== $constructor) {
             foreach ($constructor->getParameters() as $param) {
                 $propName = $param->getName();
                 $propType = $param->getType();
@@ -50,14 +51,83 @@ class SchemaTransformer
     }
 
     /**
-     * Convert a PHP type to JSON Schema.
+     * Build a simple object schema from property definitions.
      *
-     * @param \ReflectionType|null $type The PHP reflection type
+     * @param array<string, string> $properties Map of property name to type
+     * @param array<string> $required Required property names
+     * @param null|string $title Schema title
+     *
      * @return array<string, mixed> JSON Schema
      */
-    private static function typeToSchema(\ReflectionType|null $type): array
+    public static function buildObjectSchema(
+        array $properties,
+        array $required = [],
+        ?string $title = null,
+    ): array {
+        $schema = [
+            'type' => 'object',
+            'properties' => [],
+            'required' => $required,
+        ];
+
+        if (null !== $title) {
+            $schema['title'] = $title;
+        }
+
+        foreach ($properties as $name => $type) {
+            $schema['properties'][$name] = self::parseType($type);
+        }
+
+        return $schema;
+    }
+
+    /**
+     * Parse a type string and return JSON Schema type.
+     *
+     * @param string $type Type string (e.g., 'string', 'array[string]', 'int', etc.)
+     *
+     * @return array<string, mixed> JSON Schema type definition
+     */
+    public static function parseType(string $type): array
     {
-        if ($type === null) {
+        $type = \trim($type);
+
+        // Handle array types
+        if (\str_ends_with($type, ']')) {
+            \preg_match('/^array\[(.+)\]$/i', $type, $matches);
+            if (!empty($matches[1])) {
+                return [
+                    'type' => 'array',
+                    'items' => self::parseType($matches[1]),
+                ];
+            }
+
+            return ['type' => 'array'];
+        }
+
+        // Handle basic types
+        return match (\strtolower($type)) {
+            'string', 'str' => ['type' => 'string'],
+            'int', 'integer' => ['type' => 'integer'],
+            'float', 'double', 'number' => ['type' => 'number'],
+            'bool', 'boolean' => ['type' => 'boolean'],
+            'array' => ['type' => 'array'],
+            'object' => ['type' => 'object'],
+            'null' => ['type' => 'null'],
+            default => ['type' => 'string'],
+        };
+    }
+
+    /**
+     * Convert a PHP type to JSON Schema.
+     *
+     * @param null|\ReflectionType $type The PHP reflection type
+     *
+     * @return array<string, mixed> JSON Schema
+     */
+    private static function typeToSchema(?\ReflectionType $type): array
+    {
+        if (null === $type) {
             return ['type' => 'string']; // Default to string
         }
 
@@ -67,6 +137,7 @@ class SchemaTransformer
             foreach ($type->getTypes() as $t) {
                 $types[] = self::getJsonSchemaType($t);
             }
+
             return ['type' => $types];
         }
 
@@ -81,7 +152,6 @@ class SchemaTransformer
     /**
      * Get JSON Schema type for a named reflection type.
      *
-     * @param \ReflectionNamedType $type
      * @return array<string, mixed>
      */
     private static function getJsonSchemaTypeForNamedType(\ReflectionNamedType $type): array
@@ -93,6 +163,7 @@ class SchemaTransformer
         if (!$type->isBuiltin()) {
             try {
                 $class = new \ReflectionClass($typeName);
+
                 return [
                     'type' => 'object',
                     'title' => $class->getShortName(),
@@ -109,9 +180,6 @@ class SchemaTransformer
 
     /**
      * Get JSON Schema type string for a reflection type.
-     *
-     * @param \ReflectionType $type
-     * @return string
      */
     private static function getJsonSchemaType(\ReflectionType $type): string
     {
@@ -128,70 +196,5 @@ class SchemaTransformer
         }
 
         return 'string';
-    }
-
-    /**
-     * Build a simple object schema from property definitions.
-     *
-     * @param array<string, string> $properties Map of property name to type
-     * @param array<string> $required Required property names
-     * @param string|null $title Schema title
-     * @return array<string, mixed> JSON Schema
-     */
-    public static function buildObjectSchema(
-        array $properties,
-        array $required = [],
-        ?string $title = null
-    ): array {
-        $schema = [
-            'type' => 'object',
-            'properties' => [],
-            'required' => $required,
-        ];
-
-        if ($title !== null) {
-            $schema['title'] = $title;
-        }
-
-        foreach ($properties as $name => $type) {
-            $schema['properties'][$name] = self::parseType($type);
-        }
-
-        return $schema;
-    }
-
-    /**
-     * Parse a type string and return JSON Schema type.
-     *
-     * @param string $type Type string (e.g., 'string', 'array[string]', 'int', etc.)
-     * @return array<string, mixed> JSON Schema type definition
-     */
-    public static function parseType(string $type): array
-    {
-        $type = \trim($type);
-
-        // Handle array types
-        if (\str_ends_with($type, ']')) {
-            \preg_match('/^array\[(.+)\]$/i', $type, $matches);
-            if (!empty($matches[1])) {
-                return [
-                    'type' => 'array',
-                    'items' => self::parseType($matches[1]),
-                ];
-            }
-            return ['type' => 'array'];
-        }
-
-        // Handle basic types
-        return match (\strtolower($type)) {
-            'string', 'str' => ['type' => 'string'],
-            'int', 'integer' => ['type' => 'integer'],
-            'float', 'double', 'number' => ['type' => 'number'],
-            'bool', 'boolean' => ['type' => 'boolean'],
-            'array' => ['type' => 'array'],
-            'object' => ['type' => 'object'],
-            'null' => ['type' => 'null'],
-            default => ['type' => 'string'],
-        };
     }
 }

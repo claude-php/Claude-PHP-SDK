@@ -16,7 +16,8 @@ class LazyProxyTest extends TestCase
 
             protected function load(): object
             {
-                $this->loadCount++;
+                ++$this->loadCount;
+
                 return new class {
                     public string $name = 'proxy';
 

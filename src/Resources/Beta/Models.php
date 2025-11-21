@@ -17,6 +17,7 @@ class Models extends Resource
      * List beta models.
      *
      * @param array<string, mixed> $params Query parameters
+     *
      * @return array List of models
      */
     public function list(array $params = []): array
@@ -28,6 +29,7 @@ class Models extends Resource
      * Retrieve a specific model.
      *
      * @param string $modelId Model ID
+     *
      * @return array Model details
      */
     public function retrieve(string $modelId): array

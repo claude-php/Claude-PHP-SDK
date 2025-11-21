@@ -14,11 +14,12 @@ class MessageCountTokensToolParam
     /**
      * @param string $type The type identifier ("tool")
      * @param string $name The tool name
-     * @param array<string, mixed>|null $input_schema The input schema
+     * @param null|array<string, mixed> $input_schema The input schema
      */
     public function __construct(
         public readonly string $type,
         public readonly string $name,
         public readonly ?array $input_schema = null,
-    ) {}
+    ) {
+    }
 }

@@ -7,8 +7,8 @@ namespace ClaudePhp;
 use ClaudePhp\Client\HttpClient as TransportHttpClient;
 use ClaudePhp\Resources\Beta\Beta;
 use ClaudePhp\Resources\Completions;
-use ClaudePhp\Resources\Models;
 use ClaudePhp\Resources\Messages\Messages;
+use ClaudePhp\Resources\Models;
 use GuzzleHttp\Client as GuzzleClient;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Client\ClientInterface;
@@ -57,36 +57,36 @@ class ClaudePhp
     private ?TransportHttpClient $transport = null;
 
     /**
-     * @var Messages|null
+     * @var null|Messages
      */
     private $messages;
 
     /**
-     * @var Models|null
+     * @var null|Models
      */
     private $models;
 
     /**
-     * @var Completions|null
+     * @var null|Completions
      */
     private $completions;
 
     /**
-     * @var Beta|null
+     * @var null|Beta
      */
     private $beta;
 
     /**
      * Create a new Anthropic client instance
      *
-     * @param string|null $apiKey API key (defaults to ANTHROPIC_API_KEY env var)
+     * @param null|string $apiKey API key (defaults to ANTHROPIC_API_KEY env var)
      * @param string $baseUrl API base URL
      * @param float $timeout Request timeout in seconds
      * @param int $maxRetries Maximum number of retries for retryable errors
      * @param array<string, string> $customHeaders Additional headers for all requests
-     * @param ClientInterface|null $httpClient PSR-18 HTTP client (optional)
-     * @param RequestFactoryInterface|null $requestFactory PSR-17 request factory
-     * @param StreamFactoryInterface|null $streamFactory PSR-17 stream factory
+     * @param null|ClientInterface $httpClient PSR-18 HTTP client (optional)
+     * @param null|RequestFactoryInterface $requestFactory PSR-17 request factory
+     * @param null|StreamFactoryInterface $streamFactory PSR-17 stream factory
      */
     public function __construct(
         ?string $apiKey = null,
@@ -96,7 +96,7 @@ class ClaudePhp
         array $customHeaders = [],
         ?ClientInterface $httpClient = null,
         ?RequestFactoryInterface $requestFactory = null,
-        ?StreamFactoryInterface $streamFactory = null
+        ?StreamFactoryInterface $streamFactory = null,
     ) {
         $this->apiKey = $apiKey ?? $_ENV['ANTHROPIC_API_KEY'] ?? '';
         $this->baseUrl = $baseUrl;
@@ -107,9 +107,9 @@ class ClaudePhp
         $this->requestFactory = $requestFactory;
         $this->streamFactory = $streamFactory;
 
-        if ($this->apiKey === '') {
+        if ('' === $this->apiKey) {
             throw new \InvalidArgumentException(
-                'API key is required. Pass it as apiKey parameter or set ANTHROPIC_API_KEY environment variable.'
+                'API key is required. Pass it as apiKey parameter or set ANTHROPIC_API_KEY environment variable.',
             );
         }
 
@@ -173,14 +173,14 @@ class ClaudePhp
      */
     public function getHttpTransport(): TransportHttpClient
     {
-        if ($this->transport !== null) {
+        if (null !== $this->transport) {
             return $this->transport;
         }
 
-        if ($this->httpClient === null || $this->requestFactory === null || $this->streamFactory === null) {
+        if (null === $this->httpClient || null === $this->requestFactory || null === $this->streamFactory) {
             throw new \RuntimeException(
                 'HTTP client is not configured. Provide a PSR-18 client and PSR-17 factories when constructing '
-                    . 'the ClaudePhp client.'
+                    . 'the ClaudePhp client.',
             );
         }
 
@@ -189,10 +189,66 @@ class ClaudePhp
             requestFactory: $this->requestFactory,
             streamFactory: $this->streamFactory,
             defaultHeaders: $this->buildDefaultHeaders(),
-            timeout: $this->timeout
+            timeout: $this->timeout,
         );
 
         return $this->transport;
+    }
+
+    /**
+     * Get the Messages resource
+     */
+    public function messages(): Messages
+    {
+        if (null === $this->messages) {
+            $this->messages = new Messages($this);
+        }
+
+        return $this->messages;
+    }
+
+    /**
+     * Get the Models resource
+     */
+    public function models(): Models
+    {
+        if (null === $this->models) {
+            $this->models = new Models($this);
+        }
+
+        return $this->models;
+    }
+
+    /**
+     * Get the Completions resource
+     */
+    public function completions(): Completions
+    {
+        if (null === $this->completions) {
+            $this->completions = new Completions($this);
+        }
+
+        return $this->completions;
+    }
+
+    /**
+     * Get the Beta resource wrapper
+     */
+    public function beta(): Beta
+    {
+        if (null === $this->beta) {
+            $this->beta = new Beta($this);
+        }
+
+        return $this->beta;
+    }
+
+    /**
+     * Get an async proxy that exposes async resource operations.
+     */
+    public function async(): ClaudePhpAsyncProxy
+    {
+        return new ClaudePhpAsyncProxy($this);
     }
 
     /**
@@ -216,77 +272,17 @@ class ClaudePhp
      */
     private function bootstrapDefaultHttpStack(): void
     {
-        if ($this->requestFactory === null || $this->streamFactory === null) {
+        if (null === $this->requestFactory || null === $this->streamFactory) {
             $factory = new Psr17Factory();
             $this->requestFactory ??= $factory;
             $this->streamFactory ??= $factory;
         }
 
-        if ($this->httpClient === null) {
+        if (null === $this->httpClient) {
             $this->httpClient = new GuzzleClient([
                 'base_uri' => $this->baseUrl,
                 'timeout' => $this->timeout,
             ]);
         }
-    }
-
-    /**
-     * Get the Messages resource
-     *
-     * @return Messages
-     */
-    public function messages(): Messages
-    {
-        if ($this->messages === null) {
-            $this->messages = new Messages($this);
-        }
-        return $this->messages;
-    }
-
-    /**
-     * Get the Models resource
-     *
-     * @return Models
-     */
-    public function models(): Models
-    {
-        if ($this->models === null) {
-            $this->models = new Models($this);
-        }
-        return $this->models;
-    }
-
-    /**
-     * Get the Completions resource
-     *
-     * @return Completions
-     */
-    public function completions(): Completions
-    {
-        if ($this->completions === null) {
-            $this->completions = new Completions($this);
-        }
-        return $this->completions;
-    }
-
-    /**
-     * Get the Beta resource wrapper
-     *
-     * @return Beta
-     */
-    public function beta(): Beta
-    {
-        if ($this->beta === null) {
-            $this->beta = new Beta($this);
-        }
-        return $this->beta;
-    }
-
-    /**
-     * Get an async proxy that exposes async resource operations.
-     */
-    public function async(): ClaudePhpAsyncProxy
-    {
-        return new ClaudePhpAsyncProxy($this);
     }
 }

@@ -18,5 +18,6 @@ class BetaMessage
         public readonly string $stop_reason,
         public readonly ?string $stop_sequence = null,
         public readonly ?array $usage = null,
-    ) {}
+    ) {
+    }
 }

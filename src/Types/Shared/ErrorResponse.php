@@ -12,5 +12,6 @@ class ErrorResponse
     public function __construct(
         public readonly string $type,
         public readonly ErrorObject $error,
-    ) {}
+    ) {
+    }
 }

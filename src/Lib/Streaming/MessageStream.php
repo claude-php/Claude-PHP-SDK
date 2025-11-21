@@ -57,7 +57,7 @@ class MessageStream implements \Iterator
             $this->advance();
         }
 
-        if ($this->finalMessage === null) {
+        if (null === $this->finalMessage) {
             $this->finalMessage = $this->manager->getMessage();
         }
 
@@ -78,16 +78,17 @@ class MessageStream implements \Iterator
     {
         if (!$this->eventStream->valid()) {
             $this->currentEvent = null;
+
             return;
         }
 
         $this->advance();
-        $this->position++;
+        ++$this->position;
     }
 
     public function valid(): bool
     {
-        return $this->currentEvent !== null;
+        return null !== $this->currentEvent;
     }
 
     public function rewind(): void
@@ -146,7 +147,7 @@ class MessageStream implements \Iterator
 
         $this->eventStream->next();
 
-        if (!$this->eventStream->valid() && $this->finalMessage === null) {
+        if (!$this->eventStream->valid() && null === $this->finalMessage) {
             $this->finalMessage = $this->manager->getMessage();
         }
     }

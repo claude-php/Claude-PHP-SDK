@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ClaudePhp\Tests;
 
 use ClaudePhp\ClaudePhp;
-use ClaudePhp\Exceptions\APIStatusError;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase as PHPUnitTestCase;
 
@@ -62,7 +61,7 @@ class AnthropicTest extends PHPUnitTestCase
             baseUrl: $baseUrl,
             timeout: $timeout,
             maxRetries: $maxRetries,
-            customHeaders: $customHeaders
+            customHeaders: $customHeaders,
         );
 
         $this->assertEquals($baseUrl, $client->getBaseUrl());
@@ -83,7 +82,7 @@ class AnthropicTest extends PHPUnitTestCase
 
         $client = new ClaudePhp(
             apiKey: 'test-key',
-            customHeaders: $headers
+            customHeaders: $headers,
         );
 
         $this->assertEquals($headers, $client->getCustomHeaders());

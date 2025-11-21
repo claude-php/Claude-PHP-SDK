@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ClaudePhp\Utils;
 
 use ReflectionClass;
+use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionUnionType;
-use ReflectionIntersectionType;
 
 /**
  * Compatibility utilities for runtime type introspection.
@@ -22,12 +22,13 @@ final class CompatUtils
      *
      * For PHP, this works with ReflectionType objects to extract component types.
      *
-     * @param ReflectionType|string|null $type The type to extract from
+     * @param null|ReflectionType|string $type The type to extract from
+     *
      * @return class-string[]
      */
     public static function getArgs(mixed $type): array
     {
-        if ($type === null) {
+        if (null === $type) {
             return [];
         }
 
@@ -40,6 +41,7 @@ final class CompatUtils
             foreach ($type->getTypes() as $t) {
                 $types[] = $t->getName();
             }
+
             return $types;
         }
 
@@ -48,6 +50,7 @@ final class CompatUtils
             foreach ($type->getTypes() as $t) {
                 $types[] = $t->getName();
             }
+
             return $types;
         }
 
@@ -68,11 +71,10 @@ final class CompatUtils
      * - "string" → "string"
      *
      * @param mixed $type The type to get origin from
-     * @return string|null
      */
     public static function getOrigin(mixed $type): ?string
     {
-        if ($type === null) {
+        if (null === $type) {
             return null;
         }
 
@@ -108,7 +110,6 @@ final class CompatUtils
      * Check if a type is a Union type.
      *
      * @param mixed $type The type to check
-     * @return bool
      */
     public static function isUnion(mixed $type): bool
     {
@@ -131,7 +132,6 @@ final class CompatUtils
      * TypedDict, we check for classes that might be used as typed dictionaries.
      *
      * @param mixed $type The type to check
-     * @return bool
      */
     public static function isTypedDict(mixed $type): bool
     {
@@ -158,7 +158,7 @@ final class CompatUtils
         }
 
         // Check for common patterns that indicate TypedDict-like behavior
-        return $type->isFinal() && count($type->getMethods()) === 0 && count($type->getProperties()) > 0;
+        return $type->isFinal() && 0 === count($type->getMethods()) && count($type->getProperties()) > 0;
     }
 
     /**
@@ -168,7 +168,6 @@ final class CompatUtils
      * For example: 'pending'|'completed'|'failed'
      *
      * @param mixed $type The type to check
-     * @return bool
      */
     public static function isLiteralType(mixed $type): bool
     {
@@ -179,25 +178,29 @@ final class CompatUtils
                 foreach ($parts as $part) {
                     $part = trim($part);
                     // Check if part is quoted (string literal)
-                    if ((str_starts_with($part, "'") && str_ends_with($part, "'")) ||
-                        (str_starts_with($part, '"') && str_ends_with($part, '"'))
+                    if (
+                        (str_starts_with($part, "'") && str_ends_with($part, "'"))
+                        || (str_starts_with($part, '"') && str_ends_with($part, '"'))
                     ) {
                         continue;
                     }
+
                     // If any part is not a literal, it's not a pure literal type
                     return false;
                 }
+
                 return true;
             }
 
             // Single quoted string could be a literal
-            return (str_starts_with($type, "'") && str_ends_with($type, "'")) ||
-                (str_starts_with($type, '"') && str_ends_with($type, '"'));
+            return (str_starts_with($type, "'") && str_ends_with($type, "'"))
+                || (str_starts_with($type, '"') && str_ends_with($type, '"'));
         }
 
         if ($type instanceof ReflectionUnionType) {
             // Check if all union members are string literals (represented as SingleQuotedString or similar)
             $types = $type->getTypes();
+
             return count($types) > 0 && count($types) < 5; // Heuristic: literal unions are small
         }
 
@@ -208,6 +211,7 @@ final class CompatUtils
      * Extract type arguments from a string type declaration.
      *
      * @param string $typeString The type string to parse
+     *
      * @return class-string[]
      */
     private static function getArgsFromString(string $typeString): array
@@ -217,6 +221,7 @@ final class CompatUtils
             preg_match('/^([^<]+)<(.+)>$/', $typeString, $matches);
             if (isset($matches[2])) {
                 $innerTypes = explode(',', $matches[2]);
+
                 return array_map('trim', $innerTypes);
             }
         }
@@ -224,6 +229,7 @@ final class CompatUtils
         // Handle union types: "string|int|null"
         if (str_contains($typeString, '|')) {
             $parts = explode('|', $typeString);
+
             return array_map('trim', $parts);
         }
 
@@ -234,19 +240,20 @@ final class CompatUtils
      * Extract origin from a string type declaration.
      *
      * @param string $typeString The type string to parse
-     * @return string|null
      */
     private static function getOriginFromString(string $typeString): ?string
     {
         // Handle generic-like strings: "List<string>"
         if (str_contains($typeString, '<')) {
             $base = explode('<', $typeString)[0];
+
             return strtolower(trim($base));
         }
 
         // Handle union types: return the first type as origin (typically used for variant discrimination)
         if (str_contains($typeString, '|')) {
             $parts = explode('|', $typeString);
+
             return trim($parts[0]);
         }
 

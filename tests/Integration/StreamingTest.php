@@ -18,7 +18,7 @@ class StreamingTest extends TestCase
     public function testBasicStreamingFlow(): void
     {
         $streamData = '';
-        
+
         // message_start event
         $streamData .= $this->createStreamingEvent('message_start', [
             'type' => 'message_start',
@@ -113,7 +113,7 @@ class StreamingTest extends TestCase
     public function testStreamingWithToolUse(): void
     {
         $streamData = '';
-        
+
         // message_start
         $streamData .= $this->createStreamingEvent('message_start', [
             'type' => 'message_start',
@@ -312,7 +312,7 @@ class StreamingTest extends TestCase
     public function testStreamingWithMultibyteCharacters(): void
     {
         $streamData = '';
-        
+
         $streamData .= $this->createStreamingEvent('message_start', [
             'type' => 'message_start',
             'message' => [
@@ -368,13 +368,14 @@ class StreamingTest extends TestCase
         $events = iterator_to_array($stream);
 
         // Verify multibyte characters are preserved
-        $textDeltas = array_filter($events, fn($event) => 
-            isset($event['delta']['type']) && $event['delta']['type'] === 'text_delta'
+        $textDeltas = array_filter(
+            $events,
+            fn ($event) => isset($event['delta']['type']) && 'text_delta' === $event['delta']['type'],
         );
 
         $this->assertCount(4, $textDeltas);
-        
-        $texts = array_map(fn($event) => $event['delta']['text'], $textDeltas);
+
+        $texts = array_map(fn ($event) => $event['delta']['text'], $textDeltas);
         $this->assertContains('こんにちは', $texts);
         $this->assertContains('🚀', $texts);
         $this->assertContains('漢字', $texts);
@@ -425,7 +426,7 @@ class StreamingTest extends TestCase
     public function testStreamingWithCitation(): void
     {
         $streamData = '';
-        
+
         $streamData .= $this->createStreamingEvent('message_start', [
             'type' => 'message_start',
             'message' => [
@@ -490,12 +491,13 @@ class StreamingTest extends TestCase
         $events = iterator_to_array($stream);
 
         // Find citation delta event
-        $citationEvent = array_filter($events, fn($event) => 
-            isset($event['delta']['type']) && $event['delta']['type'] === 'citations_delta'
+        $citationEvent = array_filter(
+            $events,
+            fn ($event) => isset($event['delta']['type']) && 'citations_delta' === $event['delta']['type'],
         );
 
         $this->assertNotEmpty($citationEvent);
-        
+
         $citationData = array_values($citationEvent)[0];
         $this->assertIsArray($citationData['delta']['citations']);
         $this->assertEquals('page', $citationData['delta']['citations'][0]['location']['type']);

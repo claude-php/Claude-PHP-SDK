@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace ClaudePhp\Lib\Streaming;
 
 use ClaudePhp\Responses\Message;
-use ClaudePhp\Responses\TextContent;
-use ClaudePhp\Responses\ToolUseContent;
 use ClaudePhp\Responses\Usage;
 
 /**
@@ -44,13 +42,14 @@ class MessageStreamManager
     /**
      * Create a new MessageStreamManager.
      */
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 
     /**
      * Add a streamed event to accumulate message state.
      *
      * @param array<string, mixed> $event The streamed event
-     * @return void
      */
     public function addEvent(array $event): void
     {
@@ -101,10 +100,11 @@ class MessageStreamManager
     {
         $text = '';
         foreach ($this->message['content'] ?? [] as $block) {
-            if ($block['type'] === 'text') {
+            if ('text' === $block['type']) {
                 $text .= $block['text'] ?? '';
             }
         }
+
         return $text;
     }
 
@@ -181,7 +181,7 @@ class MessageStreamManager
         $this->currentBlockIndex = count($this->message['content']);
         $this->currentContent = array_merge(['type' => $block['type'] ?? 'text'], $block);
 
-        if ($block['type'] === 'text') {
+        if ('text' === $block['type']) {
             $this->currentContent['text'] = '';
         }
 
@@ -198,9 +198,9 @@ class MessageStreamManager
         if (isset($this->message['content'][$this->currentBlockIndex])) {
             $block = &$this->message['content'][$this->currentBlockIndex];
 
-            if ($delta['type'] === 'text_delta' && isset($delta['text'])) {
+            if ('text_delta' === $delta['type'] && isset($delta['text'])) {
                 $block['text'] = ($block['text'] ?? '') . $delta['text'];
-            } elseif ($delta['type'] === 'input_json_delta' && isset($delta['partial_json'])) {
+            } elseif ('input_json_delta' === $delta['type'] && isset($delta['partial_json'])) {
                 $block['input'] = ($block['input'] ?? '') . $delta['partial_json'];
             }
         }

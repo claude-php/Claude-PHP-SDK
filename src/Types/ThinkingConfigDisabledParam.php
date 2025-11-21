@@ -11,5 +11,6 @@ class ThinkingConfigDisabledParam
 {
     public function __construct(
         public readonly string $type,
-    ) {}
+    ) {
+    }
 }

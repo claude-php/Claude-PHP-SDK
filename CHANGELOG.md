@@ -5,6 +5,23 @@ All notable changes to the Claude PHP SDK will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [0.3.0] - 2025-01-21
+
+### Added
+
+- **Microsoft Azure AI Foundry Integration**: Full support for accessing Claude through Azure AI Foundry
+  - `AnthropicFoundry` class for synchronous operations
+  - `AsyncAnthropicFoundry` class for asynchronous operations using Amphp
+  - Dual authentication support: API key and Azure AD token provider
+  - Complete feature parity with direct API (streaming, tools, vision, etc.)
+  - Comprehensive example file (`examples/foundry.php`) with 8 usage scenarios
+  - Documentation in `docs/foundry.md`
+  - Unit tests for Foundry integration
+- Updated README.md with Cloud Platform Integrations section
+- Updated examples/README.md with Foundry examples listing
+
 ## [0.2.0] - 2025-11-22
 
 ### Added

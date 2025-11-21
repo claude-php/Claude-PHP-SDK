@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace ClaudePhp\Tests\Unit\Responses\Decoders;
 
 use ClaudePhp\Responses\Decoders\AsyncJSONLDecoder;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
 class AsyncJSONLDecoderTest extends TestCase
 {
     /**
-     * @var ResponseInterface&\PHPUnit\Framework\MockObject\MockObject
+     * @var MockObject&ResponseInterface
      */
     private ResponseInterface $mockResponse;
 

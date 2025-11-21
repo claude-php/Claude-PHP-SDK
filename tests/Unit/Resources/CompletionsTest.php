@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Unit\Resources;
 
-use ClaudePhp\Tests\TestCase;
-use ClaudePhp\Resources\Completions;
 use ClaudePhp\ClaudePhp;
+use ClaudePhp\Resources\Completions;
+use ClaudePhp\Tests\TestCase;
 
 class CompletionsTest extends TestCase
 {
@@ -19,18 +19,18 @@ class CompletionsTest extends TestCase
         $this->completions = new Completions($client);
     }
 
-    public function test_can_instantiate_completions_resource(): void
+    public function testCanInstantiateCompletionsResource(): void
     {
         $this->assertInstanceOf(Completions::class, $this->completions);
     }
 
-    public function test_create_accepts_valid_parameters(): void
+    public function testCreateAcceptsValidParameters(): void
     {
         // Verify parameter validation passes
         $this->assertTrue(true);
     }
 
-    public function test_stream_sets_stream_flag(): void
+    public function testStreamSetsStreamFlag(): void
     {
         try {
             $this->completions->stream(['model' => 'legacy-test-model', 'prompt' => 'Test']);

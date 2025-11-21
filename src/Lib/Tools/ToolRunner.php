@@ -45,7 +45,7 @@ class ToolRunner
     public function __construct(
         ClaudePhp $client,
         array $tools = [],
-        int $maxIterations = 10
+        int $maxIterations = 10,
     ) {
         $this->client = $client;
         $this->tools = $tools;
@@ -67,6 +67,7 @@ class ToolRunner
      * Run the agentic loop with the given parameters.
      *
      * @param array<string, mixed> $params Message creation parameters
+     *
      * @return mixed The final message after the loop completes
      */
     public function run(array $params): mixed
@@ -75,7 +76,7 @@ class ToolRunner
         $iterationCount = 0;
 
         while ($iterationCount < $this->maxIterations) {
-            $iterationCount++;
+            ++$iterationCount;
 
             // Create message
             $response = $this->client->messages()->create([
@@ -88,7 +89,7 @@ class ToolRunner
             $toolResults = [];
 
             foreach ($response->content ?? [] as $block) {
-                if ($block['type'] === 'tool_use') {
+                if ('tool_use' === $block['type']) {
                     $hasToolUse = true;
                     $toolName = $block['name'] ?? '';
                     $toolInput = $block['input'] ?? [];
@@ -100,7 +101,7 @@ class ToolRunner
                             $toolResults[] = [
                                 'type' => 'tool_result',
                                 'tool_use_id' => $toolId,
-                                'content' => (string)$result,
+                                'content' => (string) $result,
                             ];
                         } catch (\Throwable $e) {
                             $toolResults[] = [
@@ -133,7 +134,7 @@ class ToolRunner
         }
 
         throw new \RuntimeException(
-            "Tool runner reached maximum iterations ({$this->maxIterations})"
+            "Tool runner reached maximum iterations ({$this->maxIterations})",
         );
     }
 }

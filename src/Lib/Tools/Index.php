@@ -28,8 +28,6 @@ function getToolsLibrary(): array
 
 /**
  * Get the tools library version.
- *
- * @return string
  */
 function getToolsLibraryVersion(): string
 {

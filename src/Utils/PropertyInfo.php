@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Utils;
 
-use Annotation;
-
 /**
  * Metadata class for property transformation information.
  *
@@ -17,17 +15,18 @@ use Annotation;
 class PropertyInfo
 {
     /**
-     * @param string|null $alias Field name alias (e.g., for camelCase conversion)
-     * @param string|null $format Format type: 'iso8601', 'base64', or 'custom'
-     * @param string|null $formatTemplate Custom format template for dates
-     * @param string|null $discriminator Discriminator field name for union types
+     * @param null|string $alias Field name alias (e.g., for camelCase conversion)
+     * @param null|string $format Format type: 'iso8601', 'base64', or 'custom'
+     * @param null|string $formatTemplate Custom format template for dates
+     * @param null|string $discriminator Discriminator field name for union types
      */
     public function __construct(
         public ?string $alias = null,
         public ?string $format = null,
         public ?string $formatTemplate = null,
         public ?string $discriminator = null,
-    ) {}
+    ) {
+    }
 
     public function __repr(): string
     {

@@ -14,5 +14,6 @@ class CitationSearchResultLocationParam
         public readonly string $cited_text,
         public readonly int $document_index,
         public readonly ?string $document_title = null,
-    ) {}
+    ) {
+    }
 }

@@ -26,6 +26,7 @@ class TestUtils
             // Handle class names
             if (class_exists($expected_type) || interface_exists($expected_type)) {
                 Assert::assertInstanceOf($expected_type, $actual_value, $message);
+
                 return;
             }
 
@@ -40,27 +41,28 @@ class TestUtils
                 'null' => Assert::assertNull($actual_value, $message),
                 'resource' => Assert::assertIsResource($actual_value, $message),
                 'callable' => Assert::assertIsCallable($actual_value, $message),
-                default => Assert::fail("Unknown type: $expected_type")
+                default => Assert::fail("Unknown type: {$expected_type}")
             };
         } elseif (is_array($expected_type)) {
             // Handle union types represented as arrays
             $matched = false;
             $errors = [];
-            
+
             foreach ($expected_type as $type) {
                 try {
                     self::assertMatchesType($type, $actual_value, $message);
                     $matched = true;
+
                     break;
                 } catch (\Exception $e) {
                     $errors[] = $e->getMessage();
                 }
             }
-            
+
             if (!$matched) {
                 $types = implode('|', $expected_type);
                 $error_details = implode(', ', $errors);
-                Assert::fail("Value does not match any of the union types [$types]. Errors: $error_details");
+                Assert::fail("Value does not match any of the union types [{$types}]. Errors: {$error_details}");
             }
         } else {
             Assert::fail('Invalid expected type provided');
@@ -79,14 +81,14 @@ class TestUtils
         foreach ($expected_properties as $property => $expected_type) {
             Assert::assertTrue(
                 property_exists($object, $property),
-                "Property '$property' does not exist on object. " . $message
+                "Property '{$property}' does not exist on object. " . $message,
             );
-            
-            $actual_value = $object->$property;
+
+            $actual_value = $object->{$property};
             self::assertMatchesType(
                 $expected_type,
                 $actual_value,
-                "Property '$property' has incorrect type. " . $message
+                "Property '{$property}' has incorrect type. " . $message,
             );
         }
     }
@@ -94,17 +96,18 @@ class TestUtils
     /**
      * Update environment variables for testing with automatic cleanup
      *
-     * @param array<string, string|null> $vars Variables to set (null to unset)
+     * @param array<string, null|string> $vars Variables to set (null to unset)
+     *
      * @return \Closure Cleanup function to restore original values
      */
     public static function updateEnv(array $vars): \Closure
     {
         $original = [];
-        
+
         foreach ($vars as $key => $value) {
             $original[$key] = $_ENV[$key] ?? null;
-            
-            if ($value === null) {
+
+            if (null === $value) {
                 unset($_ENV[$key]);
                 if (isset($_SERVER[$key])) {
                     unset($_SERVER[$key]);
@@ -114,10 +117,10 @@ class TestUtils
                 $_SERVER[$key] = $value;
             }
         }
-        
+
         return function () use ($original): void {
             foreach ($original as $key => $value) {
-                if ($value === null) {
+                if (null === $value) {
                     unset($_ENV[$key]);
                     if (isset($_SERVER[$key])) {
                         unset($_SERVER[$key]);
@@ -136,6 +139,7 @@ class TestUtils
      * @param int $status HTTP status code
      * @param array<string, string> $headers Response headers
      * @param string $body Response body
+     *
      * @return array Mock response data
      */
     public static function createMockResponse(int $status = 200, array $headers = [], string $body = ''): array
@@ -177,8 +181,8 @@ class TestUtils
     public static function assertJsonStructure(string $json_string, array $expected_structure, string $message = ''): void
     {
         $decoded = json_decode($json_string, true);
-        Assert::assertIsArray($decoded, "Invalid JSON string. " . $message);
-        
+        Assert::assertIsArray($decoded, 'Invalid JSON string. ' . $message);
+
         self::assertArrayStructure($decoded, $expected_structure, $message);
     }
 
@@ -193,14 +197,14 @@ class TestUtils
     {
         foreach ($expected_structure as $key => $expected_type) {
             if (is_string($key)) {
-                Assert::assertArrayHasKey($key, $array, "Missing key '$key'. " . $message);
-                
+                Assert::assertArrayHasKey($key, $array, "Missing key '{$key}'. " . $message);
+
                 if (is_array($expected_type)) {
                     if (isset($array[$key]) && is_array($array[$key])) {
                         self::assertArrayStructure($array[$key], $expected_type, $message);
                     }
                 } else {
-                    self::assertMatchesType($expected_type, $array[$key], "Key '$key' has incorrect type. " . $message);
+                    self::assertMatchesType($expected_type, $array[$key], "Key '{$key}' has incorrect type. " . $message);
                 }
             }
         }
@@ -218,7 +222,7 @@ class TestUtils
         $lines = explode("\n", $event_data);
         $event_line = null;
         $data_line = null;
-        
+
         foreach ($lines as $line) {
             if (str_starts_with($line, 'event: ')) {
                 $event_line = substr($line, 7);
@@ -226,13 +230,13 @@ class TestUtils
                 $data_line = substr($line, 6);
             }
         }
-        
+
         Assert::assertNotNull($event_line, 'No event line found in SSE event');
         Assert::assertEquals($expected_type, $event_line, 'Event type mismatch in event line');
-        
+
         Assert::assertNotNull($data_line, 'No data line found in SSE event');
-        
-        if (trim($data_line) !== '[DONE]') {
+
+        if ('[DONE]' !== trim($data_line)) {
             $json = json_decode($data_line, true);
             Assert::assertIsArray($json, 'Invalid JSON in SSE data');
             Assert::assertArrayHasKey('type', $json, 'Missing type in SSE event data');

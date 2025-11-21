@@ -22,7 +22,7 @@ class AnthropicBedrock
     private mixed $bedrock;
 
     /**
-     * @var string|null AWS region
+     * @var null|string AWS region
      */
     private ?string $region;
 
@@ -30,12 +30,12 @@ class AnthropicBedrock
      * Create a new AnthropicBedrock client.
      *
      * @param array<string, mixed> $config AWS SDK configuration
-     * @param string|null $region AWS region
+     * @param null|string $region AWS region
      */
     public function __construct(array $config = [], ?string $region = null)
     {
         // Use reflection to avoid requiring aws/sdk-php
-        $bedrockClass = 'Aws\\BedrockRuntime\\BedrockRuntimeClient';
+        $bedrockClass = 'Aws\BedrockRuntime\BedrockRuntimeClient';
         if (\class_exists($bedrockClass)) {
             $this->bedrock = new $bedrockClass($config);
         }
@@ -46,7 +46,6 @@ class AnthropicBedrock
      * Create a message via Bedrock.
      *
      * @param array<string, mixed> $params Message parameters
-     * @return Message
      */
     public function createMessage(array $params): Message
     {
@@ -66,12 +65,11 @@ class AnthropicBedrock
      * Create a message with streaming via Bedrock.
      *
      * @param array<string, mixed> $params Message parameters
-     * @param callable|null $onChunk Optional callback for each chunk
-     * @return Message
+     * @param null|callable $onChunk Optional callback for each chunk
      */
     public function createMessageStream(
         array $params,
-        ?callable $onChunk = null
+        ?callable $onChunk = null,
     ): Message {
         $bedrockParams = $this->transformParams($params);
         $bedrockParams['stream'] = true;
@@ -85,7 +83,7 @@ class AnthropicBedrock
         $eventStream = $response['body'];
 
         foreach ($this->parseEventStream($eventStream) as $event) {
-            if ($onChunk !== null) {
+            if (null !== $onChunk) {
                 ($onChunk)($event);
             }
             $manager->addEvent($event);
@@ -98,6 +96,7 @@ class AnthropicBedrock
      * Transform SDK params to Bedrock format.
      *
      * @param array<string, mixed> $params
+     *
      * @return array<string, mixed>
      */
     private function transformParams(array $params): array
@@ -117,6 +116,7 @@ class AnthropicBedrock
      * Convert model ID to Bedrock model ID.
      *
      * @param string $modelId SDK model ID
+     *
      * @return string Bedrock model ID
      */
     private function getBedrockModelId(string $modelId): string
@@ -134,7 +134,6 @@ class AnthropicBedrock
      * Transform Bedrock response to SDK format.
      *
      * @param array<string, mixed> $bedrockResponse
-     * @return Message
      */
     private function transformResponse(array $bedrockResponse): Message
     {
@@ -161,7 +160,7 @@ class AnthropicBedrock
             content: $content,
             model: $bedrockResponse['model'] ?? 'unknown',
             stop_reason: $bedrockResponse['stop_reason'] ?? 'end_turn',
-            usage: $usage
+            usage: $usage,
         );
     }
 
@@ -169,6 +168,7 @@ class AnthropicBedrock
      * Parse AWS EventStream format.
      *
      * @param mixed $eventStream Event stream from Bedrock
+     *
      * @return \Generator<array<string, mixed>>
      */
     private function parseEventStream(mixed $eventStream): \Generator

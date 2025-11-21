@@ -13,5 +13,6 @@ class RawMessageDeltaEvent
         public readonly string $type,
         public readonly mixed $delta,
         public readonly int $usage,
-    ) {}
+    ) {
+    }
 }

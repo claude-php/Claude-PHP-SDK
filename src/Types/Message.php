@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Types;
 
-use ClaudePhp\Types\Usage;
-
 /**
  * Message response from the Anthropic API
  *
@@ -20,7 +18,7 @@ class Message
      * @param array<array<string, mixed>> $content The message content blocks
      * @param string $model The model that generated the response
      * @param string $stop_reason Why the model stopped generating text
-     * @param string|null $stop_sequence The stop sequence that triggered the halt (if any)
+     * @param null|string $stop_sequence The stop sequence that triggered the halt (if any)
      * @param Usage $usage Token usage information
      */
     public function __construct(
@@ -32,5 +30,6 @@ class Message
         public readonly string $stop_reason,
         public readonly ?string $stop_sequence,
         public readonly Usage $usage,
-    ) {}
+    ) {
+    }
 }

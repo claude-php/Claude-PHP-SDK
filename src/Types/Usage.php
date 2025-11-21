@@ -15,5 +15,6 @@ class Usage
         public readonly ?int $cache_creation_input_tokens = null,
         public readonly ?int $cache_read_input_tokens = null,
         public readonly ?array $server_tool_use = null,
-    ) {}
+    ) {
+    }
 }

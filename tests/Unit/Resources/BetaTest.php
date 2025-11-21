@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Unit\Resources\Beta;
 
-use ClaudePhp\Tests\TestCase;
+use ClaudePhp\ClaudePhp;
+use ClaudePhp\Resources\Beta\Batches;
 use ClaudePhp\Resources\Beta\Beta;
 use ClaudePhp\Resources\Beta\Files;
 use ClaudePhp\Resources\Beta\Messages;
 use ClaudePhp\Resources\Beta\Models;
 use ClaudePhp\Resources\Beta\Skills;
-use ClaudePhp\ClaudePhp;
+use ClaudePhp\Resources\Beta\Versions;
+use ClaudePhp\Tests\TestCase;
 
 class BetaTest extends TestCase
 {
@@ -23,30 +25,30 @@ class BetaTest extends TestCase
         $this->beta = new Beta($client);
     }
 
-    public function test_can_instantiate_beta_resource(): void
+    public function testCanInstantiateBetaResource(): void
     {
         $this->assertInstanceOf(Beta::class, $this->beta);
     }
 
-    public function test_files_returns_files_resource(): void
+    public function testFilesReturnsFilesResource(): void
     {
         $files = $this->beta->files();
         $this->assertInstanceOf(Files::class, $files);
     }
 
-    public function test_messages_returns_messages_resource(): void
+    public function testMessagesReturnsMessagesResource(): void
     {
         $messages = $this->beta->messages();
         $this->assertInstanceOf(Messages::class, $messages);
     }
 
-    public function test_models_returns_models_resource(): void
+    public function testModelsReturnsModelsResource(): void
     {
         $models = $this->beta->models();
         $this->assertInstanceOf(Models::class, $models);
     }
 
-    public function test_skills_returns_skills_resource(): void
+    public function testSkillsReturnsSkillsResource(): void
     {
         $skills = $this->beta->skills();
         $this->assertInstanceOf(Skills::class, $skills);
@@ -64,7 +66,7 @@ class BetaFilesTest extends TestCase
         $this->files = new Files($client);
     }
 
-    public function test_upload_validates_file_parameter(): void
+    public function testUploadValidatesFileParameter(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('file parameter is required');
@@ -72,7 +74,7 @@ class BetaFilesTest extends TestCase
         $this->files->upload([]);
     }
 
-    public function test_retrieve_validates_file_id(): void
+    public function testRetrieveValidatesFileId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('file_id is required');
@@ -80,7 +82,7 @@ class BetaFilesTest extends TestCase
         $this->files->retrieve('');
     }
 
-    public function test_content_validates_file_id(): void
+    public function testContentValidatesFileId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('file_id is required');
@@ -88,7 +90,7 @@ class BetaFilesTest extends TestCase
         $this->files->content('');
     }
 
-    public function test_delete_validates_file_id(): void
+    public function testDeleteValidatesFileId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('file_id is required');
@@ -108,20 +110,20 @@ class BetaMessagesTest extends TestCase
         $this->messages = $this->testClient->beta()->messages();
     }
 
-    public function test_create_validates_required_parameters(): void
+    public function testCreateValidatesRequiredParameters(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
         $this->messages->create([]);
     }
 
-    public function test_batches_returns_batches_resource(): void
+    public function testBatchesReturnsBatchesResource(): void
     {
         $batches = $this->messages->batches();
-        $this->assertInstanceOf(\ClaudePhp\Resources\Beta\Batches::class, $batches);
+        $this->assertInstanceOf(Batches::class, $batches);
     }
 
-    public function test_parse_requires_output_format(): void
+    public function testParseRequiresOutputFormat(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->messages->parse([
@@ -131,7 +133,7 @@ class BetaMessagesTest extends TestCase
         ]);
     }
 
-    public function test_parse_returns_structured_data(): void
+    public function testParseReturnsStructuredData(): void
     {
         $schema = [
             'type' => 'object',
@@ -160,7 +162,7 @@ class BetaMessagesTest extends TestCase
         $this->assertSame(['order_id' => '123'], $result);
     }
 
-    public function test_stream_structured_returns_wrapped_stream(): void
+    public function testStreamStructuredReturnsWrappedStream(): void
     {
         $schema = [
             'type' => 'object',
@@ -168,7 +170,7 @@ class BetaMessagesTest extends TestCase
             'required' => ['answer'],
         ];
 
-        $streamData = "";
+        $streamData = '';
         $streamData .= $this->createStreamingEvent('message_start', [
             'type' => 'message_start',
             'message' => [
@@ -217,7 +219,7 @@ class BetaModelsTest extends TestCase
         $this->models = new Models($client);
     }
 
-    public function test_retrieve_validates_model_id(): void
+    public function testRetrieveValidatesModelId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('model_id is required');
@@ -237,14 +239,14 @@ class BetaSkillsTest extends TestCase
         $this->skills = new Skills($client);
     }
 
-    public function test_create_validates_required_parameters(): void
+    public function testCreateValidatesRequiredParameters(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
         $this->skills->create([]);
     }
 
-    public function test_retrieve_validates_skill_id(): void
+    public function testRetrieveValidatesSkillId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('skill_id is required');
@@ -252,7 +254,7 @@ class BetaSkillsTest extends TestCase
         $this->skills->retrieve('');
     }
 
-    public function test_delete_validates_skill_id(): void
+    public function testDeleteValidatesSkillId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('skill_id is required');
@@ -260,32 +262,32 @@ class BetaSkillsTest extends TestCase
         $this->skills->delete('');
     }
 
-    public function test_versions_returns_versions_resource(): void
+    public function testVersionsReturnsVersionsResource(): void
     {
         $versions = $this->skills->versions();
-        $this->assertInstanceOf(\ClaudePhp\Resources\Beta\Versions::class, $versions);
+        $this->assertInstanceOf(Versions::class, $versions);
     }
 }
 
 class BetaVersionsTest extends TestCase
 {
-    private \ClaudePhp\Resources\Beta\Versions $versions;
+    private Versions $versions;
 
     protected function setUp(): void
     {
         parent::setUp();
         $client = new ClaudePhp(apiKey: 'test-key');
-        $this->versions = new \ClaudePhp\Resources\Beta\Versions($client);
+        $this->versions = new Versions($client);
     }
 
-    public function test_create_validates_skill_id(): void
+    public function testCreateValidatesSkillId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
         $this->versions->create([]);
     }
 
-    public function test_list_validates_skill_id(): void
+    public function testListValidatesSkillId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('skill_id is required');
@@ -293,7 +295,7 @@ class BetaVersionsTest extends TestCase
         $this->versions->list('');
     }
 
-    public function test_retrieve_validates_skill_id(): void
+    public function testRetrieveValidatesSkillId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('skill_id and version_id are required');
@@ -301,7 +303,7 @@ class BetaVersionsTest extends TestCase
         $this->versions->retrieve('', 'v1');
     }
 
-    public function test_retrieve_validates_version_id(): void
+    public function testRetrieveValidatesVersionId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('skill_id and version_id are required');
@@ -309,7 +311,7 @@ class BetaVersionsTest extends TestCase
         $this->versions->retrieve('skill-1', '');
     }
 
-    public function test_delete_validates_ids(): void
+    public function testDeleteValidatesIds(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('skill_id and version_id are required');

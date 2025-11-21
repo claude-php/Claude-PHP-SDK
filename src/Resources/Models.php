@@ -19,8 +19,8 @@ class Models extends Resource
      * Returns a paginated list of all available Claude models.
      *
      * @param array<string, mixed> $params Query parameters:
-     *   - limit: int (optional) - Number of models to return (max 100)
-     *   - before_id: string (optional) - Pagination cursor
+     *                                     - limit: int (optional) - Number of models to return (max 100)
+     *                                     - before_id: string (optional) - Pagination cursor
      *
      * @return array Response with models array and pagination
      */
@@ -35,6 +35,7 @@ class Models extends Resource
      * Gets detailed information about a specific model.
      *
      * @param string $modelId The model ID to retrieve
+     *
      * @return Model Model information object
      */
     public function retrieve(string $modelId): array

@@ -22,12 +22,12 @@ class AnthropicVertex
     private string $projectId;
 
     /**
-     * @var string|null Google Cloud region
+     * @var null|string Google Cloud region
      */
     private ?string $region;
 
     /**
-     * @var string|null API access token
+     * @var null|string API access token
      */
     private ?string $accessToken;
 
@@ -35,13 +35,13 @@ class AnthropicVertex
      * Create a new AnthropicVertex client.
      *
      * @param string $projectId Google Cloud project ID
-     * @param string|null $region Google Cloud region (default: us-central1)
-     * @param string|null $accessToken Optional access token
+     * @param null|string $region Google Cloud region (default: us-central1)
+     * @param null|string $accessToken Optional access token
      */
     public function __construct(
         string $projectId,
         ?string $region = null,
-        ?string $accessToken = null
+        ?string $accessToken = null,
     ) {
         $this->projectId = $projectId;
         $this->region = $region ?? 'us-central1';
@@ -52,7 +52,6 @@ class AnthropicVertex
      * Create a message via Vertex AI.
      *
      * @param array<string, mixed> $params Message parameters
-     * @return Message
      */
     public function createMessage(array $params): Message
     {
@@ -70,12 +69,11 @@ class AnthropicVertex
      * Create a message with streaming via Vertex AI.
      *
      * @param array<string, mixed> $params Message parameters
-     * @param callable|null $onChunk Optional callback for each chunk
-     * @return Message
+     * @param null|callable $onChunk Optional callback for each chunk
      */
     public function createMessageStream(
         array $params,
-        ?callable $onChunk = null
+        ?callable $onChunk = null,
     ): Message {
         $vertexParams = $this->transformParams($params);
         $vertexParams['stream'] = true;
@@ -87,7 +85,7 @@ class AnthropicVertex
 
         $stream = $this->makeStreamRequest('POST', $url, $vertexParams);
         foreach ($stream as $event) {
-            if ($onChunk !== null) {
+            if (null !== $onChunk) {
                 ($onChunk)($event);
             }
             $manager->addEvent($event);
@@ -100,6 +98,7 @@ class AnthropicVertex
      * Transform SDK params to Vertex AI format.
      *
      * @param array<string, mixed> $params
+     *
      * @return array<string, mixed>
      */
     private function transformParams(array $params): array
@@ -119,6 +118,7 @@ class AnthropicVertex
      * Convert model ID to Vertex AI model ID.
      *
      * @param string $modelId SDK model ID
+     *
      * @return string Vertex AI model ID
      */
     private function getVertexModelId(string $modelId): string
@@ -135,8 +135,6 @@ class AnthropicVertex
      * Transform Vertex AI response to SDK format.
      *
      * @param array<string, mixed> $vertexResponse
-     * @param string $model
-     * @return Message
      */
     private function transformResponse(array $vertexResponse, string $model): Message
     {
@@ -163,14 +161,12 @@ class AnthropicVertex
             content: $content,
             model: $model,
             stop_reason: $vertexResponse['stop_reason'] ?? 'end_turn',
-            usage: $usage
+            usage: $usage,
         );
     }
 
     /**
      * Load access token from Google Cloud auth.
-     *
-     * @return string|null
      */
     private function loadAccessToken(): ?string
     {
@@ -185,6 +181,7 @@ class AnthropicVertex
      * @param string $method HTTP method
      * @param string $url Request URL
      * @param array<string, mixed> $data Request body
+     *
      * @return array<string, mixed>
      */
     private function makeRequest(string $method, string $url, array $data): array
@@ -203,7 +200,7 @@ class AnthropicVertex
         ]);
 
         $response = @\file_get_contents($url, false, $context);
-        if ($response === false) {
+        if (false === $response) {
             throw new \RuntimeException('Vertex AI API request failed');
         }
 
@@ -216,12 +213,13 @@ class AnthropicVertex
      * @param string $method HTTP method
      * @param string $url Request URL
      * @param array<string, mixed> $data Request body
+     *
      * @return \Generator<array<string, mixed>>
      */
     private function makeStreamRequest(
         string $method,
         string $url,
-        array $data
+        array $data,
     ): \Generator {
         $headers = [
             'Content-Type: application/json',
@@ -237,13 +235,13 @@ class AnthropicVertex
         ]);
 
         $stream = @\fopen($url, 'r', false, $context);
-        if ($stream === false) {
+        if (false === $stream) {
             throw new \RuntimeException('Vertex AI stream request failed');
         }
 
         while (!feof($stream)) {
             $line = \fgets($stream);
-            if ($line === false) {
+            if (false === $line) {
                 break;
             }
 

@@ -28,12 +28,12 @@ class APIStatusError extends APIError
     public $response;
 
     /**
-     * @var array<string, mixed>|object|string|null
+     * @var null|array<string, mixed>|object|string
      */
     public $body;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     public $request_id;
 
@@ -42,8 +42,8 @@ class APIStatusError extends APIError
      * @param string $message Error message
      * @param RequestInterface $request The HTTP request
      * @param ResponseInterface $response The HTTP response
-     * @param array<string, mixed>|object|string|null $body Parsed response body
-     * @param string|null $request_id Request ID from headers
+     * @param null|array<string, mixed>|object|string $body Parsed response body
+     * @param null|string $request_id Request ID from headers
      */
     public function __construct(
         int $status_code,
@@ -51,7 +51,7 @@ class APIStatusError extends APIError
         RequestInterface $request,
         ResponseInterface $response,
         array|object|string|null $body = null,
-        ?string $request_id = null
+        ?string $request_id = null,
     ) {
         parent::__construct($message);
         $this->status_code = $status_code;

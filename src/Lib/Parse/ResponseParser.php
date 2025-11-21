@@ -19,8 +19,10 @@ class ResponseParser
      *
      * @param Message $message The message response from Claude
      * @param array<string, mixed> $schema The response schema (JSON Schema format)
-     * @return array<string, mixed> Parsed and validated response data
+     *
      * @throws \RuntimeException If parsing fails or validation fails
+     *
+     * @return array<string, mixed> Parsed and validated response data
      */
     public static function parse(Message $message, array $schema): array
     {
@@ -39,6 +41,7 @@ class ResponseParser
      *
      * @param string $text JSON text
      * @param array<string, mixed> $schema JSON schema
+     *
      * @return array<string, mixed>
      */
     public static function parseText(string $text, array $schema): array
@@ -63,7 +66,8 @@ class ResponseParser
      *
      * @param string $text JSON text (possibly partial)
      * @param array<string, mixed> $schema JSON schema
-     * @return array<string, mixed>|null
+     *
+     * @return null|array<string, mixed>
      */
     public static function tryParseText(string $text, array $schema): ?array
     {
@@ -77,17 +81,17 @@ class ResponseParser
     /**
      * Extract all text content from message.
      *
-     * @param Message $message
      * @return string Concatenated text content
      */
     private static function extractTextContent(Message $message): string
     {
         $text = '';
         foreach ($message->content ?? [] as $block) {
-            if (isset($block['type']) && $block['type'] === 'text') {
+            if (isset($block['type']) && 'text' === $block['type']) {
                 $text .= $block['text'] ?? '';
             }
         }
+
         return $text;
     }
 
@@ -96,6 +100,7 @@ class ResponseParser
      *
      * @param mixed $data The data to validate
      * @param array<string, mixed> $schema The JSON schema
+     *
      * @throws \RuntimeException If validation fails
      */
     private static function validateAgainstSchema(mixed $data, array $schema): void
@@ -105,19 +110,19 @@ class ResponseParser
         // Validate type
         if ($type && !self::validateType($data, $type)) {
             throw new \RuntimeException(
-                "Type mismatch: expected $type, got " . \gettype($data)
+                "Type mismatch: expected {$type}, got " . \gettype($data),
             );
         }
 
         // Validate object properties
-        if ($type === 'object' && \is_array($data)) {
+        if ('object' === $type && \is_array($data)) {
             $properties = $schema['properties'] ?? [];
             $required = $schema['required'] ?? [];
 
             // Check required properties
             foreach ($required as $requiredProp) {
                 if (!isset($data[$requiredProp])) {
-                    throw new \RuntimeException("Missing required property: $requiredProp");
+                    throw new \RuntimeException("Missing required property: {$requiredProp}");
                 }
             }
 
@@ -130,7 +135,7 @@ class ResponseParser
         }
 
         // Validate array items
-        if ($type === 'array' && \is_array($data)) {
+        if ('array' === $type && \is_array($data)) {
             $itemsSchema = $schema['items'] ?? [];
             foreach ($data as $item) {
                 if (!empty($itemsSchema)) {
@@ -143,11 +148,9 @@ class ResponseParser
     /**
      * Validate data type against schema type specification.
      *
-     * @param mixed $data
-     * @param string|array<string> $type
-     * @return bool
+     * @param array<string>|string $type
      */
-    private static function validateType(mixed $data, string|array $type): bool
+    private static function validateType(mixed $data, array|string $type): bool
     {
         if (\is_string($type)) {
             return match ($type) {
@@ -157,7 +160,7 @@ class ResponseParser
                 'boolean' => \is_bool($data),
                 'array' => \is_array($data),
                 'object' => \is_array($data),
-                'null' => $data === null,
+                'null' => null === $data,
                 default => true,
             };
         }

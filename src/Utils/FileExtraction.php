@@ -21,6 +21,7 @@ final class FileExtraction
      *
      * @param array<string, mixed> $query The data structure to extract from
      * @param string[][] $paths Paths to extract files from (e.g., [['files', '<array>'], ['avatar']])
+     *
      * @return array<array<string, mixed>> Array of [path, file_data] tuples
      */
     public static function extractFiles(array &$query, array $paths): array
@@ -40,6 +41,7 @@ final class FileExtraction
      *
      * @param mixed $obj The object to extract from (modified by reference)
      * @param string[] $path The path to follow
+     *
      * @return array<array<string, mixed>>
      */
     private static function extractPath(mixed &$obj, array $path): array
@@ -62,13 +64,14 @@ final class FileExtraction
      * @param string[] $path Full path to follow
      * @param int $index Current index in path
      * @param string $prefix Key prefix for flattened names
+     *
      * @return array<array<string, mixed>>
      */
     private static function extractPathRecursive(
         mixed &$obj,
         array $path,
         int $index,
-        string $prefix
+        string $prefix,
     ): array {
         if (!Utils::isMapping($obj)) {
             return [];
@@ -76,12 +79,12 @@ final class FileExtraction
 
         $key = $path[$index] ?? null;
 
-        if ($key === null) {
+        if (null === $key) {
             // Reached end of path
             return [];
         }
 
-        if ($key === '<array>') {
+        if ('<array>' === $key) {
             // Handle array iteration
             if (!Utils::isList($obj)) {
                 return [];
@@ -119,6 +122,7 @@ final class FileExtraction
                     $files[] = ["{$newPrefix}[]", $item];
                 }
                 unset($obj[$key]);
+
                 return $files;
             }
 
@@ -128,11 +132,13 @@ final class FileExtraction
 
             $files = [[$newPrefix, $value]];
             unset($obj[$key]);
+
             return $files;
         }
 
         // Intermediate key - recurse deeper
         $value = &$obj[$key];
+
         return self::extractPathRecursive($value, $path, $index + 1, $newPrefix);
     }
 }

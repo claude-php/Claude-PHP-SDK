@@ -8,13 +8,12 @@ use ClaudePhp\Utils\CompatUtils;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionFunction;
-use ReflectionParameter;
 
 class CompatUtilsTest extends TestCase
 {
     public function testGetArgsFromUnionType(): void
     {
-        $reflection = new ReflectionFunction(function (string|int|null $param) {
+        $reflection = new ReflectionFunction(function (int|string|null $param) {
             return $param;
         });
 
@@ -65,7 +64,7 @@ class CompatUtilsTest extends TestCase
 
     public function testGetOriginFromUnionType(): void
     {
-        $reflection = new ReflectionFunction(function (string|int $param) {
+        $reflection = new ReflectionFunction(function (int|string $param) {
             return $param;
         });
 
@@ -121,7 +120,7 @@ class CompatUtilsTest extends TestCase
 
     public function testIsUnionWithUnionType(): void
     {
-        $reflection = new ReflectionFunction(function (string|int $param) {
+        $reflection = new ReflectionFunction(function (int|string $param) {
             return $param;
         });
 
@@ -252,4 +251,6 @@ class CompatUtilsTest extends TestCase
 /**
  * Example class for TypedDict testing.
  */
-final class TypedDictExample {}
+final class TypedDictExample
+{
+}

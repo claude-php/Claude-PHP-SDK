@@ -20,12 +20,12 @@ class BatchesTest extends TestCase
         $this->batches = new Batches($this->testClient);
     }
 
-    public function test_can_instantiate_batches_resource(): void
+    public function testCanInstantiateBatchesResource(): void
     {
         $this->assertInstanceOf(Batches::class, $this->batches);
     }
 
-    public function test_create_validates_requests_parameter(): void
+    public function testCreateValidatesRequestsParameter(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing required parameter: requests');
@@ -33,7 +33,7 @@ class BatchesTest extends TestCase
         $this->batches->create([]);
     }
 
-    public function test_create_accepts_valid_requests(): void
+    public function testCreateAcceptsValidRequests(): void
     {
         $this->addMockResponse(200, [], json_encode(['id' => 'msgbatch_123']));
         $response = $this->batches->create(['requests' => [['custom_id' => '1', 'params' => []]]]);
@@ -42,7 +42,7 @@ class BatchesTest extends TestCase
         $this->assertSame('msgbatch_123', $response['id']);
     }
 
-    public function test_retrieve_validates_batch_id(): void
+    public function testRetrieveValidatesBatchId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('batch_id is required');
@@ -50,7 +50,7 @@ class BatchesTest extends TestCase
         $this->batches->retrieve('');
     }
 
-    public function test_retrieve_accepts_valid_batch_id(): void
+    public function testRetrieveAcceptsValidBatchId(): void
     {
         $this->addMockResponse(200, [], json_encode(['id' => 'batch-123']));
         $batch = $this->batches->retrieve('batch-123');
@@ -58,13 +58,13 @@ class BatchesTest extends TestCase
         $this->assertSame('batch-123', $batch['id']);
     }
 
-    public function test_list_accepts_parameters(): void
+    public function testListAcceptsParameters(): void
     {
         // Verify parameter validation passes
         $this->assertTrue(true);
     }
 
-    public function test_cancel_validates_batch_id(): void
+    public function testCancelValidatesBatchId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('batch_id is required');
@@ -72,7 +72,7 @@ class BatchesTest extends TestCase
         $this->batches->cancel('');
     }
 
-    public function test_cancel_accepts_valid_batch_id(): void
+    public function testCancelAcceptsValidBatchId(): void
     {
         $this->addMockResponse(200, [], json_encode(['id' => 'batch-123', 'processing_status' => 'canceled']));
         $batch = $this->batches->cancel('batch-123');
@@ -80,7 +80,7 @@ class BatchesTest extends TestCase
         $this->assertSame('canceled', $batch['processing_status']);
     }
 
-    public function test_results_validates_batch_id(): void
+    public function testResultsValidatesBatchId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('batch_id is required');
@@ -88,7 +88,7 @@ class BatchesTest extends TestCase
         $this->batches->results('');
     }
 
-    public function test_results_returns_jsonl_decoder(): void
+    public function testResultsReturnsJsonlDecoder(): void
     {
         $this->addMockResponses([
             TestUtils::createMockResponse(200, [], json_encode([
@@ -103,7 +103,7 @@ class BatchesTest extends TestCase
         $this->assertInstanceOf(JSONLDecoder::class, $result);
     }
 
-    public function test_results_streams_jsonl_payload(): void
+    public function testResultsStreamsJsonlPayload(): void
     {
         $resultsUrl = TestUtils::getTestBaseUrl() . '/v1/messages/batches/batch-123/results';
 
@@ -117,7 +117,7 @@ class BatchesTest extends TestCase
                 200,
                 ['Content-Type' => 'application/binary'],
                 '{"custom_id":"req_1","result":{"type":"succeeded"}}' . "\n"
-                    . '{"custom_id":"req_2","result":{"type":"errored","error":{"type":"invalid_request"}}}'
+                    . '{"custom_id":"req_2","result":{"type":"errored","error":{"type":"invalid_request"}}}',
             ),
         ]);
 
@@ -139,7 +139,7 @@ class BatchesTest extends TestCase
         $this->assertSame($resultsUrl, (string) $requests[1]->getUri());
     }
 
-    public function test_delete_validates_batch_id(): void
+    public function testDeleteValidatesBatchId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('batch_id is required');
@@ -147,7 +147,7 @@ class BatchesTest extends TestCase
         $this->batches->delete('');
     }
 
-    public function test_delete_accepts_valid_batch_id(): void
+    public function testDeleteAcceptsValidBatchId(): void
     {
         // Verify parameter validation passes
         $this->assertTrue(true);

@@ -18,5 +18,6 @@ class ContentBlockStopEvent
     public function __construct(
         public readonly string $type,
         public readonly int $index,
-    ) {}
+    ) {
+    }
 }

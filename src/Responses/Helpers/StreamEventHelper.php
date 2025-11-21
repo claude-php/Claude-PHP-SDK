@@ -9,7 +9,9 @@ namespace ClaudePhp\Responses\Helpers;
  */
 final class StreamEventHelper
 {
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
      * Return the high-level type discriminator for an event.
@@ -28,7 +30,7 @@ final class StreamEventHelper
      */
     public static function isTextDelta(array $event): bool
     {
-        return self::type($event) === 'content_block_delta'
+        return 'content_block_delta' === self::type($event)
             && ($event['delta']['type'] ?? null) === 'text_delta';
     }
 
@@ -53,7 +55,7 @@ final class StreamEventHelper
      */
     public static function isInputJsonDelta(array $event): bool
     {
-        return self::type($event) === 'content_block_delta'
+        return 'content_block_delta' === self::type($event)
             && ($event['delta']['type'] ?? null) === 'input_json_delta';
     }
 
@@ -78,6 +80,6 @@ final class StreamEventHelper
      */
     public static function isMessageStop(array $event): bool
     {
-        return self::type($event) === 'message_stop';
+        return 'message_stop' === self::type($event);
     }
 }

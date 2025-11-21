@@ -38,7 +38,7 @@ final class SchemaTransformerTest extends TestCase
                 'tags' => 'array[string]',
             ],
             ['name'],
-            'Person'
+            'Person',
         );
 
         $this->assertSame('object', $schema['type']);

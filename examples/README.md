@@ -213,6 +213,19 @@ See [STREAMING_EXAMPLES.md](STREAMING_EXAMPLES.md) for comprehensive streaming d
 
 - **beta_features.php** - Using beta features with the anthropic-beta header
 
+### Cloud Platform Integrations
+
+- **foundry.php** - Microsoft Azure AI Foundry integration (from the [Claude in Microsoft Foundry](https://docs.claude.com/en/docs/build-with-claude/claude-in-microsoft-foundry) guide):
+  - API key authentication
+  - Azure AD token authentication
+  - Streaming with Foundry
+  - Tool use with Foundry
+  - Token counting
+  - Multi-turn conversations
+  - Vision support
+  - Error handling
+  - Full feature parity with direct API
+
 ### Testing
 
 - **test_connection.php** - Basic connectivity test with debugging output

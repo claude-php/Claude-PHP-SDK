@@ -12,5 +12,6 @@ class WebSearchTool20250305
     public function __construct(
         public readonly string $type,
         public readonly string $name,
-    ) {}
+    ) {
+    }
 }

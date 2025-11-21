@@ -20,5 +20,6 @@ class BetaBase64ImageSourceParam
         public readonly string $type,
         public readonly string $media_type,
         public readonly string $data,
-    ) {}
+    ) {
+    }
 }

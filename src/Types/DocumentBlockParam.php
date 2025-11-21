@@ -15,5 +15,6 @@ class DocumentBlockParam
         public readonly ?string $title = null,
         public readonly ?array $citations = null,
         public readonly ?string $context = null,
-    ) {}
+    ) {
+    }
 }

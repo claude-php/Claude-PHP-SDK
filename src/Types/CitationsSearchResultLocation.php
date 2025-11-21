@@ -16,5 +16,6 @@ class CitationsSearchResultLocation
      */
     public function __construct(
         public readonly int $result_index,
-    ) {}
+    ) {
+    }
 }

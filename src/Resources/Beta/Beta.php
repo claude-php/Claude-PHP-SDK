@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Resources\Beta;
 
-use ClaudePhp\Resources\Resource;
 use ClaudePhp\Resources\Beta\Skills\Skills;
+use ClaudePhp\Resources\Resource;
 
 /**
  * Beta resource wrapper.
@@ -16,8 +16,6 @@ class Beta extends Resource
 {
     /**
      * Get the Files sub-resource.
-     *
-     * @return Files
      */
     public function files(): Files
     {
@@ -26,8 +24,6 @@ class Beta extends Resource
 
     /**
      * Get the Messages sub-resource.
-     *
-     * @return Messages
      */
     public function messages(): Messages
     {
@@ -36,8 +32,6 @@ class Beta extends Resource
 
     /**
      * Get the Models sub-resource.
-     *
-     * @return Models
      */
     public function models(): Models
     {
@@ -46,8 +40,6 @@ class Beta extends Resource
 
     /**
      * Get the Skills sub-resource.
-     *
-     * @return Skills
      */
     public function skills(): Skills
     {

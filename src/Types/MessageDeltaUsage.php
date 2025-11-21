@@ -12,5 +12,6 @@ class MessageDeltaUsage
     public function __construct(
         public readonly string $type,
         public readonly int $output_tokens,
-    ) {}
+    ) {
+    }
 }

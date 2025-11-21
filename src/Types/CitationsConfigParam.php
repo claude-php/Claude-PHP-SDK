@@ -12,5 +12,6 @@ class CitationsConfigParam
     public function __construct(
         public readonly string $type,
         public readonly ?bool $enabled = null,
-    ) {}
+    ) {
+    }
 }

@@ -14,5 +14,6 @@ class WebSearchResultBlockParam
         public readonly ?string $url = null,
         public readonly ?string $title = null,
         public readonly ?string $snippet = null,
-    ) {}
+    ) {
+    }
 }

@@ -13,5 +13,6 @@ class RawContentBlockStartEvent
         public readonly string $type,
         public readonly int $index,
         public readonly mixed $content_block,
-    ) {}
+    ) {
+    }
 }

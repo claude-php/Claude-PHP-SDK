@@ -23,8 +23,6 @@ function getParseLibrary(): array
 
 /**
  * Get the parse library version.
- *
- * @return string
  */
 function getParseLibraryVersion(): string
 {

@@ -11,7 +11,8 @@ class ReflectionTest extends TestCase
 {
     public function testFunctionHasArgument(): void
     {
-        $func = static function (int $id, string $name): void {};
+        $func = static function (int $id, string $name): void {
+        };
 
         $this->assertTrue(Reflection::functionHasArgument($func, 'id'));
         $this->assertTrue(Reflection::functionHasArgument($func, 'name'));
@@ -21,7 +22,9 @@ class ReflectionTest extends TestCase
     public function testFunctionHasArgumentWithMethod(): void
     {
         $class = new class {
-            public function method(string $param): void {}
+            public function method(string $param): void
+            {
+            }
         };
 
         $this->assertTrue(Reflection::functionHasArgument([$class, 'method'], 'param'));
@@ -30,7 +33,8 @@ class ReflectionTest extends TestCase
 
     public function testGetParameterNames(): void
     {
-        $func = static function (string $first, int $second, bool $third): void {};
+        $func = static function (string $first, int $second, bool $third): void {
+        };
 
         $names = Reflection::getParameterNames($func);
 
@@ -39,7 +43,8 @@ class ReflectionTest extends TestCase
 
     public function testGetParameterNamesEmpty(): void
     {
-        $func = static function (): void {};
+        $func = static function (): void {
+        };
 
         $names = Reflection::getParameterNames($func);
 
@@ -48,11 +53,13 @@ class ReflectionTest extends TestCase
 
     public function testSignaturesInSync(): void
     {
-        $func1 = static function (int $id, string $name): void {};
+        $func1 = static function (int $id, string $name): void {
+        };
         $func2 = static function (int $id, string $name): string {
             return '';
         };
-        $func3 = static function (int $id): void {};
+        $func3 = static function (int $id): void {
+        };
 
         $this->assertTrue(Reflection::signaturesInSync($func1, $func2));
         $this->assertFalse(Reflection::signaturesInSync($func1, $func3));
@@ -60,8 +67,10 @@ class ReflectionTest extends TestCase
 
     public function testSignaturesInSyncWithExclude(): void
     {
-        $func1 = static function (int $id, string $name): void {};
-        $func2 = static function (int $id): void {};
+        $func1 = static function (int $id, string $name): void {
+        };
+        $func2 = static function (int $id): void {
+        };
 
         // When excluding 'name', they should be in sync
         $this->assertTrue(Reflection::signaturesInSync($func1, $func2, ['name']));
@@ -69,7 +78,8 @@ class ReflectionTest extends TestCase
 
     public function testGetParameterTypes(): void
     {
-        $func = static function (int $id, ?string $name): void {};
+        $func = static function (int $id, ?string $name): void {
+        };
 
         $types = Reflection::getParameterTypes($func);
 
@@ -81,7 +91,8 @@ class ReflectionTest extends TestCase
 
     public function testGetParameterTypesNoTypes(): void
     {
-        $func = static function ($untyped): void {};
+        $func = static function ($untyped): void {
+        };
 
         $types = Reflection::getParameterTypes($func);
 

@@ -16,5 +16,6 @@ class CitationPageLocationParam
         public readonly int $start_page_number,
         public readonly int $end_page_number,
         public readonly ?string $document_title = null,
-    ) {}
+    ) {
+    }
 }

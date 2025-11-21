@@ -53,7 +53,7 @@ class StructuredOutputStreamTest extends TestCase
         $response = new StreamResponse(new Response(
             200,
             ['Content-Type' => 'text/event-stream'],
-            $streamData
+            $streamData,
         ));
 
         $stream = new StructuredOutputStream($response, $schema);

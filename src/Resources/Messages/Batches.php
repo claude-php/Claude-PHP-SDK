@@ -23,10 +23,10 @@ class Batches extends Resource
      * Submits a batch of message requests for processing.
      *
      * @param array<string, mixed> $params Batch creation parameters:
-     *   - requests: array (required) - Array of batch request objects
-     *   - processing_type: string (optional) - How to process the batch
+     *                                     - requests: array (required) - Array of batch request objects
+     *                                     - processing_type: string (optional) - How to process the batch
      *
-     * @return array<string, mixed> Batch object with id, processing_status, etc.
+     * @return array<string, mixed> batch object with id, processing_status, etc
      */
     public function create(array $params = []): array
     {
@@ -43,6 +43,7 @@ class Batches extends Resource
      * Gets the status and metadata of a batch.
      *
      * @param string $batchId The batch ID to retrieve
+     *
      * @return array<string, mixed> Batch object with current status
      */
     public function retrieve(string $batchId): array
@@ -60,8 +61,8 @@ class Batches extends Resource
      * Returns a paginated list of batches.
      *
      * @param array<string, mixed> $params Query parameters:
-     *   - limit: int (optional) - Number of batches to return
-     *   - before_id: string (optional) - Pagination cursor
+     *                                     - limit: int (optional) - Number of batches to return
+     *                                     - before_id: string (optional) - Pagination cursor
      *
      * @return array Response with batches array and pagination
      */
@@ -81,6 +82,7 @@ class Batches extends Resource
      * Cancels a batch that hasn't finished processing.
      *
      * @param string $batchId The batch ID to cancel
+     *
      * @return array<string, mixed> Updated batch object
      */
     public function cancel(string $batchId): array
@@ -98,6 +100,7 @@ class Batches extends Resource
      * Retrieves the results of a completed batch as a JSONL stream decoder.
      *
      * @param string $batchId The batch ID to get results for
+     *
      * @return JSONLDecoder Decoder yielding batch result objects
      */
     public function results(string $batchId): JSONLDecoder
@@ -118,7 +121,6 @@ class Batches extends Resource
      * Deletes a batch. Batch must be in terminal state.
      *
      * @param string $batchId The batch ID to delete
-     * @return void
      */
     public function delete(string $batchId): void
     {
@@ -144,7 +146,7 @@ class Batches extends Resource
             $resultsUrl = $batch->results_url;
         }
 
-        if ($resultsUrl === null || $resultsUrl === '') {
+        if (null === $resultsUrl || '' === $resultsUrl) {
             $status = null;
             if (is_array($batch)) {
                 $status = $batch['processing_status'] ?? null;
@@ -153,6 +155,7 @@ class Batches extends Resource
             }
 
             $statusPart = $status ? " Current status: {$status}." : '';
+
             throw new \RuntimeException('Batch does not have a results_url yet.' . $statusPart);
         }
 
@@ -167,7 +170,7 @@ class Batches extends Resource
         $transport = $this->client->getHttpTransport();
         $response = $transport->getRaw($url, [], array_merge(
             ['Accept' => 'application/binary'],
-            $this->getCustomHeaders()
+            $this->getCustomHeaders(),
         ));
 
         $iterator = $this->createStreamIterator($response->getBody());
@@ -185,12 +188,13 @@ class Batches extends Resource
         while (!$body->eof()) {
             $chunk = $body->read(16384);
 
-            if ($chunk === '' || $chunk === false) {
+            if ('' === $chunk || false === $chunk) {
                 if ($body->eof()) {
                     break;
                 }
 
                 usleep(1000);
+
                 continue;
             }
 

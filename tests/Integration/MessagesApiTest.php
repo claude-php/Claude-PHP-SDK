@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Integration;
 
+use ClaudePhp\Responses\StreamResponse;
 use ClaudePhp\Tests\TestCase;
 use ClaudePhp\Types\Message;
 use ClaudePhp\Types\MessageTokensCount;
-use ClaudePhp\Responses\StreamResponse;
 
 /**
  * Integration tests for Messages API
@@ -217,7 +217,7 @@ class MessagesApiTest extends TestCase
         $errorResponse = $this->createErrorResponse(
             'Invalid model specified',
             'invalid_request_error',
-            400
+            400,
         );
 
         $this->addMockResponse(400, ['Content-Type' => 'application/json'], $errorResponse);
@@ -239,7 +239,7 @@ class MessagesApiTest extends TestCase
         $errorResponse = $this->createErrorResponse(
             'Rate limit exceeded',
             'rate_limit_error',
-            429
+            429,
         );
 
         $this->addMockResponse(429, [
@@ -264,7 +264,7 @@ class MessagesApiTest extends TestCase
         $errorResponse = $this->createErrorResponse(
             'Invalid API key',
             'authentication_error',
-            401
+            401,
         );
 
         $this->addMockResponse(401, ['Content-Type' => 'application/json'], $errorResponse);

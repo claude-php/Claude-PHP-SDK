@@ -14,5 +14,6 @@ class ServerToolUseBlock
         public readonly int $id,
         public readonly string $name,
         public readonly mixed $input,
-    ) {}
+    ) {
+    }
 }

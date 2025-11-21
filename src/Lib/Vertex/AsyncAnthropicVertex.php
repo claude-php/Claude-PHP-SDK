@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Lib\Vertex;
 
-use ClaudePhp\Lib\Streaming\AsyncMessageStreamManager;
 use ClaudePhp\Responses\Message;
 
 /**
@@ -20,12 +19,12 @@ class AsyncAnthropicVertex
     private string $projectId;
 
     /**
-     * @var string|null Google Cloud region
+     * @var null|string Google Cloud region
      */
     private ?string $region;
 
     /**
-     * @var string|null API access token
+     * @var null|string API access token
      */
     private ?string $accessToken;
 
@@ -33,13 +32,13 @@ class AsyncAnthropicVertex
      * Create a new AsyncAnthropicVertex client.
      *
      * @param string $projectId Google Cloud project ID
-     * @param string|null $region Google Cloud region (default: us-central1)
-     * @param string|null $accessToken Optional access token
+     * @param null|string $region Google Cloud region (default: us-central1)
+     * @param null|string $accessToken Optional access token
      */
     public function __construct(
         string $projectId,
         ?string $region = null,
-        ?string $accessToken = null
+        ?string $accessToken = null,
     ) {
         $this->projectId = $projectId;
         $this->region = $region ?? 'us-central1';
@@ -50,6 +49,7 @@ class AsyncAnthropicVertex
      * Create a message via Vertex AI asynchronously.
      *
      * @param array<string, mixed> $params Message parameters
+     *
      * @return mixed Promise resolving to Message
      */
     public function createMessage(array $params): mixed
@@ -58,8 +58,9 @@ class AsyncAnthropicVertex
             $vertexClient = new AnthropicVertex(
                 $this->projectId,
                 $this->region,
-                $this->accessToken
+                $this->accessToken,
             );
+
             return $vertexClient->createMessage($params);
         });
     }
@@ -68,31 +69,30 @@ class AsyncAnthropicVertex
      * Create a message with streaming via Vertex AI asynchronously.
      *
      * @param array<string, mixed> $params Message parameters
-     * @param callable|null $onChunk Optional async callback for each chunk
+     * @param null|callable $onChunk Optional async callback for each chunk
+     *
      * @return mixed Promise resolving to Message
      */
     public function createMessageStream(
         array $params,
-        ?callable $onChunk = null
+        ?callable $onChunk = null,
     ): mixed {
         return \Amp\async(function () use ($params, $onChunk) {
             $vertexClient = new AnthropicVertex(
                 $this->projectId,
                 $this->region,
-                $this->accessToken
+                $this->accessToken,
             );
 
             return $vertexClient->createMessageStream(
                 $params,
-                $onChunk
+                $onChunk,
             );
         });
     }
 
     /**
      * Load access token from Google Cloud auth.
-     *
-     * @return string|null
      */
     private function loadAccessToken(): ?string
     {

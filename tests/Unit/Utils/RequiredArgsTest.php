@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Unit\Utils;
 
-use ClaudePhp\Utils\RequiredArgs;
 use ClaudePhp\Types\NotGiven;
+use ClaudePhp\Utils\RequiredArgs;
 use PHPUnit\Framework\TestCase;
 
 class RequiredArgsTest extends TestCase
@@ -111,7 +111,7 @@ class RequiredArgsTest extends TestCase
         $validated = RequiredArgs::validate(
             $func,
             ['mode'],
-            ['mode' => ['api_key']]
+            ['mode' => ['api_key']],
         );
 
         $this->expectException(\InvalidArgumentException::class);
@@ -128,7 +128,7 @@ class RequiredArgsTest extends TestCase
         $validated = RequiredArgs::validate(
             $func,
             ['mode'],
-            ['mode' => ['api_key']]
+            ['mode' => ['api_key']],
         );
 
         $result = $validated('auth', 'key123', 'token123');
@@ -139,7 +139,8 @@ class RequiredArgsTest extends TestCase
     {
         $callCount = 0;
         $func = function ($id) use (&$callCount) {
-            $callCount++;
+            ++$callCount;
+
             return $id;
         };
 

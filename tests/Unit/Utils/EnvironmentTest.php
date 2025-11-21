@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Unit\Utils;
 
+use ClaudePhp\ClaudePhp;
 use ClaudePhp\Tests\TestCase;
 use ClaudePhp\Tests\TestUtils;
-use ClaudePhp\ClaudePhp;
 
 /**
  * Environment configuration and testing utilities
@@ -63,8 +63,7 @@ class EnvironmentTest extends TestCase
         $this->assertEquals('original_value', $_SERVER['TEST_VARIABLE']);
 
         // Final cleanup
-        unset($_ENV['TEST_VARIABLE']);
-        unset($_SERVER['TEST_VARIABLE']);
+        unset($_ENV['TEST_VARIABLE'], $_SERVER['TEST_VARIABLE']);
     }
 
     public function testUpdateEnvWithMultipleChanges(): void
@@ -101,8 +100,7 @@ class EnvironmentTest extends TestCase
         $this->assertEquals($originals['VAR3'], $_ENV['VAR3'] ?? null);
 
         // Final cleanup
-        unset($_ENV['VAR1'], $_ENV['VAR2'], $_ENV['VAR3']);
-        unset($_SERVER['VAR1'], $_SERVER['VAR2'], $_SERVER['VAR3']);
+        unset($_ENV['VAR1'], $_ENV['VAR2'], $_ENV['VAR3'], $_SERVER['VAR1'], $_SERVER['VAR2'], $_SERVER['VAR3']);
     }
 
     public function testClientEnvironmentVariableDetection(): void
@@ -114,13 +112,13 @@ class EnvironmentTest extends TestCase
 
         // Create client without explicit API key
         $client = new ClaudePhp();
-        
+
         // Verify client uses environment variable
         // Note: This test assumes the client reads from environment variables
         // The exact implementation depends on the ClaudePhp constructor
-        
+
         $cleanup();
-        
+
         // This test serves as documentation of expected behavior
         $this->assertTrue(true);
     }
@@ -133,12 +131,12 @@ class EnvironmentTest extends TestCase
 
         // Create client without explicit base URL
         $client = new ClaudePhp(apiKey: 'test-key');
-        
+
         // Verify client uses environment variable
         // Note: This test assumes the client reads from environment variables
-        
+
         $cleanup();
-        
+
         $this->assertTrue(true);
     }
 
@@ -153,14 +151,14 @@ class EnvironmentTest extends TestCase
         // Create client with explicit parameters (should override environment)
         $client = new ClaudePhp(
             apiKey: 'explicit-key',
-            baseUrl: 'https://explicit.endpoint.com'
+            baseUrl: 'https://explicit.endpoint.com',
         );
 
         // Explicit parameters should take precedence over environment variables
         // This test documents expected behavior
-        
+
         $cleanup();
-        
+
         $this->assertTrue(true);
     }
 
@@ -188,9 +186,9 @@ class EnvironmentTest extends TestCase
 
         // Test that custom user agent is respected
         // This would require examining actual HTTP requests
-        
+
         $cleanup();
-        
+
         $this->assertTrue(true);
     }
 
@@ -203,9 +201,9 @@ class EnvironmentTest extends TestCase
 
         // Test that timeout settings are respected from environment
         // This would require access to client configuration
-        
+
         $cleanup();
-        
+
         $this->assertTrue(true);
     }
 
@@ -217,9 +215,9 @@ class EnvironmentTest extends TestCase
 
         // Test that debug mode affects logging or request handling
         // This would require examining debug output
-        
+
         $cleanup();
-        
+
         $this->assertTrue(true);
     }
 
@@ -234,7 +232,7 @@ class EnvironmentTest extends TestCase
 
         // Test that AWS environment variables are detected
         // This would be used for AWS Bedrock integration
-        
+
         $cleanupAws();
 
         // Test Google Cloud environment variables
@@ -245,9 +243,9 @@ class EnvironmentTest extends TestCase
 
         // Test that GCP environment variables are detected
         // This would be used for Vertex AI integration
-        
+
         $cleanupGcp();
-        
+
         $this->assertTrue(true);
     }
 
@@ -260,7 +258,7 @@ class EnvironmentTest extends TestCase
 
         // Should handle invalid environment variable values gracefully
         // or throw appropriate validation errors
-        
+
         $cleanup();
 
         // Test negative retry count
@@ -269,9 +267,9 @@ class EnvironmentTest extends TestCase
         ]);
 
         // Should validate retry count
-        
+
         $cleanup2();
-        
+
         $this->assertTrue(true);
     }
 
@@ -281,7 +279,7 @@ class EnvironmentTest extends TestCase
         $cleanup1 = TestUtils::updateEnv([
             'TEST_ISOLATION_VAR' => 'value1',
         ]);
-        
+
         $this->assertEquals('value1', $_ENV['TEST_ISOLATION_VAR']);
         $cleanup1();
 
@@ -292,7 +290,7 @@ class EnvironmentTest extends TestCase
         $cleanup2 = TestUtils::updateEnv([
             'TEST_ISOLATION_VAR' => 'value2',
         ]);
-        
+
         $this->assertEquals('value2', $_ENV['TEST_ISOLATION_VAR']);
         $cleanup2();
 

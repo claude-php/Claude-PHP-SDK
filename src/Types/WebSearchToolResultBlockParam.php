@@ -12,5 +12,6 @@ class WebSearchToolResultBlockParam
     public function __construct(
         public readonly string $type,
         public readonly mixed $content = null,
-    ) {}
+    ) {
+    }
 }

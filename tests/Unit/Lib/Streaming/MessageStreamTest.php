@@ -23,7 +23,7 @@ final class MessageStreamTest extends TestCase
         $count = 0;
         foreach ($stream as $event) {
             $this->assertIsArray($event);
-            $count++;
+            ++$count;
         }
 
         $this->assertSame(4, $count);

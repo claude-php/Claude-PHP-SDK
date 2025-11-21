@@ -6,7 +6,6 @@ namespace ClaudePhp\Tests\Unit\Utils;
 
 use ClaudePhp\Utils\TypeUtils;
 use PHPUnit\Framework\TestCase;
-use ReflectionParameter;
 use ReflectionFunction;
 
 class TypeUtilsTest extends TestCase
@@ -14,7 +13,8 @@ class TypeUtilsTest extends TestCase
     public function testIsUnionType(): void
     {
         // This test requires creating a function with union types
-        $fn = new ReflectionFunction(function (int | string $value): void {});
+        $fn = new ReflectionFunction(function (int|string $value): void {
+        });
         $param = $fn->getParameters()[0];
         $type = $param->getType();
 
@@ -23,7 +23,8 @@ class TypeUtilsTest extends TestCase
 
     public function testIsUnionTypeWithNonUnion(): void
     {
-        $fn = new ReflectionFunction(function (int $value): void {});
+        $fn = new ReflectionFunction(function (int $value): void {
+        });
         $param = $fn->getParameters()[0];
         $type = $param->getType();
 
@@ -32,7 +33,8 @@ class TypeUtilsTest extends TestCase
 
     public function testIsNamedType(): void
     {
-        $fn = new ReflectionFunction(function (string $value): void {});
+        $fn = new ReflectionFunction(function (string $value): void {
+        });
         $param = $fn->getParameters()[0];
         $type = $param->getType();
 
@@ -41,7 +43,8 @@ class TypeUtilsTest extends TestCase
 
     public function testGetTypeName(): void
     {
-        $fn = new ReflectionFunction(function (string $value): void {});
+        $fn = new ReflectionFunction(function (string $value): void {
+        });
         $param = $fn->getParameters()[0];
         $type = $param->getType();
 
@@ -50,7 +53,8 @@ class TypeUtilsTest extends TestCase
 
     public function testGetTypeNameWithIntType(): void
     {
-        $fn = new ReflectionFunction(function (int $value): void {});
+        $fn = new ReflectionFunction(function (int $value): void {
+        });
         $param = $fn->getParameters()[0];
         $type = $param->getType();
 
@@ -59,7 +63,8 @@ class TypeUtilsTest extends TestCase
 
     public function testIsNullableType(): void
     {
-        $fn = new ReflectionFunction(function (?string $value): void {});
+        $fn = new ReflectionFunction(function (?string $value): void {
+        });
         $param = $fn->getParameters()[0];
         $type = $param->getType();
 
@@ -68,7 +73,8 @@ class TypeUtilsTest extends TestCase
 
     public function testIsNullableTypeWithNonNullable(): void
     {
-        $fn = new ReflectionFunction(function (string $value): void {});
+        $fn = new ReflectionFunction(function (string $value): void {
+        });
         $param = $fn->getParameters()[0];
         $type = $param->getType();
 
@@ -77,7 +83,8 @@ class TypeUtilsTest extends TestCase
 
     public function testGetUnionTypeNames(): void
     {
-        $fn = new ReflectionFunction(function (int | string $value): void {});
+        $fn = new ReflectionFunction(function (int|string $value): void {
+        });
         $param = $fn->getParameters()[0];
         $type = $param->getType();
 

@@ -58,7 +58,7 @@ class HttpClient
         private readonly RequestFactoryInterface $requestFactory,
         private readonly StreamFactoryInterface $streamFactory,
         private array $defaultHeaders = [],
-        private readonly float $timeout = 30.0
+        private readonly float $timeout = 30.0,
     ) {
     }
 
@@ -69,7 +69,7 @@ class HttpClient
      */
     public function get(string $url, array $query = [], array $headers = []): mixed
     {
-        if ($query !== []) {
+        if ([] !== $query) {
             $url .= '?' . http_build_query($query);
         }
 
@@ -89,7 +89,7 @@ class HttpClient
      */
     public function getRaw(string $url, array $query = [], array $headers = []): ResponseInterface
     {
-        if ($query !== []) {
+        if ([] !== $query) {
             $url .= '?' . http_build_query($query);
         }
 
@@ -108,7 +108,8 @@ class HttpClient
         $bodyString = \is_array($body) ? $this->encodeJson($body) : $body;
         $request = $this->requestFactory
             ->createRequest('POST', $url)
-            ->withBody($this->streamFactory->createStream($bodyString));
+            ->withBody($this->streamFactory->createStream($bodyString))
+        ;
 
         $response = $this->sendRequest($request, $headers);
 
@@ -137,7 +138,8 @@ class HttpClient
 
         $request = $this->requestFactory
             ->createRequest('PATCH', $url)
-            ->withBody($this->streamFactory->createStream($bodyString));
+            ->withBody($this->streamFactory->createStream($bodyString))
+        ;
 
         $response = $this->sendRequest($request, $headers);
 
@@ -154,7 +156,8 @@ class HttpClient
         $bodyString = \is_array($body) ? $this->encodeJson($body) : $body;
         $request = $this->requestFactory
             ->createRequest('POST', $url)
-            ->withBody($this->streamFactory->createStream($bodyString));
+            ->withBody($this->streamFactory->createStream($bodyString))
+        ;
 
         $streamHeaders = array_merge([
             'Accept' => 'text/event-stream',
@@ -173,7 +176,8 @@ class HttpClient
     {
         $request = $request
             ->withHeader('Content-Type', 'application/json')
-            ->withHeader('Accept', $headers['Accept'] ?? 'application/json');
+            ->withHeader('Accept', $headers['Accept'] ?? 'application/json')
+        ;
 
         foreach ($this->defaultHeaders as $name => $value) {
             $request = $request->withHeader($name, $value);
@@ -202,7 +206,7 @@ class HttpClient
     private function decodeJsonResponse(ResponseInterface $response): mixed
     {
         $raw = (string) $response->getBody();
-        if ($raw === '') {
+        if ('' === $raw) {
             return null;
         }
 
@@ -239,7 +243,7 @@ class HttpClient
         $message = 'HTTP ' . $status;
         if (\is_array($body)) {
             $message = $body['error']['message'] ?? $body['message'] ?? $message;
-        } elseif (\is_string($body) && $body !== '') {
+        } elseif (\is_string($body) && '' !== $body) {
             $message = $body;
         }
 
@@ -251,7 +255,7 @@ class HttpClient
     private function tryDecodeBody(ResponseInterface $response): array|object|string|null
     {
         $raw = (string) $response->getBody();
-        if ($raw === '') {
+        if ('' === $raw) {
             return null;
         }
 

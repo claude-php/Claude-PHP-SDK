@@ -14,9 +14,9 @@ class ToolParam
     /**
      * @param string $type The tool type
      * @param string $name The tool name
-     * @param string|null $description The tool description
-     * @param array<string, mixed>|null $input_schema The input schema
-     * @param array<string, mixed>|null $cache_control Cache control configuration
+     * @param null|string $description The tool description
+     * @param null|array<string, mixed> $input_schema The input schema
+     * @param null|array<string, mixed> $cache_control Cache control configuration
      */
     public function __construct(
         public readonly string $type,
@@ -24,5 +24,6 @@ class ToolParam
         public readonly ?string $description = null,
         public readonly ?array $input_schema = null,
         public readonly ?array $cache_control = null,
-    ) {}
+    ) {
+    }
 }

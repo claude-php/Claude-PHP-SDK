@@ -17,5 +17,6 @@ class CitationPageLocation
         public readonly int $end_page_number,
         public readonly ?string $document_title = null,
         public readonly ?string $file_id = null,
-    ) {}
+    ) {
+    }
 }

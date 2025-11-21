@@ -20,5 +20,6 @@ class ContentBlockStartEvent
         public readonly string $type,
         public readonly int $index,
         public readonly array $content_block,
-    ) {}
+    ) {
+    }
 }

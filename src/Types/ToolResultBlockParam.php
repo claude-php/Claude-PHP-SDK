@@ -13,5 +13,6 @@ class ToolResultBlockParam
         public readonly string $type,
         public readonly string $tool_use_id,
         public readonly mixed $content,
-    ) {}
+    ) {
+    }
 }

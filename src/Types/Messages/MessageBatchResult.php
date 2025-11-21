@@ -16,5 +16,6 @@ abstract class MessageBatchResult
      */
     public function __construct(
         public readonly string $type,
-    ) {}
+    ) {
+    }
 }

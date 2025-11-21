@@ -13,5 +13,6 @@ class WebSearchToolResultBlock
         public readonly string $type,
         public readonly ?string $url = null,
         public readonly ?array $content = null,
-    ) {}
+    ) {
+    }
 }

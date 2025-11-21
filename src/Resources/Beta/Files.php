@@ -17,8 +17,8 @@ class Files extends Resource
      * Upload a file.
      *
      * @param array<string, mixed> $params File upload parameters:
-     *   - file: string|resource (required) - File content or path
-     *   - mime_type: string (optional) - MIME type
+     *                                     - file: string|resource (required) - File content or path
+     *                                     - mime_type: string (optional) - MIME type
      *
      * @return array File metadata
      */
@@ -36,6 +36,7 @@ class Files extends Resource
      * List uploaded files.
      *
      * @param array<string, mixed> $params Query parameters
+     *
      * @return array List of files
      */
     public function list(array $params = []): array
@@ -47,6 +48,7 @@ class Files extends Resource
      * Retrieve file metadata.
      *
      * @param string $fileId The file ID
+     *
      * @return array File metadata
      */
     public function retrieveMetadata(string $fileId): array
@@ -58,6 +60,7 @@ class Files extends Resource
      * Download file content.
      *
      * @param string $fileId The file ID
+     *
      * @return mixed File content
      */
     public function download(string $fileId): string
@@ -69,7 +72,6 @@ class Files extends Resource
      * Delete a file.
      *
      * @param string $fileId The file ID
-     * @return void
      */
     public function delete(string $fileId): void
     {

@@ -22,5 +22,6 @@ class BetaBashCodeExecutionToolResultBlockParam
         public readonly string $tool_use_id,
         public readonly bool $is_error,
         public readonly array $content,
-    ) {}
+    ) {
+    }
 }

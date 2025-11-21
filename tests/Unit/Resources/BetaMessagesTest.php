@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Unit\Resources;
 
-use ClaudePhp\Tests\TestCase;
 use ClaudePhp\Responses\Message;
+use ClaudePhp\Tests\TestCase;
 
 class BetaMessagesTest extends TestCase
 {
@@ -57,12 +57,12 @@ class BetaMessagesTest extends TestCase
             'messages' => [
                 ['role' => 'user', 'content' => 'Hello!'],
             ],
-            'betas' => ['structured-outputs-2025-09-17'],
+            'betas' => ['structured-outputs-2025-11-13'],
         ]);
 
         $this->assertInstanceOf(Message::class, $result);
         $this->assertHttpHeadersPresent([
-            'anthropic-beta' => 'structured-outputs-2025-09-17',
+            'anthropic-beta' => 'structured-outputs-2025-11-13',
         ]);
     }
 

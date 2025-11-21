@@ -41,7 +41,7 @@ class StreamingToolRunner
     public function __construct(
         ClaudePhp $client,
         array $tools = [],
-        int $maxIterations = 10
+        int $maxIterations = 10,
     ) {
         $this->client = $client;
         $this->tools = $tools;
@@ -63,7 +63,8 @@ class StreamingToolRunner
      * Run the agentic loop with streaming responses.
      *
      * @param array<string, mixed> $params Message creation parameters
-     * @param callable|null $onStream Optional callback for stream events
+     * @param null|callable $onStream Optional callback for stream events
+     *
      * @return Message The final message after the loop completes
      */
     public function run(array $params, ?callable $onStream = null): Message
@@ -72,7 +73,7 @@ class StreamingToolRunner
         $iterationCount = 0;
 
         while ($iterationCount < $this->maxIterations) {
-            $iterationCount++;
+            ++$iterationCount;
 
             // Create streaming message
             $stream = $this->client->messages()->stream([
@@ -84,7 +85,7 @@ class StreamingToolRunner
             $manager = new MessageStreamManager();
             foreach ($stream as $event) {
                 $manager->addEvent($event);
-                if ($onStream !== null) {
+                if (null !== $onStream) {
                     ($onStream)($event);
                 }
             }
@@ -96,7 +97,7 @@ class StreamingToolRunner
             $toolResults = [];
 
             foreach ($response->content ?? [] as $block) {
-                if ($block['type'] === 'tool_use') {
+                if ('tool_use' === $block['type']) {
                     $hasToolUse = true;
                     $toolName = $block['name'] ?? '';
                     $toolInput = $block['input'] ?? [];
@@ -108,7 +109,7 @@ class StreamingToolRunner
                             $toolResults[] = [
                                 'type' => 'tool_result',
                                 'tool_use_id' => $toolId,
-                                'content' => (string)$result,
+                                'content' => (string) $result,
                             ];
                         } catch (\Throwable $e) {
                             $toolResults[] = [
@@ -141,7 +142,7 @@ class StreamingToolRunner
         }
 
         throw new \RuntimeException(
-            "Streaming tool runner reached maximum iterations ({$this->maxIterations})"
+            "Streaming tool runner reached maximum iterations ({$this->maxIterations})",
         );
     }
 }

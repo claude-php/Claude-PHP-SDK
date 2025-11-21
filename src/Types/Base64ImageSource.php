@@ -13,5 +13,6 @@ class Base64ImageSource
         public readonly string $type,
         public readonly string $media_type,
         public readonly string $data,
-    ) {}
+    ) {
+    }
 }

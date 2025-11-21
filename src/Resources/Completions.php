@@ -21,6 +21,7 @@ class Completions extends Resource
      * Create a completion.
      *
      * @param array<string, mixed> $params Completion parameters
+     *
      * @return array Completion response
      *
      * @deprecated Use Messages API instead
@@ -36,10 +37,10 @@ class Completions extends Resource
             'claude-instant-1-100k',
         ];
 
-        if (isset($params['model']) && in_array($params['model'], $deprecated_models)) {
+        if (isset($params['model']) && in_array($params['model'], $deprecated_models, true)) {
             trigger_error(
                 'The Completions API and its models are deprecated. Please use the Messages API instead.',
-                E_USER_DEPRECATED
+                E_USER_DEPRECATED,
             );
         }
 
@@ -65,6 +66,7 @@ class Completions extends Resource
      * Stream a completion.
      *
      * @param array<string, mixed> $params Completion parameters
+     *
      * @return StreamResponse Stream response
      *
      * @deprecated Use Messages API instead
@@ -72,6 +74,7 @@ class Completions extends Resource
     public function stream(array $params = []): StreamResponse
     {
         $params['stream'] = true;
+
         return $this->create($params);
     }
 }

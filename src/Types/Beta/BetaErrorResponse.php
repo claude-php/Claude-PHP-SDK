@@ -12,5 +12,6 @@ class BetaErrorResponse
     public function __construct(
         public readonly string $type,
         public readonly mixed $error,
-    ) {}
+    ) {
+    }
 }

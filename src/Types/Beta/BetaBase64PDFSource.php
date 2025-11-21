@@ -13,5 +13,6 @@ class BetaBase64PDFSource
         public readonly string $type,
         public readonly string $media_type,
         public readonly string $data,
-    ) {}
+    ) {
+    }
 }

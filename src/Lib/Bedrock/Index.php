@@ -23,8 +23,6 @@ function getBedrockLibrary(): array
 
 /**
  * Get the bedrock library version.
- *
- * @return string
  */
 function getBedrockLibraryVersion(): string
 {

@@ -20,5 +20,6 @@ class DeletedMessageBatch
         public readonly string $id,
         public readonly string $type,
         public readonly bool $deleted,
-    ) {}
+    ) {
+    }
 }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Unit\Resources;
 
-use ClaudePhp\Tests\TestCase;
-use ClaudePhp\Resources\Models;
 use ClaudePhp\ClaudePhp;
+use ClaudePhp\Resources\Models;
+use ClaudePhp\Tests\TestCase;
 
 class ModelsTest extends TestCase
 {
@@ -19,18 +19,18 @@ class ModelsTest extends TestCase
         $this->models = new Models($client);
     }
 
-    public function test_can_instantiate_models_resource(): void
+    public function testCanInstantiateModelsResource(): void
     {
         $this->assertInstanceOf(Models::class, $this->models);
     }
 
-    public function test_list_accepts_parameters(): void
+    public function testListAcceptsParameters(): void
     {
         // Verify it doesn't throw validation errors
         $this->assertTrue(true);
     }
 
-    public function test_retrieve_validates_model_id(): void
+    public function testRetrieveValidatesModelId(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('model_id is required');
@@ -38,7 +38,7 @@ class ModelsTest extends TestCase
         $this->models->retrieve('');
     }
 
-    public function test_retrieve_accepts_valid_model_id(): void
+    public function testRetrieveAcceptsValidModelId(): void
     {
         // Doesn't throw validation
         try {

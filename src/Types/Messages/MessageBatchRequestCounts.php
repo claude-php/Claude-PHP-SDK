@@ -24,5 +24,6 @@ class MessageBatchRequestCounts
         public readonly int $errored,
         public readonly int $canceled,
         public readonly int $expired,
-    ) {}
+    ) {
+    }
 }

@@ -19,7 +19,7 @@ final class DateTimeUtils
      * Parse an ISO 8601 date string.
      *
      * @param string $dateString The date string in ISO 8601 format
-     * @return DateTimeImmutable
+     *
      * @throws \Exception If the date string is invalid
      */
     public static function parseDate(string $dateString): DateTimeImmutable
@@ -32,7 +32,7 @@ final class DateTimeUtils
      * Parse an ISO 8601 datetime string.
      *
      * @param string $dateTimeString The datetime string in ISO 8601 format
-     * @return DateTimeImmutable
+     *
      * @throws \Exception If the datetime string is invalid
      */
     public static function parseDateTime(string $dateTimeString): DateTimeImmutable
@@ -48,14 +48,14 @@ final class DateTimeUtils
 
         foreach ($formats as $format) {
             $result = DateTimeImmutable::createFromFormat($format, $dateTimeString);
-            if ($result !== false) {
+            if (false !== $result) {
                 return $result;
             }
         }
 
         // Fallback to strtotime for more flexible parsing
         $timestamp = strtotime($dateTimeString);
-        if ($timestamp === false) {
+        if (false === $timestamp) {
             throw new \Exception("Invalid datetime format: {$dateTimeString}");
         }
 
@@ -64,9 +64,6 @@ final class DateTimeUtils
 
     /**
      * Format a DateTime as an ISO 8601 string.
-     *
-     * @param DateTimeInterface $dateTime
-     * @return string
      */
     public static function formatDateTime(DateTimeInterface $dateTime): string
     {
@@ -75,9 +72,6 @@ final class DateTimeUtils
 
     /**
      * Format a DateTime as a date-only string (YYYY-MM-DD).
-     *
-     * @param DateTimeInterface $dateTime
-     * @return string
      */
     public static function formatDate(DateTimeInterface $dateTime): string
     {

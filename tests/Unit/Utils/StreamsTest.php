@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ClaudePhp\Tests\Unit\Utils;
 
+use function Amp\async;
+
 use Amp\Future;
 use ClaudePhp\Utils\Streams;
 use PHPUnit\Framework\TestCase;
-
-use function Amp\async;
 
 class StreamsTest extends TestCase
 {
@@ -18,7 +18,9 @@ class StreamsTest extends TestCase
             public function getIterator(): \Iterator
             {
                 yield 1;
+
                 yield 2;
+
                 yield 3;
             }
         };
@@ -34,7 +36,9 @@ class StreamsTest extends TestCase
             public function getIterator(): \Iterator
             {
                 yield 1;
+
                 yield 2;
+
                 yield 3;
             }
         };
@@ -47,7 +51,7 @@ class StreamsTest extends TestCase
     public function testMapSyncIterator(): void
     {
         $iterator = [1, 2, 3];
-        $callback = static fn($n) => $n * 2;
+        $callback = static fn ($n) => $n * 2;
 
         $result = Streams::mapSyncIterator($iterator, $callback);
         $collected = iterator_to_array($result);
@@ -58,7 +62,7 @@ class StreamsTest extends TestCase
     public function testFilterSyncIterator(): void
     {
         $iterator = [1, 2, 3, 4, 5];
-        $predicate = static fn($n) => $n > 2;
+        $predicate = static fn ($n) => $n > 2;
 
         $result = Streams::filterSyncIterator($iterator, $predicate);
         $collected = iterator_to_array($result);
@@ -116,7 +120,7 @@ class StreamsTest extends TestCase
         // Skip 1, take 3, filter even
         $result = Streams::skipSyncIterator($iterator, 1);
         $result = Streams::takeSyncIterator($result, 3);
-        $result = Streams::filterSyncIterator($result, static fn($n) => $n % 2 === 0);
+        $result = Streams::filterSyncIterator($result, static fn ($n) => 0 === $n % 2);
 
         $collected = iterator_to_array($result);
 
@@ -126,8 +130,8 @@ class StreamsTest extends TestCase
     public function testConsumeAsyncIteratorResolvesAmpFutures(): void
     {
         $futures = [
-            async(static fn() => 1),
-            async(static fn() => 2),
+            async(static fn () => 1),
+            async(static fn () => 2),
         ];
 
         $result = Streams::consumeAsyncIterator($futures);
@@ -140,8 +144,8 @@ class StreamsTest extends TestCase
     public function testCollectAsyncIteratorReturnsResolvedValues(): void
     {
         $futures = [
-            'first' => async(static fn() => 10),
-            'second' => static fn() => async(static fn() => 20),
+            'first' => async(static fn () => 10),
+            'second' => static fn () => async(static fn () => 20),
             'immediate' => 30,
         ];
 

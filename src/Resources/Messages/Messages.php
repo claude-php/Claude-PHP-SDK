@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace ClaudePhp\Resources\Messages;
 
 use ClaudePhp\Resources\Resource;
+use ClaudePhp\Responses\StreamResponse;
 use ClaudePhp\Types\Message;
 use ClaudePhp\Types\MessageTokensCount;
 use ClaudePhp\Types\Usage;
-use ClaudePhp\Utils\Transform;
 use ClaudePhp\Utils\FileExtraction;
-use ClaudePhp\Responses\StreamResponse;
+use ClaudePhp\Utils\Transform;
 
 /**
  * Messages resource for the Claude API.
@@ -22,8 +22,6 @@ class Messages extends Resource
 {
     /**
      * Lazy-load batches sub-resource.
-     *
-     * @return Batches
      */
     public function batches(): Batches
     {
@@ -37,20 +35,20 @@ class Messages extends Resource
      * Supports both streaming and non-streaming modes.
      *
      * @param array<string, mixed> $params Message creation parameters:
-     *   - model: string (required) - Model to use (e.g., 'claude-opus-4-1-20250805')
-     *   - max_tokens: int (required) - Maximum tokens to generate
-     *   - messages: array (required) - Array of message objects with role and content
-     *   - system: string|array (optional) - System prompt
-     *   - temperature: float (optional) - Temperature (0.0-1.0)
-     *   - top_p: float (optional) - Top P sampling parameter
-     *   - top_k: int (optional) - Top K sampling parameter
-     *   - stop_sequences: array (optional) - Custom stop sequences
-     *   - tools: array (optional) - Tool definitions for tool use
-     *   - tool_choice: string|array (optional) - Tool selection strategy
-     *   - thinking: array (optional) - Extended thinking configuration
-     *   - stream: bool (optional) - Whether to stream the response
-     *   - metadata: array (optional) - Request metadata
-     *   - service_tier: string (optional) - Service tier (auto, standard_only)
+     *                                     - model: string (required) - Model to use (e.g., 'claude-opus-4-1-20250805')
+     *                                     - max_tokens: int (required) - Maximum tokens to generate
+     *                                     - messages: array (required) - Array of message objects with role and content
+     *                                     - system: string|array (optional) - System prompt
+     *                                     - temperature: float (optional) - Temperature (0.0-1.0)
+     *                                     - top_p: float (optional) - Top P sampling parameter
+     *                                     - top_k: int (optional) - Top K sampling parameter
+     *                                     - stop_sequences: array (optional) - Custom stop sequences
+     *                                     - tools: array (optional) - Tool definitions for tool use
+     *                                     - tool_choice: string|array (optional) - Tool selection strategy
+     *                                     - thinking: array (optional) - Extended thinking configuration
+     *                                     - stream: bool (optional) - Whether to stream the response
+     *                                     - metadata: array (optional) - Request metadata
+     *                                     - service_tier: string (optional) - Service tier (auto, standard_only)
      *
      * @return Message|StreamResponse The message response, or stream if stream=true
      */
@@ -79,6 +77,7 @@ class Messages extends Resource
         }
 
         $response = $this->_post($path, $body);
+
         return $this->_createMessageFromArray($response);
     }
 
@@ -88,11 +87,13 @@ class Messages extends Resource
      * Creates a message with streaming enabled and returns a stream manager.
      *
      * @param array<string, mixed> $params Message parameters (same as create())
+     *
      * @return StreamResponse Stream manager for consuming events
      */
     public function stream(array $params = []): StreamResponse
     {
         $params['stream'] = true;
+
         return $this->create($params);
     }
 
@@ -103,12 +104,12 @@ class Messages extends Resource
      * actually creating the message.
      *
      * @param array<string, mixed> $params Token counting parameters:
-     *   - model: string (required) - Model to use
-     *   - messages: array (required) - Messages to count
-     *   - system: string|array (optional) - System prompt
-     *   - tools: array (optional) - Tool definitions
-     *   - tool_choice: string|array (optional) - Tool selection
-     *   - thinking: array (optional) - Extended thinking config
+     *                                     - model: string (required) - Model to use
+     *                                     - messages: array (required) - Messages to count
+     *                                     - system: string|array (optional) - System prompt
+     *                                     - tools: array (optional) - Tool definitions
+     *                                     - tool_choice: string|array (optional) - Tool selection
+     *                                     - thinking: array (optional) - Extended thinking config
      *
      * @return MessageTokensCount Token count response
      */
@@ -122,6 +123,7 @@ class Messages extends Resource
         $body = Transform::transform($params, $this->getCountTokensParamTypes());
 
         $response = $this->_post('/v1/messages/count_tokens', $body);
+
         return $this->_createMessageTokensCountFromArray($response);
     }
 
@@ -171,7 +173,6 @@ class Messages extends Resource
      * Convert an array response into a Message object.
      *
      * @param array<string, mixed> $data
-     * @return Message
      */
     private function _createMessageFromArray(array $data): Message
     {
@@ -197,7 +198,6 @@ class Messages extends Resource
      * Convert an array response into a MessageTokensCount object.
      *
      * @param array<string, mixed> $data
-     * @return MessageTokensCount
      */
     private function _createMessageTokensCountFromArray(array $data): MessageTokensCount
     {

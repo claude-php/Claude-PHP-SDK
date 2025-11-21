@@ -12,5 +12,6 @@ class BetaPermissionError
     public function __construct(
         public readonly string $type,
         public readonly string $message,
-    ) {}
+    ) {
+    }
 }

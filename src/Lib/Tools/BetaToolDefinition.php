@@ -21,7 +21,7 @@ class BetaToolDefinition
         public readonly string $name,
         callable $handler,
         public readonly string $description = '',
-        private readonly array $inputSchema = []
+        private readonly array $inputSchema = [],
     ) {
         $this->handler = $handler instanceof Closure ? $handler : Closure::fromCallable($handler);
     }
@@ -46,7 +46,7 @@ class BetaToolDefinition
             name: $definition['name'],
             handler: $handler,
             description: $definition['description'] ?? '',
-            inputSchema: $definition['input_schema'] ?? []
+            inputSchema: $definition['input_schema'] ?? [],
         );
     }
 

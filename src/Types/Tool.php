@@ -13,5 +13,6 @@ class Tool
         public readonly string $name,
         public readonly string $description,
         public readonly array $input_schema,
-    ) {}
+    ) {
+    }
 }

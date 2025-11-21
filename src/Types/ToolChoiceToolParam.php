@@ -18,5 +18,6 @@ class ToolChoiceToolParam
     public function __construct(
         public readonly string $type,
         public readonly string $name,
-    ) {}
+    ) {
+    }
 }
