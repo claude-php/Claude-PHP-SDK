@@ -72,7 +72,7 @@ class Skills extends Resource
             throw new \InvalidArgumentException('skill_id is required');
         }
 
-        $this->_delete("/v1/skills/{$skillId}");
+        $this->_delete("/skills/{$skillId}");
     }
 }
 

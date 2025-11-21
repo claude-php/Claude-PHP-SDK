@@ -36,6 +36,6 @@ class Models extends Resource
             throw new \InvalidArgumentException('model_id is required');
         }
 
-        return $this->_get("/v1/models/{$modelId}");
+        return $this->_get("/models/{$modelId}");
     }
 }

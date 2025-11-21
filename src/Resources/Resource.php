@@ -77,11 +77,12 @@ abstract class Resource
      * Make a POST request to the API.
      *
      * @param array<string, mixed>|null $body Request body
+     * @param array<string, string> $additionalHeaders Extra headers for this request
      */
-    protected function _post(string $path, ?array $body = null): mixed
+    protected function _post(string $path, ?array $body = null, array $additionalHeaders = []): mixed
     {
         $url = $this->getBaseUrl() . $path;
-        return $this->makeRequest('POST', $url, $body ?? []);
+        return $this->makeRequest('POST', $url, $body ?? [], $additionalHeaders);
     }
 
     /**
@@ -99,11 +100,12 @@ abstract class Resource
      * @param string $method HTTP method (GET, POST, DELETE, etc.)
      * @param string $url Full URL
      * @param array<string, mixed>|null $params Parameters (query for GET, body for POST)
+     * @param array<string, string> $additionalHeaders Extra headers for this request
      */
-    protected function makeRequest(string $method, string $url, ?array $params = null): mixed
+    protected function makeRequest(string $method, string $url, ?array $params = null, array $additionalHeaders = []): mixed
     {
         $transport = $this->client->getHttpTransport();
-        $headers = $this->getCustomHeaders();
+        $headers = array_merge($this->getCustomHeaders(), $additionalHeaders);
 
         return match (strtoupper($method)) {
             'GET' => $transport->get($url, $params ?? [], $headers),
@@ -116,12 +118,15 @@ abstract class Resource
 
     /**
      * Make a POST request that expects a streaming response.
+     *
+     * @param array<string, string> $additionalHeaders Extra headers for this request
      */
-    protected function _postStream(string $path, mixed $body): StreamResponse
+    protected function _postStream(string $path, mixed $body, array $additionalHeaders = []): StreamResponse
     {
         $url = $this->getBaseUrl() . $path;
         $transport = $this->client->getHttpTransport();
-        $response = $transport->postStream($url, $body ?? [], $this->getCustomHeaders());
+        $headers = array_merge($this->getCustomHeaders(), $additionalHeaders);
+        $response = $transport->postStream($url, $body ?? [], $headers);
 
         return new StreamResponse($response);
     }

@@ -1,0 +1,47 @@
+[2025-11-18 06:53:21] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:53:25] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:53:29] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:53:33] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:53:37] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:53:41] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:53:45] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:53:49] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:53:53] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:53:57] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:54:01] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:54:05] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:54:09] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:54:12] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+[2025-11-18 06:54:16] ERROR: API call failed: tools.2: Input tag 'memory_20250818' found using 'type' does not match any of the expected tags: 'bash_20250124', 'custom', 'text_editor_20250124', 'text_editor_20250429', 'text_editor_20250728', 'web_search_20250305'
+{"timestamp":"2025-11-18 06:54:36","iteration":1,"stop_reason":"tool_use","tokens":{"input":636,"output":106}}
+[2025-11-18 06:54:36] ERROR: Tool execution failed: get_weather - Weather service temporarily unavailable
+[2025-11-18 06:54:36] ERROR: Tool execution error: get_weather
+{"timestamp":"2025-11-18 06:54:39","iteration":2,"stop_reason":"end_turn","tokens":{"input":812,"output":54}}
+{"timestamp":"2025-11-18 06:54:42","iteration":1,"stop_reason":"tool_use","tokens":{"input":628,"output":53}}
+{"timestamp":"2025-11-18 06:54:45","iteration":2,"stop_reason":"end_turn","tokens":{"input":714,"output":28}}
+{"timestamp":"2025-11-18 06:54:49","iteration":1,"stop_reason":"tool_use","tokens":{"input":628,"output":53}}
+{"timestamp":"2025-11-18 06:54:51","iteration":2,"stop_reason":"end_turn","tokens":{"input":714,"output":29}}
+{"timestamp":"2025-11-18 06:54:55","iteration":1,"stop_reason":"tool_use","tokens":{"input":628,"output":55}}
+{"timestamp":"2025-11-18 06:54:58","iteration":2,"stop_reason":"end_turn","tokens":{"input":697,"output":17}}
+{"timestamp":"2025-11-18 06:55:43","iteration":1,"stop_reason":"end_turn","tokens":{"input":628,"output":34}}
+{"timestamp":"2025-11-18 06:55:47","iteration":1,"stop_reason":"end_turn","tokens":{"input":627,"output":80}}
+{"timestamp":"2025-11-18 07:02:46","iteration":1,"stop_reason":"tool_use","tokens":{"input":636,"output":106}}
+{"timestamp":"2025-11-18 07:02:49","iteration":2,"stop_reason":"end_turn","tokens":{"input":824,"output":45}}
+{"timestamp":"2025-11-18 07:02:53","iteration":1,"stop_reason":"tool_use","tokens":{"input":628,"output":53}}
+{"timestamp":"2025-11-18 07:02:56","iteration":2,"stop_reason":"end_turn","tokens":{"input":714,"output":28}}
+{"timestamp":"2025-11-18 07:02:58","iteration":1,"stop_reason":"tool_use","tokens":{"input":628,"output":53}}
+{"timestamp":"2025-11-18 07:03:01","iteration":2,"stop_reason":"end_turn","tokens":{"input":714,"output":26}}
+{"timestamp":"2025-11-18 07:03:06","iteration":1,"stop_reason":"tool_use","tokens":{"input":628,"output":55}}
+{"timestamp":"2025-11-18 07:03:08","iteration":2,"stop_reason":"end_turn","tokens":{"input":697,"output":17}}
+{"timestamp":"2025-11-18 07:03:25","iteration":1,"stop_reason":"end_turn","tokens":{"input":38090,"output":333}}
+{"timestamp":"2025-11-18 07:45:24","iteration":1,"stop_reason":"tool_use","tokens":{"input":636,"output":111}}
+{"timestamp":"2025-11-18 07:45:28","iteration":2,"stop_reason":"end_turn","tokens":{"input":829,"output":36}}
+{"timestamp":"2025-11-18 07:45:31","iteration":1,"stop_reason":"tool_use","tokens":{"input":628,"output":53}}
+[2025-11-18 07:45:31] ERROR: Tool execution failed: get_weather - Weather service temporarily unavailable
+[2025-11-18 07:45:31] ERROR: Tool execution error: get_weather
+{"timestamp":"2025-11-18 07:45:35","iteration":2,"stop_reason":"end_turn","tokens":{"input":710,"output":54}}
+{"timestamp":"2025-11-18 07:45:39","iteration":1,"stop_reason":"tool_use","tokens":{"input":628,"output":53}}
+{"timestamp":"2025-11-18 07:45:42","iteration":2,"stop_reason":"end_turn","tokens":{"input":713,"output":33}}
+{"timestamp":"2025-11-18 07:45:48","iteration":1,"stop_reason":"tool_use","tokens":{"input":628,"output":55}}
+{"timestamp":"2025-11-18 07:45:53","iteration":2,"stop_reason":"end_turn","tokens":{"input":697,"output":17}}
+{"timestamp":"2025-11-18 07:46:11","iteration":1,"stop_reason":"end_turn","tokens":{"input":38091,"output":255}}

@@ -54,7 +54,7 @@ class Versions extends Resource
             throw new \InvalidArgumentException('skill_id and version_id are required');
         }
 
-        return $this->_get("/v1/skills/{$skillId}/versions/{$versionId}");
+        return $this->_get("/skills/{$skillId}/versions/{$versionId}");
     }
 
     /**
@@ -70,6 +70,6 @@ class Versions extends Resource
             throw new \InvalidArgumentException('skill_id and version_id are required');
         }
 
-        $this->_delete("/v1/skills/{$skillId}/versions/{$versionId}");
+        $this->_delete("/skills/{$skillId}/versions/{$versionId}");
     }
 }

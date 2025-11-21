@@ -1,6 +1,6 @@
 {
     "name": "claude-php/claude-php-sdk",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "A universal, framework-agnostic PHP SDK for the Anthropic Claude API with PSR compliance",
     "license": "MIT",
     "type": "library",
@@ -15,6 +15,10 @@
         "async",
         "streaming"
     ],
+    "support": {
+        "issues": "https://github.com/claude-php/Claude-PHP-SDK/issues",
+        "source": "https://github.com/claude-php/Claude-PHP-SDK"
+    },
     "authors": [
         {
             "name": "Dale Hurley",
@@ -58,6 +62,7 @@
         "test": "phpunit",
         "lint": "phpcs --standard=PSR12 src/ tests/",
         "format": "php-cs-fixer fix src/ tests/",
+        "stan": "phpstan analyse src tests",
         "dev:bootstrap": "./scripts/bootstrap",
         "dev:test": "./scripts/test",
         "dev:lint": "./scripts/lint",
