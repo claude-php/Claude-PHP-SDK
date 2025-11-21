@@ -213,4 +213,3 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "Related examples:\n";
 echo "  • examples/context_editing.php - Context management with memory\n";
 echo "  • examples/tool_use_overview.php - Tool use basics\n";
-

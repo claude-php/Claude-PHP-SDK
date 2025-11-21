@@ -339,4 +339,3 @@ echo "Related examples:\n";
 echo "  • examples/context_windows.php - Token management\n";
 echo "  • examples/tools.php - Tool use with caching\n";
 echo "  • examples/thinking.php - Extended thinking with caching\n";
-

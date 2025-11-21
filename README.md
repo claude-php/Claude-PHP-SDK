@@ -5,7 +5,7 @@ A universal, framework-agnostic PHP SDK for the Anthropic Claude API with full P
 ## Features
 
 - ✅ **Full API Parity**: Comprehensive implementation of Messages, Files, Batches, and Models APIs
-- ✅ **Complete Example Coverage**: **29 comprehensive examples** covering **27 Claude documentation pages** (6,675+ lines)
+- ✅ **Complete Example Coverage**: **80+ comprehensive examples** covering all Claude documentation pages (11,000+ lines)
 - ✅ **PSR Compliance**: Follows PSR-12 coding standards and PSR-11 dependency injection patterns
 - ✅ **Framework Agnostic**: Works seamlessly with Laravel, Symfony, Slim, and other PHP frameworks
 - ✅ **Latest Models**: Support for Claude Sonnet 4.5, Haiku 4.5, and Opus 4.1
@@ -66,33 +66,74 @@ $client = new ClaudePhp(
 
 ## 📚 Comprehensive Examples
 
-> 💡 **Complete Documentation Coverage**: The [`examples/`](examples/) directory contains **29 comprehensive example files** (6,675+ lines of code) covering **all 27 Claude documentation pages** with complete Python → PHP parity:
+> 💡 **Complete Documentation Coverage**: The [`examples/`](examples/) directory contains **80+ comprehensive example files** (11,000+ lines of code) covering **all Claude documentation pages** with complete Python → PHP parity:
 >
-> 📊 **Statistics**: 29 files | 6,675 lines | 27 docs pages | 100% tested | 0 errors
+> 📊 **Statistics**: 80+ files | 11,000+ lines | All docs pages | 100% tested | 0 errors
 >
 > **Getting Started:**
 >
 > - **[quickstart.php](examples/quickstart.php)** - Simplest possible example
+> - **[basic_request.php](examples/basic_request.php)** - Basic API request
 > - **[get_started.php](examples/get_started.php)** - Complete getting started guide
 > - **[working_with_messages.php](examples/working_with_messages.php)** - Practical patterns (vision, prefilling, etc.)
+> - **[multi_turn.php](examples/multi_turn.php)** - Multi-turn conversations
+> - **[putting_words.php](examples/putting_words.php)** - Response prefilling
 >
-> **Core Features:**
+> **Streaming (8 Examples):**
 >
+> - **[streaming_basic.php](examples/streaming_basic.php)** - Simple text streaming
 > - **[streaming_comprehensive.php](examples/streaming_comprehensive.php)** - All streaming patterns
-> - **[batch_processing.php](examples/batch_processing.php)** - 50% cost savings with batches
-> - **[extended_thinking.php](examples/extended_thinking.php)** - Enhanced reasoning (1K-32K tokens)
-> - **[structured_outputs.php](examples/structured_outputs.php)** - Guaranteed JSON schema
+> - **[streaming_with_events.php](examples/streaming_with_events.php)** - Event-driven streaming
+> - **[streaming_with_tools.php](examples/streaming_with_tools.php)** - Streaming with tool use
+> - **[streaming_extended_thinking.php](examples/streaming_extended_thinking.php)** - Streaming with thinking
+> - **[streaming_message_accumulation.php](examples/streaming_message_accumulation.php)** - Building complete messages
+> - **[streaming_error_recovery.php](examples/streaming_error_recovery.php)** - Error handling and retry logic
+> - **[streaming_web_search.php](examples/streaming_web_search.php)** - Streaming with web search
+>
+> **Batch Processing (8 Examples):**
+>
+> - **[batch_processing.php](examples/batch_processing.php)** - 50% cost savings overview
+> - **[batch_create.php](examples/batch_create.php)** - Creating batches
+> - **[batch_list.php](examples/batch_list.php)** - Listing batches
+> - **[batch_poll.php](examples/batch_poll.php)** - Polling for completion
+> - **[batch_results.php](examples/batch_results.php)** - Retrieving results
+> - **[batch_cancel.php](examples/batch_cancel.php)** - Canceling batches
+> - **[batch_complete_workflow.php](examples/batch_complete_workflow.php)** - Complete workflow
+> - **[batch_with_caching.php](examples/batch_with_caching.php)** - Batches with prompt caching
+>
+> **Extended Thinking (6 Examples):**
+>
+> - **[extended_thinking.php](examples/extended_thinking.php)** - Comprehensive guide (1K-32K tokens)
+> - **[thinking.php](examples/thinking.php)** - Basic extended thinking
+> - **[thinking_stream.php](examples/thinking_stream.php)** - Streaming thinking
+> - **[thinking_with_tools.php](examples/thinking_with_tools.php)** - Thinking with tool use
+> - **[interleaved_thinking_tools.php](examples/interleaved_thinking_tools.php)** - Interleaved patterns
+> - **[redacted_thinking.php](examples/redacted_thinking.php)** - Redacted thinking blocks
+>
+> **Citations (7 Examples):**
+>
+> - **[citations.php](examples/citations.php)** - Source attribution overview (beta)
+> - **[citations_basic.php](examples/citations_basic.php)** - Basic citations
+> - **[citations_multiple_documents.php](examples/citations_multiple_documents.php)** - Multiple documents
+> - **[citations_with_context.php](examples/citations_with_context.php)** - Citations with context
+> - **[citations_large_document.php](examples/citations_large_document.php)** - Large document handling
+> - **[citations_streaming.php](examples/citations_streaming.php)** - Streaming citations
+> - **[citations_disabled.php](examples/citations_disabled.php)** - Disabling citations
 >
 > **Optimization:**
 >
 > - **[context_windows.php](examples/context_windows.php)** - Token management
 > - **[prompt_caching.php](examples/prompt_caching.php)** - 90% cost reduction
+> - **[messages_caching.php](examples/messages_caching.php)** - Message-level caching
+> - **[system_prompt_caching.php](examples/system_prompt_caching.php)** - System prompt caching
 > - **[context_editing.php](examples/context_editing.php)** - Automatic context management (beta)
 > - **[token_counting.php](examples/token_counting.php)** - Cost planning
 >
 > **Vision & Documents:**
 >
 > - **[vision_comprehensive.php](examples/vision_comprehensive.php)** - Complete vision guide
+> - **[vision.php](examples/vision.php)** - Basic vision example
+> - **[images.php](examples/images.php)** - Image handling
 > - **[pdf_support.php](examples/pdf_support.php)** - PDF analysis
 > - **[files_api.php](examples/files_api.php)** - File management (beta)
 >
@@ -101,17 +142,27 @@ $client = new ClaudePhp(
 > - **[tool_use_overview.php](examples/tool_use_overview.php)** - Complete tool use guide
 > - **[tool_use_implementation.php](examples/tool_use_implementation.php)** - Implementation patterns
 > - **[token_efficient_tool_use.php](examples/token_efficient_tool_use.php)** - Optimize tool usage
+> - **[fine_grained_tool_streaming.php](examples/fine_grained_tool_streaming.php)** - Real-time tool parameters
 > - **[bash_tool.php](examples/bash_tool.php)**, **[code_execution_tool.php](examples/code_execution_tool.php)**, **[computer_use_tool.php](examples/computer_use_tool.php)**
 > - **[text_editor_tool.php](examples/text_editor_tool.php)**, **[web_fetch_tool.php](examples/web_fetch_tool.php)**, **[memory_tool.php](examples/memory_tool.php)**
+> - **[web_search.php](examples/web_search.php)** - Web search tool
+>
+> **Context Management (Beta):**
+>
+> - **[advanced_configuration.php](examples/advanced_configuration.php)** - Advanced context editing
+> - **[combining_strategies.php](examples/combining_strategies.php)** - Multiple strategies
+> - **[tool_result_clearing.php](examples/tool_result_clearing.php)** - Clear tool results
+> - **[thinking_block_clearing.php](examples/thinking_block_clearing.php)** - Clear thinking blocks
 >
 > **Advanced:**
 >
-> - **[citations.php](examples/citations.php)** - Source attribution (beta)
+> - **[structured_outputs.php](examples/structured_outputs.php)** - Guaranteed JSON schema
 > - **[embeddings.php](examples/embeddings.php)** - Semantic search concepts
 > - **[search_results.php](examples/search_results.php)** - Provide search results
-> - Plus: error handling, model comparison, and more!
+> - **[error_handling.php](examples/error_handling.php)** - Comprehensive error handling
+> - **[model_comparison.php](examples/model_comparison.php)** - Compare different models
 >
-> 📖 **See [COMPLETE_EXAMPLES.md](COMPLETE_EXAMPLES.md) for the full list of 29 examples covering 27 documentation pages**
+> 📖 **See [examples/README.md](examples/README.md) for the complete list and detailed descriptions**
 
 ## 🎓 Agentic AI Tutorial Series
 

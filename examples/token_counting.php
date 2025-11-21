@@ -147,4 +147,3 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "Related examples:\n";
 echo "  • examples/context_windows.php - Context management\n";
 echo "  • examples/prompt_caching.php - Cost optimization\n";
-
