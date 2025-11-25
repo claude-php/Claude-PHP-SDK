@@ -86,7 +86,7 @@ $response = $client->messages()->create([
 **Examples included:**
 1. Claude Sonnet 4.5 (balanced performance)
 2. Claude Haiku 4.5 (fast and cost-effective)
-3. Claude Opus 4.1 (highest quality)
+3. Claude Opus 4.5 (highest quality)
 4. Model selection helper function
 5. Temperature comparison (0.0, 0.5, 1.0)
 

@@ -42,7 +42,7 @@ class ModelsTest extends TestCase
     {
         // Doesn't throw validation
         try {
-            $this->models->retrieve('claude-opus-4-1-20250805');
+            $this->models->retrieve('claude-opus-4-5-20251101');
         } catch (\Throwable $e) {
             // Expected to fail on actual HTTP call
             $this->assertNotInstanceOf(\InvalidArgumentException::class, $e);

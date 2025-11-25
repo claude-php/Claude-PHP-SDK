@@ -125,7 +125,7 @@ class AnthropicBedrock
         return match ($modelId) {
             'claude-sonnet-4-5' => 'anthropic.claude-3-5-sonnet-20241022-v2:0',
             'claude-haiku-4-5' => 'anthropic.claude-3-5-haiku-20241022-v1:0',
-            'claude-opus-4-1' => 'anthropic.claude-3-opus-20240229-v1:0',
+            'claude-opus-4-5' => 'anthropic.claude-3-opus-20240229-v1:0',
             default => $modelId,
         };
     }

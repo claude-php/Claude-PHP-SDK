@@ -324,7 +324,7 @@ echo "Context Window Sizes by Model:\n";
 echo "  Claude Sonnet 4.5:  200K tokens (1M with beta)\n";
 echo "  Claude Sonnet 4:    200K tokens (1M with beta)\n";
 echo "  Claude Haiku 4.5:   200K tokens\n";
-echo "  Claude Opus 4.1:    200K tokens\n\n";
+echo "  Claude Opus 4.5:    200K tokens\n\n";
 
 echo "Related examples:\n";
 echo "  • examples/thinking.php - Extended thinking with token management\n";

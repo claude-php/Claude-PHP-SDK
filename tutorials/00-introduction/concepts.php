@@ -735,4 +735,5 @@ echo "   ✓ Error Handling & Exception Types\n";
 echo "   ✓ Chatbot vs Agent behavior\n";
 echo "   ✓ The ReAct loop pattern\n";
 echo "   ✓ Tool use and agent capabilities\n";
-echo "   ✓ Stop reasons and their meanings\n\n";
+echo "   ✓ Stop reasons and their meanings\n";
+echo "   ✓ Multi-step problem solving\n\n";

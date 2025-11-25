@@ -312,10 +312,10 @@ The examples use `claude-sonnet-4-5-20250929` which is the latest Sonnet model. 
 
 - `claude-sonnet-4-5` - Latest Sonnet (auto-updating alias)
 - `claude-haiku-4-5-20251001` - Fast, cost-effective model
-- `claude-opus-4-1-20250805` - Most capable model for complex tasks
+- `claude-opus-4-5-20251101` - Most capable model for complex tasks
 
 ## Notes
 
-- Extended thinking is only available on Sonnet 4.5, Opus 4, and Opus 4.1
+- Extended thinking is only available on Sonnet 4.5, Opus 4, and Opus 4.5
 - Web search requires the `web_search_20250305` tool type
 - All streaming examples use synchronous streaming - PHP doesn't have native async/await

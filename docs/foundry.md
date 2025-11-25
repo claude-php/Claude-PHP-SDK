@@ -280,12 +280,12 @@ All Claude models are available through Foundry:
 | ----------------- | ---------------------------- | ------------------------- |
 | Claude Sonnet 4.5 | `claude-sonnet-4-5`          | Complex reasoning, coding |
 | Claude Haiku 4.5  | `claude-haiku-4-5`           | Speed & cost efficiency   |
-| Claude Opus 4.1   | `claude-opus-4-1`            | Specialized tasks         |
+| Claude Opus 4.5   | `claude-opus-4-5`            | Specialized tasks         |
 
 You can also use specific version IDs:
 - `claude-sonnet-4-5-20250929`
 - `claude-haiku-4-5-20251001`
-- `claude-opus-4-1-20250805`
+- `claude-opus-4-5-20251101`
 
 ## Error Handling
 

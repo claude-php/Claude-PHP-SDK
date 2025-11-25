@@ -450,7 +450,7 @@ echo "  • Combine with memory tool for long sessions\n";
 echo "  • Monitor applied_edits in responses\n\n";
 
 echo "✓ Supported Models:\n";
-echo "  • Claude Opus 4.1 (claude-opus-4-1-20250805)\n";
+echo "  • Claude Opus 4.5 (claude-opus-4-5-20251101)\n";
 echo "  • Claude Opus 4 (claude-opus-4-20250514)\n";
 echo "  • Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)\n";
 echo "  • Claude Sonnet 4 (claude-sonnet-4-20250514)\n";

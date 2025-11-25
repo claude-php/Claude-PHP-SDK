@@ -8,7 +8,7 @@ A universal, framework-agnostic PHP SDK for the Anthropic Claude API with full P
 - ✅ **Complete Example Coverage**: **80+ comprehensive examples** covering all Claude documentation pages (11,000+ lines)
 - ✅ **PSR Compliance**: Follows PSR-12 coding standards and PSR-11 dependency injection patterns
 - ✅ **Framework Agnostic**: Works seamlessly with Laravel, Symfony, Slim, and other PHP frameworks
-- ✅ **Latest Models**: Support for Claude Sonnet 4.5, Haiku 4.5, and Opus 4.1
+- ✅ **Latest Models**: Support for Claude Sonnet 4.5, Haiku 4.5, and Opus 4.5
 - ✅ **Advanced Features**: Tool use, vision, streaming, extended thinking, embeddings, batch processing, and more
 - ✅ **Async Ready**: Built for modern async patterns with Amphp support
 - ✅ **Comprehensive Error Handling**: Detailed exception hierarchy matching the Python SDK
@@ -267,7 +267,7 @@ patterns.
 | ----------------- | ---------------------------- | ------------------------: |
 | Claude Sonnet 4.5 | `claude-sonnet-4-5-20250929` | Complex reasoning, coding |
 | Claude Haiku 4.5  | `claude-haiku-4-5-20251001`  |   Speed & cost efficiency |
-| Claude Opus 4.1   | `claude-opus-4-1-20250805`   |         Specialized tasks |
+| Claude Opus 4.5   | `claude-opus-4-5-20251101`   |         Specialized tasks |
 
 Use model aliases (`claude-sonnet-4-5`, `claude-haiku-4-5`) for automatic updates.
 

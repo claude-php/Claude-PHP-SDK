@@ -45,7 +45,7 @@ class MessagesTest extends TestCase
 
         // Missing max_tokens
         $this->messages->create([
-            'model' => 'claude-opus-4-1-20250805',
+            'model' => 'claude-opus-4-5-20251101',
             'messages' => [],
         ]);
     }
@@ -56,7 +56,7 @@ class MessagesTest extends TestCase
 
         // Missing messages
         $this->messages->create([
-            'model' => 'claude-opus-4-1-20250805',
+            'model' => 'claude-opus-4-5-20251101',
             'max_tokens' => 1024,
         ]);
     }
@@ -73,7 +73,7 @@ class MessagesTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        $this->messages->countTokens(['model' => 'claude-opus-4-1-20250805']);
+        $this->messages->countTokens(['model' => 'claude-opus-4-5-20251101']);
     }
 
     public function testCountTokensAcceptsValidParameters(): void
@@ -81,7 +81,7 @@ class MessagesTest extends TestCase
         // This would test actual HTTP call in integration tests
         // Unit test just verifies parameter validation passes
         $params = [
-            'model' => 'claude-opus-4-1-20250805',
+            'model' => 'claude-opus-4-5-20251101',
             'messages' => [
                 ['role' => 'user', 'content' => 'Hello'],
             ],

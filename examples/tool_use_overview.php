@@ -294,7 +294,7 @@ echo "System prompt tokens by model:\n";
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
 echo "Model              auto/none    any/tool\n";
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-echo "Opus 4.1/4         346 tokens   313 tokens\n";
+echo "Opus 4.5/4         346 tokens   313 tokens\n";
 echo "Sonnet 4.5/4       346 tokens   313 tokens\n";
 echo "Haiku 4.5          346 tokens   313 tokens\n";
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";

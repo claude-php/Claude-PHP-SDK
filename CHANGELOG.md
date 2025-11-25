@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2025-11-25
+
+### Added
+
+- **Claude Opus 4.5 Support**: Updated to support the newly released Claude Opus 4.5 model
+  - Model ID: `claude-opus-4-5-20251101`
+  - New pricing: $5/$25 per million tokens (input/output)
+  - State-of-the-art performance for coding, agents, and computer use
+
+### Changed
+
+- Updated all model references from Opus 4.1 to Opus 4.5
+- Updated model mappings in Bedrock and Vertex integrations
+- Updated pricing information in documentation and examples
+
 ## [0.3.0] - 2025-01-21
 
 ### Added

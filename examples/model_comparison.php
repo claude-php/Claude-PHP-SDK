@@ -84,8 +84,8 @@ try {
 
 echo "\n" . str_repeat("=", 80) . "\n\n";
 
-// Example 3: Claude Opus 4.1 (Most capable)
-echo "Example 3: Claude Opus 4.1\n";
+// Example 3: Claude Opus 4.5 (Most capable)
+echo "Example 3: Claude Opus 4.5\n";
 echo "---------------------------\n";
 echo "Best for: Complex reasoning, analysis, creative tasks requiring highest quality\n";
 echo "Prompt: {$testPrompt}\n\n";
@@ -93,7 +93,7 @@ echo "Prompt: {$testPrompt}\n\n";
 $startTime = microtime(true);
 try {
     $response = $client->messages()->create([
-        'model' => 'claude-opus-4-1-20250805',
+        'model' => 'claude-opus-4-5-20251101',
         'max_tokens' => 1024,
         'messages' => [
             ['role' => 'user', 'content' => $testPrompt]
@@ -123,7 +123,7 @@ echo "----------------------------------\n";
 function selectModel(string $taskType): string {
     return match($taskType) {
         'fast', 'simple', 'classification' => 'claude-haiku-4-5-20251001',
-        'complex', 'creative', 'research' => 'claude-opus-4-1-20250805',
+        'complex', 'creative', 'research' => 'claude-opus-4-5-20251101',
         'balanced', 'general' => 'claude-sonnet-4-5',
         default => 'claude-sonnet-4-5',
     };

@@ -237,11 +237,11 @@ $response = $client->messages()->create([
 - Lowest cost
 - Lower capability on complex tasks
 
-### Claude Opus 4.1 (Specialized)
+### Claude Opus 4.5 (Premium)
 
 ```php
 $response = $client->messages()->create([
-    'model' => 'claude-opus-4-1-20250805',
+    'model' => 'claude-opus-4-5-20251101',
     'max_tokens' => 1024,
     'messages' => [
         ['role' => 'user', 'content' => 'Your message']

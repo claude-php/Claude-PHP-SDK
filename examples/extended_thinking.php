@@ -5,7 +5,7 @@
  * https://docs.claude.com/en/docs/build-with-claude/extended-thinking
  * 
  * Enhanced reasoning capabilities with step-by-step thought process visibility.
- * Supported models: Claude Sonnet 4.5, Sonnet 4, Haiku 4.5, Opus 4.1, Opus 4
+ * Supported models: Claude Sonnet 4.5, Sonnet 4, Haiku 4.5, Opus 4.5, Opus 4
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -301,7 +301,7 @@ echo "Pricing (per million tokens):\n";
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
 echo "Model              Input      Output\n";
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
-echo "Opus 4.1           \$15        \$75\n";
+echo "Opus 4.5           \$5         \$25\n";
 echo "Opus 4             \$15        \$75\n";
 echo "Sonnet 4.5         \$3         \$15\n";
 echo "Sonnet 4           \$3         \$15\n";
@@ -372,7 +372,7 @@ $supportedModels = [
     'claude-sonnet-4-5-20250929' => 'Latest Sonnet - Summarized thinking',
     'claude-sonnet-4-20250514' => 'Sonnet 4 - Summarized thinking',
     'claude-haiku-4-5-20251001' => 'Fast model - Summarized thinking',
-    'claude-opus-4-1-20250805' => 'Most capable - Summarized thinking',
+    'claude-opus-4-5-20251101' => 'Most capable - Summarized thinking',
     'claude-opus-4-20250514' => 'Opus 4 - Summarized thinking',
     'claude-3-7-sonnet-20250219' => 'DEPRECATED - Full thinking output'
 ];
