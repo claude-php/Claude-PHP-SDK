@@ -7,6 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2025-11-26
+
+### Added
+
+- **Computer Use V5 (20251124)**: New computer use tool with enhanced features
+  - Zoom capability for detailed screen inspection
+  - Allowed callers for security control
+  - Deferred loading for performance optimization
+  - Multi-display support with display_number
+  - Strict mode for validation
+  - Types: `ToolComputerUse20251124`, `BetaToolComputerUse20251124`
+
+- **Search Tools (20251119)**: Dynamic tool discovery
+  - BM25 search tool: `ToolSearchToolBM25_20251119`
+  - Regex search tool: `ToolSearchToolRegex20251119`
+  - Tool reference blocks for search results
+  - Result and error types for search operations
+
+- **MCP Toolset Configuration**: Model Context Protocol support
+  - Types: `MCPToolset`, `MCPToolConfig`, `MCPToolDefaultConfig`
+  - Per-tool configuration overrides
+  - Default configurations for server tools
+
+- **Output Config with Effort Levels**: Control response quality
+  - Types: `OutputConfig`, `BetaOutputConfig`
+  - Effort levels: low, medium, high
+  - Trade-off between latency and response depth
+
+- **Auto-Compaction**: Context window management
+  - Types: `CompactionControl`
+  - Automatic message history summarization
+  - Configurable token thresholds
+  - Custom summary prompts
+
+- **Tool Caller Types**: Advanced tool invocation control
+  - `DirectCaller` / `BetaDirectCaller`
+  - `ServerToolCaller` / `BetaServerToolCaller`
+  - `ToolReferenceBlock` / `BetaToolReferenceBlock`
+
+- **New Examples**:
+  - `auto_compaction.php` - Context window management
+  - `effort_levels.php` - Controlling response quality
+  - `tool_search.php` - Dynamic tool discovery
+  - `mcp_toolset.php` - MCP server configuration
+  - `computer_use_v5.php` - Enhanced computer use
+
+- **New Tutorial**:
+  - Tutorial 15: Context Management & Advanced Tool Use
+
+### Changed
+
+- Updated Beta types for new features
+- Enhanced documentation with new feature coverage
+
+### Fixed
+
+- Fixed duplicate `/v1/` prefix in API paths for `Batches.delete()`, `Messages.countTokens()`, `Beta/Messages.countTokens()`, and `Completions.create()`
+- Fixed `batch_processing.php` example to use array notation for API responses
+- Fixed Tutorial 15 helpers include path
+
 ## [0.4.0] - 2025-11-25
 
 ### Added

@@ -128,7 +128,7 @@ class Batches extends Resource
             throw new \InvalidArgumentException('batch_id is required');
         }
 
-        $this->_delete("/v1/messages/batches/{$batchId}");
+        $this->_delete("/messages/batches/{$batchId}");
     }
 
     /**

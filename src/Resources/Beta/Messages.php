@@ -86,7 +86,7 @@ class Messages extends Resource
         }
 
         $body = Transform::transform($params, $this->getCountTokensParamTypes());
-        $response = $this->_post('/v1/messages/count_tokens', $body);
+        $response = $this->_post('/messages/count_tokens', $body);
         if (!\is_array($response)) {
             throw new \RuntimeException('Unexpected response payload from beta messages countTokens');
         }

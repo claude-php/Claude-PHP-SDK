@@ -56,10 +56,10 @@ class Completions extends Resource
         ]);
 
         if (!empty($params['stream'])) {
-            return $this->_postStream('/v1/completions', $body);
+            return $this->_postStream('/completions', $body);
         }
 
-        return $this->_post('/v1/completions', $body);
+        return $this->_post('/completions', $body);
     }
 
     /**

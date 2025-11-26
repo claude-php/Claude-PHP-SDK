@@ -209,7 +209,7 @@ class MessagesApiTest extends TestCase
         $this->assertEquals(15, $response->input_tokens);
         $this->assertEquals(0, $response->output_tokens);
 
-        $this->assertHttpRequestMade('POST', '/v1/messages/count_tokens');
+        $this->assertHttpRequestMade('POST', '/messages/count_tokens');
     }
 
     public function testApiErrorHandling(): void

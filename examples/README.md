@@ -209,6 +209,35 @@ See [STREAMING_EXAMPLES.md](STREAMING_EXAMPLES.md) for comprehensive streaming d
 - **tools.php** - Basic tool use example
 - **web_search.php** - Basic web search example
 
+### Advanced Tool Use & Context Management
+
+- **tool_search.php** - Dynamic tool discovery:
+  - BM25 search tool (tool_search_tool_bm25_20251119)
+  - Regex search tool (tool_search_tool_regex_20251119)
+  - Deferred tool loading for large collections
+  - Tool reference blocks
+- **computer_use_v5.php** - Enhanced desktop automation (Computer Use V5):
+  - Computer use setup (computer_20251124)
+  - Zoom capability for detailed inspection
+  - Allowed callers for security
+  - Multi-display support
+  - Strict mode for validation
+- **mcp_toolset.php** - MCP server configuration:
+  - MCP toolset configuration
+  - Per-tool overrides
+  - Default configurations
+  - Security best practices
+- **auto_compaction.php** - Context window management:
+  - Automatic context summarization
+  - Configurable token thresholds
+  - Custom summary prompts
+  - Detecting compaction events
+- **effort_levels.php** - Control response quality:
+  - Effort levels (low, medium, high)
+  - Task complexity detection
+  - Performance trade-offs
+  - Combining with extended thinking
+
 ### Beta Features
 
 - **beta_features.php** - Using beta features with the anthropic-beta header

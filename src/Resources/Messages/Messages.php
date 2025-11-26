@@ -35,20 +35,20 @@ class Messages extends Resource
      * Supports both streaming and non-streaming modes.
      *
      * @param array<string, mixed> $params Message creation parameters:
-     *   - model: string (required) - Model to use (e.g., 'claude-opus-4-5-20251101')
-     *   - max_tokens: int (required) - Maximum tokens to generate
-     *   - messages: array (required) - Array of message objects with role and content
-     *   - system: string|array (optional) - System prompt
-     *   - temperature: float (optional) - Temperature (0.0-1.0)
-     *   - top_p: float (optional) - Top P sampling parameter
-     *   - top_k: int (optional) - Top K sampling parameter
-     *   - stop_sequences: array (optional) - Custom stop sequences
-     *   - tools: array (optional) - Tool definitions for tool use
-     *   - tool_choice: string|array (optional) - Tool selection strategy
-     *   - thinking: array (optional) - Extended thinking configuration
-     *   - stream: bool (optional) - Whether to stream the response
-     *   - metadata: array (optional) - Request metadata
-     *   - service_tier: string (optional) - Service tier (auto, standard_only)
+     *                                     - model: string (required) - Model to use (e.g., 'claude-opus-4-5-20251101')
+     *                                     - max_tokens: int (required) - Maximum tokens to generate
+     *                                     - messages: array (required) - Array of message objects with role and content
+     *                                     - system: string|array (optional) - System prompt
+     *                                     - temperature: float (optional) - Temperature (0.0-1.0)
+     *                                     - top_p: float (optional) - Top P sampling parameter
+     *                                     - top_k: int (optional) - Top K sampling parameter
+     *                                     - stop_sequences: array (optional) - Custom stop sequences
+     *                                     - tools: array (optional) - Tool definitions for tool use
+     *                                     - tool_choice: string|array (optional) - Tool selection strategy
+     *                                     - thinking: array (optional) - Extended thinking configuration
+     *                                     - stream: bool (optional) - Whether to stream the response
+     *                                     - metadata: array (optional) - Request metadata
+     *                                     - service_tier: string (optional) - Service tier (auto, standard_only)
      *
      * @return Message|StreamResponse The message response, or stream if stream=true
      */
@@ -122,7 +122,7 @@ class Messages extends Resource
 
         $body = Transform::transform($params, $this->getCountTokensParamTypes());
 
-        $response = $this->_post('/v1/messages/count_tokens', $body);
+        $response = $this->_post('/messages/count_tokens', $body);
 
         return $this->_createMessageTokensCountFromArray($response);
     }

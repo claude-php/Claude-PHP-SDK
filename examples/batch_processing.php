@@ -65,18 +65,18 @@ try {
     ]);
     
     echo "✓ Batch created successfully!\n";
-    echo "  Batch ID: {$batch->id}\n";
-    echo "  Status: {$batch->processing_status}\n";
+    echo "  Batch ID: {$batch['id']}\n";
+    echo "  Status: {$batch['processing_status']}\n";
     echo "  Request counts:\n";
-    echo "    Total: {$batch->request_counts->total}\n";
-    echo "    Processing: {$batch->request_counts->processing}\n";
-    echo "    Succeeded: {$batch->request_counts->succeeded}\n";
-    echo "    Errored: {$batch->request_counts->errored}\n";
-    echo "    Canceled: {$batch->request_counts->canceled}\n";
-    echo "    Expired: {$batch->request_counts->expired}\n\n";
+    $counts = $batch['request_counts'];
+    echo "    Processing: {$counts['processing']}\n";
+    echo "    Succeeded: {$counts['succeeded']}\n";
+    echo "    Errored: {$counts['errored']}\n";
+    echo "    Canceled: {$counts['canceled']}\n";
+    echo "    Expired: {$counts['expired']}\n\n";
     
     echo "Use this batch_id to retrieve results later:\n";
-    echo "  \$results = \$client->messages()->batches()->retrieve('{$batch->id}');\n";
+    echo "  \$results = \$client->messages()->batches()->retrieve('{$batch['id']}');\n";
     
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\n";
@@ -94,12 +94,13 @@ try {
     ]);
     
     echo "Recent batches:\n";
-    foreach ($batches->data as $batch) {
-        echo "  • ID: {$batch->id}\n";
-        echo "    Status: {$batch->processing_status}\n";
-        echo "    Requests: {$batch->request_counts->total} total, ";
-        echo "{$batch->request_counts->succeeded} succeeded\n";
-        echo "    Created: {$batch->created_at}\n\n";
+    foreach ($batches['data'] ?? [] as $batch) {
+        $counts = $batch['request_counts'];
+        $total = $counts['processing'] + $counts['succeeded'] + $counts['errored'] + $counts['canceled'] + $counts['expired'];
+        echo "  • ID: {$batch['id']}\n";
+        echo "    Status: {$batch['processing_status']}\n";
+        echo "    Requests: {$total} total, {$counts['succeeded']} succeeded\n";
+        echo "    Created: {$batch['created_at']}\n\n";
     }
 } catch (Exception $e) {
     echo "Note: List batches to see your batch processing history\n";

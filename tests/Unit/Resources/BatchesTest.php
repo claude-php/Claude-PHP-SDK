@@ -133,7 +133,7 @@ class BatchesTest extends TestCase
         $requests = $this->getAllRequests();
         $this->assertCount(2, $requests);
         $this->assertSame('GET', $requests[0]->getMethod());
-        $this->assertStringContainsString('/v1/messages/batches/batch-123', (string) $requests[0]->getUri());
+        $this->assertStringContainsString('/messages/batches/batch-123', (string) $requests[0]->getUri());
         $this->assertSame('GET', $requests[1]->getMethod());
         $this->assertSame('application/binary', $requests[1]->getHeaderLine('Accept'));
         $this->assertSame($resultsUrl, (string) $requests[1]->getUri());

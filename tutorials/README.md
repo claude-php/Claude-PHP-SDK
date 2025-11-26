@@ -307,6 +307,24 @@ Build self-directed agents that pursue goals independently across sessions.
 
 ---
 
+### [Tutorial 15: Context Management & Advanced Tool Use](./15-context-management/)
+**Time: 60 minutes** | **Difficulty: Advanced**
+
+Master context window management with auto-compaction, effort levels, and advanced tool discovery.
+
+**What You'll Learn:**
+- Auto-compaction for managing context window size
+- Effort levels for controlling response quality
+- Tool search for dynamic tool discovery
+- MCP toolset configuration
+- Computer use v5 features
+
+**Files:**
+- 📖 [README.md](./15-context-management/README.md)
+- 💻 [context_agent.php](./15-context-management/context_agent.php)
+
+---
+
 ## 📚 Related SDK Examples
 
 These tutorials build on patterns from the SDK's `examples/` directory:
