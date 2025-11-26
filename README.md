@@ -186,16 +186,16 @@ Learn to build sophisticated AI agents through 15 progressive tutorials covering
 
 ### Advanced Patterns (Tutorials 7-14)
 
-| Tutorial                                             | Topic                       | Time   | Level        |
-| ---------------------------------------------------- | --------------------------- | ------ | ------------ |
-| **[Tutorial 7](tutorials/07-chain-of-thought/)**     | Chain of Thought (CoT)      | 45 min | Intermediate |
-| **[Tutorial 8](tutorials/08-tree-of-thoughts/)**     | Tree of Thoughts (ToT)      | 60 min | Advanced     |
-| **[Tutorial 9](tutorials/09-plan-and-execute/)**     | Plan-and-Execute            | 45 min | Intermediate |
-| **[Tutorial 10](tutorials/10-reflection/)**          | Reflection & Self-Critique  | 45 min | Intermediate |
-| **[Tutorial 11](tutorials/11-hierarchical-agents/)** | Hierarchical Agents         | 60 min | Advanced     |
-| **[Tutorial 12](tutorials/12-multi-agent-debate/)**  | Multi-Agent Debate          | 60 min | Advanced     |
-| **[Tutorial 13](tutorials/13-rag-pattern/)**         | RAG Pattern                 | 60 min | Advanced     |
-| **[Tutorial 14](tutorials/14-autonomous-agents/)**   | Autonomous Agents           | 90 min | Advanced     |
+| Tutorial                                             | Topic                      | Time   | Level        |
+| ---------------------------------------------------- | -------------------------- | ------ | ------------ |
+| **[Tutorial 7](tutorials/07-chain-of-thought/)**     | Chain of Thought (CoT)     | 45 min | Intermediate |
+| **[Tutorial 8](tutorials/08-tree-of-thoughts/)**     | Tree of Thoughts (ToT)     | 60 min | Advanced     |
+| **[Tutorial 9](tutorials/09-plan-and-execute/)**     | Plan-and-Execute           | 45 min | Intermediate |
+| **[Tutorial 10](tutorials/10-reflection/)**          | Reflection & Self-Critique | 45 min | Intermediate |
+| **[Tutorial 11](tutorials/11-hierarchical-agents/)** | Hierarchical Agents        | 60 min | Advanced     |
+| **[Tutorial 12](tutorials/12-multi-agent-debate/)**  | Multi-Agent Debate         | 60 min | Advanced     |
+| **[Tutorial 13](tutorials/13-rag-pattern/)**         | RAG Pattern                | 60 min | Advanced     |
+| **[Tutorial 14](tutorials/14-autonomous-agents/)**   | Autonomous Agents          | 90 min | Advanced     |
 
 **What You'll Learn:**
 
@@ -241,6 +241,7 @@ $response = $client->createMessage([
 ```
 
 **Features:**
+
 - ✅ API key and Azure AD token authentication
 - ✅ Full Claude API support (streaming, tools, vision)
 - ✅ Regional deployment options
@@ -251,15 +252,47 @@ $response = $client->createMessage([
 ### AWS Bedrock & Google Vertex AI
 
 Similar integrations are available for AWS Bedrock and Google Cloud Vertex AI. See:
+
 - `ClaudePhp\Lib\Bedrock\AnthropicBedrock` for AWS Bedrock
 - `ClaudePhp\Lib\Vertex\AnthropicVertex` for Google Vertex AI
 
 ## Framework Integrations
 
-Need a pre-wired client inside your container? See the
+### Laravel Package
+
+For Laravel applications, use the official Laravel integration package:
+
+```bash
+composer require claude-php/claude-php-sdk-laravel
+```
+
+This provides a service provider, facade, and configuration publishing:
+
+```php
+use ClaudePhp\Laravel\Facades\Claude;
+
+$response = Claude::messages()->create([
+    'model' => 'claude-sonnet-4-5-20250929',
+    'max_tokens' => 1024,
+    'messages' => [['role' => 'user', 'content' => 'Hello!']]
+]);
+```
+
+**Features:**
+
+- ✅ Auto-registered service provider and facade
+- ✅ Publishable configuration with environment variable support
+- ✅ Full dependency injection support
+- ✅ Laravel 11.x and 12.x compatible
+- ✅ Comprehensive documentation with agentic patterns
+
+👉 **[Laravel Package Documentation](https://github.com/claude-php/Claude-PHP-SDK-Laravel)**
+
+### Manual Integration
+
+For other frameworks or custom setups, see the
 [framework integration guide](.docs/framework_integration.md) for drop-in
-Laravel and Symfony bindings, environment variables, and streaming controller
-patterns.
+Symfony bindings, environment variables, and streaming controller patterns.
 
 ## Supported Models
 

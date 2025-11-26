@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2025-11-26
+
+### Added
+
+- **Official Laravel Package**: Released `claude-php/claude-php-sdk-laravel` v1.0.0
+  - Service provider with auto-registration
+  - `Claude` facade for expressive API access
+  - Publishable configuration with environment variable support
+  - Full dependency injection support
+  - Laravel 11.x and 12.x compatible
+  - Comprehensive documentation with agentic patterns (ReAct, multi-tool agents, frameworks)
+  - 👉 [Laravel Package Repository](https://github.com/claude-php/Claude-PHP-SDK-Laravel)
+
+### Changed
+
+- Updated README with Laravel package installation and usage instructions
+- Added dedicated Framework Integrations section for Laravel
+
 ## [0.5.0] - 2025-11-26
 
 ### Added
