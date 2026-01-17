@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3] - 2025-01-17
+
+### Added
+
+- **Comprehensive Integration Tests**: Added `NewFeaturesIntegrationTest` for v0.5.2 features
+  - Server-side tool handling tests
+  - Authentication flexibility tests
+  - Stream closure and resource cleanup tests
+  - Binary streaming method verification
+  - Mixed client/server tool scenarios
+  - 6 new integration test cases (318 total tests passing)
+
+- **Tutorial 16: v0.5.2 New Features**: Complete tutorial for latest SDK capabilities
+  - Server-side vs client-side tools explained
+  - Authentication flexibility patterns (OAuth2, Bearer tokens, proxies)
+  - Enhanced stream management best practices
+  - Binary request streaming examples
+  - Mixed tools agent implementation
+  - Runnable example code with comprehensive documentation
+
+### Changed
+
+- Updated `tutorials/README.md` with Tutorial 16 in learning path
+- Updated `examples/README.md` with documentation for new examples
+  - Added `server_side_tools.php` reference
+  - Added `authentication_flexibility.php` reference
+- Enhanced project documentation for v0.5.2 features
+
 ## [0.5.2] - 2025-01-17
 
 ### Added

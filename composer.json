@@ -1,6 +1,6 @@
 {
     "name": "claude-php/claude-php-sdk",
-    "version": "0.5.2",
+    "version": "0.5.3",
     "description": "A universal, framework-agnostic PHP SDK for the Anthropic Claude API with PSR compliance",
     "license": "MIT",
     "type": "library",
