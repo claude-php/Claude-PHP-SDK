@@ -325,6 +325,24 @@ Master context window management with auto-compaction, effort levels, and advanc
 
 ---
 
+### [Tutorial 16: v0.5.2 New Features](./16-v052-features/)
+**Time: 60 minutes** | **Difficulty: Intermediate**
+
+Learn about the powerful new features in v0.5.2 that achieve parity with Python SDK v0.76.0.
+
+**What You'll Learn:**
+- Server-side tools (executed by Claude's API)
+- Authentication flexibility (OAuth2, Bearer tokens, proxies)
+- Enhanced stream management with automatic cleanup
+- Binary request streaming capabilities
+- How to mix client-side and server-side tools
+
+**Files:**
+- 📖 [README.md](./16-v052-features/README.md)
+- 💻 [v052_features.php](./16-v052-features/v052_features.php)
+
+---
+
 ## 📚 Related SDK Examples
 
 These tutorials build on patterns from the SDK's `examples/` directory:
@@ -385,6 +403,8 @@ After completing foundations, explore these specialized patterns:
 **Advanced Systems:**
 - Tutorial 13 (RAG) - Knowledge integration
 - Tutorial 14 (Autonomous) - Self-directed agents
+- Tutorial 15 (Context Management) - Advanced context handling
+- Tutorial 16 (v0.5.2 Features) - Latest SDK capabilities
 
 ### Quick Start Options
 

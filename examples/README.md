@@ -208,6 +208,12 @@ See [STREAMING_EXAMPLES.md](STREAMING_EXAMPLES.md) for comprehensive streaming d
   - Organization best practices
 - **tools.php** - Basic tool use example
 - **web_search.php** - Basic web search example
+- **server_side_tools.php** - Server-side tool execution (v0.5.2):
+  - Understanding server-side vs client-side tools
+  - No handler required for server tools
+  - Tool type identification (tool_use vs server_tool_use)
+  - Mixing client and server tools
+  - Code execution and bash examples
 
 ### Advanced Tool Use & Context Management
 
@@ -237,6 +243,13 @@ See [STREAMING_EXAMPLES.md](STREAMING_EXAMPLES.md) for comprehensive streaming d
   - Task complexity detection
   - Performance trade-offs
   - Combining with extended thinking
+- **authentication_flexibility.php** - Flexible authentication methods (v0.5.2):
+  - OAuth2 Bearer token authentication
+  - Custom x-api-key headers for proxies
+  - Azure AD / Enterprise SSO integration
+  - API gateway patterns
+  - Environment-based configuration
+  - Multi-tenant authentication strategies
 
 ### Beta Features
 
