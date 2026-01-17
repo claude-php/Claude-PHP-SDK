@@ -64,6 +64,32 @@ $client = new ClaudePhp(
 );
 ```
 
+#### Alternative Authentication (v0.5.2+)
+
+The SDK now supports flexible authentication beyond standard API keys:
+
+```php
+// OAuth2 / Bearer token authentication
+$client = new ClaudePhp(
+    apiKey: null,
+    customHeaders: ['Authorization' => 'Bearer your-oauth-token']
+);
+
+// Custom x-api-key header (for proxies/gateways)
+$client = new ClaudePhp(
+    apiKey: null,
+    customHeaders: ['x-api-key' => 'your-proxy-key']
+);
+```
+
+**Use cases:**
+- API gateways and proxies with centralized key management
+- OAuth2 and service account authentication
+- Azure AD or enterprise SSO integration
+- Multi-tenant systems with custom auth
+
+See [examples/authentication_flexibility.php](examples/authentication_flexibility.php) for more patterns.
+
 ## 📚 Comprehensive Examples
 
 > 💡 **Complete Documentation Coverage**: The [`examples/`](examples/) directory contains **80+ comprehensive example files** (11,000+ lines of code) covering **all Claude documentation pages** with complete Python → PHP parity:
@@ -141,11 +167,13 @@ $client = new ClaudePhp(
 >
 > - **[tool_use_overview.php](examples/tool_use_overview.php)** - Complete tool use guide
 > - **[tool_use_implementation.php](examples/tool_use_implementation.php)** - Implementation patterns
+> - **[server_side_tools.php](examples/server_side_tools.php)** - Server-side tool execution (v0.5.2+)
 > - **[token_efficient_tool_use.php](examples/token_efficient_tool_use.php)** - Optimize tool usage
 > - **[fine_grained_tool_streaming.php](examples/fine_grained_tool_streaming.php)** - Real-time tool parameters
 > - **[bash_tool.php](examples/bash_tool.php)**, **[code_execution_tool.php](examples/code_execution_tool.php)**, **[computer_use_tool.php](examples/computer_use_tool.php)**
 > - **[text_editor_tool.php](examples/text_editor_tool.php)**, **[web_fetch_tool.php](examples/web_fetch_tool.php)**, **[memory_tool.php](examples/memory_tool.php)**
 > - **[web_search.php](examples/web_search.php)** - Web search tool
+> - **[authentication_flexibility.php](examples/authentication_flexibility.php)** - Flexible auth methods (v0.5.2+)
 >
 > **Context Management (Beta):**
 >

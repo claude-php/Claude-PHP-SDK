@@ -107,9 +107,17 @@ class ClaudePhp
         $this->requestFactory = $requestFactory;
         $this->streamFactory = $streamFactory;
 
-        if ('' === $this->apiKey) {
+        // Validate that either API key or custom auth headers are provided
+        $hasApiKey = '' !== $this->apiKey;
+        $hasAuthHeader = isset($customHeaders['x-api-key']) 
+            || isset($customHeaders['authorization']) 
+            || isset($customHeaders['Authorization']);
+
+        if (!$hasApiKey && !$hasAuthHeader) {
             throw new \InvalidArgumentException(
-                'API key is required. Pass it as apiKey parameter or set ANTHROPIC_API_KEY environment variable.',
+                'Authentication is required. Provide an API key via the apiKey parameter, '
+                . 'ANTHROPIC_API_KEY environment variable, or custom authentication headers '
+                . '(x-api-key, Authorization).',
             );
         }
 
@@ -259,10 +267,15 @@ class ClaudePhp
     private function buildDefaultHeaders(): array
     {
         $defaults = [
-            'x-api-key' => $this->apiKey,
             'anthropic-version' => self::DEFAULT_API_VERSION,
             'user-agent' => sprintf('ClaudePhp/%s', self::SDK_VERSION),
         ];
+
+        // Only add x-api-key if an API key was provided
+        // This allows alternative auth methods via custom headers
+        if ('' !== $this->apiKey) {
+            $defaults['x-api-key'] = $this->apiKey;
+        }
 
         return array_merge($defaults, $this->customHeaders);
     }

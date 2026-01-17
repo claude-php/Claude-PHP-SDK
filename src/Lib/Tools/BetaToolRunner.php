@@ -106,6 +106,8 @@ class BetaToolRunner implements \IteratorAggregate
     }
 
     /**
+     * Extract both client-side and server-side tool uses from response.
+     *
      * @param array<string, mixed>|Message $response
      *
      * @return array<int, array<string, mixed>>
@@ -116,7 +118,9 @@ class BetaToolRunner implements \IteratorAggregate
         $toolUses = [];
 
         foreach ($content as $block) {
-            if (($block['type'] ?? null) === 'tool_use') {
+            $type = $block['type'] ?? null;
+            // Handle both client-side tool_use and server-side server_tool_use
+            if ($type === 'tool_use' || $type === 'server_tool_use') {
                 $toolUses[] = $block;
             }
         }
@@ -139,6 +143,11 @@ class BetaToolRunner implements \IteratorAggregate
     }
 
     /**
+     * Build tool results for both client-side and server-side tools.
+     *
+     * Server-side tools are handled by the API and don't require local execution.
+     * We acknowledge them but don't execute them locally.
+     *
      * @param array<int, array<string, mixed>> $toolUses
      *
      * @return array<int, array<string, mixed>>
@@ -148,6 +157,17 @@ class BetaToolRunner implements \IteratorAggregate
         $results = [];
 
         foreach ($toolUses as $toolUse) {
+            $type = $toolUse['type'] ?? 'tool_use';
+
+            // Server-side tools are executed by the API, not locally
+            if ($type === 'server_tool_use') {
+                // For server-side tools, we don't execute locally.
+                // The API handles execution and will include results in subsequent responses.
+                // We skip adding a result block for server tools.
+                continue;
+            }
+
+            // Handle client-side tool execution
             $name = $toolUse['name'] ?? '';
             $tool = $this->toolMap[$name] ?? null;
 

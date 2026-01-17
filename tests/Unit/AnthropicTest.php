@@ -29,7 +29,7 @@ class AnthropicTest extends PHPUnitTestCase
     public function testClientThrowsExceptionWithoutApiKey(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('API key is required');
+        $this->expectExceptionMessage('Authentication is required');
 
         new ClaudePhp(apiKey: null);
     }

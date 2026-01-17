@@ -141,4 +141,26 @@ abstract class Resource
 
         return new StreamResponse($response);
     }
+
+    /**
+     * Make a POST request with binary body that expects a streaming response.
+     *
+     * @param string $path API path
+     * @param string $binaryBody Raw binary data
+     * @param string $contentType Content-Type for the binary data
+     * @param array<string, string> $additionalHeaders Extra headers for this request
+     */
+    protected function _postStreamBinary(
+        string $path,
+        string $binaryBody,
+        string $contentType = 'application/octet-stream',
+        array $additionalHeaders = []
+    ): StreamResponse {
+        $url = $this->getBaseUrl() . $path;
+        $transport = $this->client->getHttpTransport();
+        $headers = array_merge($this->getCustomHeaders(), $additionalHeaders);
+        $response = $transport->postStreamBinary($url, $binaryBody, $contentType, $headers);
+
+        return new StreamResponse($response);
+    }
 }

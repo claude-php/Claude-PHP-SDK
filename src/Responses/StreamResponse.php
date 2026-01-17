@@ -17,9 +17,21 @@ use Psr\Http\Message\ResponseInterface;
 class StreamResponse implements \IteratorAggregate
 {
     private ?\Generator $generator = null;
+    private bool $closed = false;
 
     public function __construct(private readonly ResponseInterface $response)
     {
+    }
+
+    /**
+     * Destructor ensures the stream is always closed.
+     *
+     * This guarantees that network resources are freed even if close()
+     * is not explicitly called.
+     */
+    public function __destruct()
+    {
+        $this->close();
     }
 
     /**
@@ -44,13 +56,21 @@ class StreamResponse implements \IteratorAggregate
 
     /**
      * Close the underlying stream to free network resources.
+     *
+     * This method is idempotent and can be called multiple times safely.
      */
     public function close(): void
     {
+        if ($this->closed) {
+            return;
+        }
+
         $body = $this->response->getBody();
         if (method_exists($body, 'close')) {
             $body->close();
         }
+
+        $this->closed = true;
     }
 
     /**

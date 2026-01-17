@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.2] - 2025-01-17
+
+### Added
+
+- **Server-Side Tools Support**: Tool runners now handle server-side tool execution
+  - `BetaToolRunner`, `ToolRunner`, and `StreamingToolRunner` support `server_tool_use` blocks
+  - Server-side tools (e.g., code execution) are recognized but not executed locally
+  - Automatic differentiation between client-side and server-side tool calls
+  - Mirrors Python SDK v0.76.0 feature (#1086)
+
+- **Binary Request Streaming**: Support for sending binary data with streaming responses
+  - New `HttpClient::postStreamBinary()` method for binary request bodies
+  - `Resource::_postStreamBinary()` helper for resource classes
+  - Configurable Content-Type for binary payloads
+  - Enables advanced use cases like binary uploads with real-time processing
+
+- **Stream Closure Guarantees**: Enhanced resource management for streaming responses
+  - `StreamResponse` now includes `__destruct()` for automatic cleanup
+  - Idempotent `close()` method prevents duplicate close attempts
+  - Ensures network resources are freed even without explicit close
+  - Mirrors Python SDK v0.76.0 stream closure improvements
+
+### Changed
+
+- **Authentication Flexibility**: Loosened API key validation for alternative auth methods
+  - API key is now optional if custom auth headers are provided
+  - Supports custom `x-api-key`, `Authorization`, or other auth headers
+  - Empty API key allowed when `customHeaders` include authentication
+  - Enables Bearer tokens, service accounts, and proxy-based auth
+  - Mirrors Python SDK v0.76.0 auth header validation changes
+
+### Fixed
+
+- PATCH method verified to correctly handle file uploads and multipart data
+  - FileExtraction utility properly processes files in PATCH requests
+  - Async PATCH operations handle file conversions correctly
+
 ## [0.5.1] - 2025-11-26
 
 ### Added

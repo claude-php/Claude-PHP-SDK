@@ -171,7 +171,7 @@ class EnvironmentTest extends TestCase
 
         // Attempt to create client without API key should throw exception
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('API key is required');
+        $this->expectExceptionMessage('Authentication is required');
 
         new ClaudePhp();
 

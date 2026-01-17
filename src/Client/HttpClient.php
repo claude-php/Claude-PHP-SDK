@@ -168,6 +168,40 @@ class HttpClient
     }
 
     /**
+     * Make a POST request with binary body that expects a streaming response.
+     *
+     * This method supports sending binary data (e.g., raw bytes, file streams)
+     * in the request body while receiving a streamed response. Useful for
+     * uploading binary content and receiving real-time processing results.
+     *
+     * @param string $url The target URL
+     * @param string $binaryBody Raw binary data to send
+     * @param string $contentType Content-Type for the binary data (e.g., 'application/octet-stream')
+     * @param array<string, string> $headers Additional headers
+     *
+     * @return ResponseInterface The streaming response
+     */
+    public function postStreamBinary(
+        string $url,
+        string $binaryBody,
+        string $contentType = 'application/octet-stream',
+        array $headers = []
+    ): ResponseInterface {
+        $request = $this->requestFactory
+            ->createRequest('POST', $url)
+            ->withBody($this->streamFactory->createStream($binaryBody))
+        ;
+
+        $streamHeaders = array_merge([
+            'Content-Type' => $contentType,
+            'Accept' => 'text/event-stream',
+            'Cache-Control' => 'no-cache',
+        ], $headers);
+
+        return $this->sendRequestBinary($request, $streamHeaders);
+    }
+
+    /**
      * Send the HTTP request and return the raw response.
      *
      * @param array<string, string> $headers
@@ -179,6 +213,38 @@ class HttpClient
             ->withHeader('Accept', $headers['Accept'] ?? 'application/json')
         ;
 
+        foreach ($this->defaultHeaders as $name => $value) {
+            $request = $request->withHeader($name, $value);
+        }
+
+        foreach ($headers as $name => $value) {
+            $request = $request->withHeader($name, $value);
+        }
+
+        try {
+            $response = $this->client->sendRequest($request);
+        } catch (ClientExceptionInterface $e) {
+            throw new APIConnectionError('HTTP request failed: ' . $e->getMessage(), 0, $e);
+        }
+
+        if ($response->getStatusCode() >= 400) {
+            $this->handleErrorResponse($request, $response);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Send the HTTP request with binary content and return the raw response.
+     *
+     * Similar to sendRequest but doesn't override Content-Type to JSON.
+     * Used for binary request streaming.
+     *
+     * @param array<string, string> $headers
+     */
+    private function sendRequestBinary(RequestInterface $request, array $headers = []): ResponseInterface
+    {
+        // Don't override Content-Type for binary requests - use what's provided in headers
         foreach ($this->defaultHeaders as $name => $value) {
             $request = $request->withHeader($name, $value);
         }

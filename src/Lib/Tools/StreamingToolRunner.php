@@ -92,12 +92,22 @@ class StreamingToolRunner
 
             $response = $manager->getMessage();
 
-            // Check if there are tool uses
+            // Check if there are tool uses (both client-side and server-side)
             $hasToolUse = false;
             $toolResults = [];
 
             foreach ($response->content ?? [] as $block) {
-                if ('tool_use' === $block['type']) {
+                $blockType = $block['type'] ?? '';
+
+                // Handle server-side tools - API executes these, we don't need to
+                if ('server_tool_use' === $blockType) {
+                    $hasToolUse = true;
+                    // Server-side tools are handled by the API, skip local execution
+                    continue;
+                }
+
+                // Handle client-side tools
+                if ('tool_use' === $blockType) {
                     $hasToolUse = true;
                     $toolName = $block['name'] ?? '';
                     $toolInput = $block['input'] ?? [];
