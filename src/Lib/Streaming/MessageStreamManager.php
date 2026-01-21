@@ -183,6 +183,8 @@ class MessageStreamManager
 
         if ('text' === $block['type']) {
             $this->currentContent['text'] = '';
+        } elseif ('tool_use' === $block['type']) {
+            $this->currentContent['input'] = ''; // Initialize as string for JSON accumulation
         }
 
         $this->message['content'][] = $this->currentContent;
