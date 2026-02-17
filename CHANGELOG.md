@@ -7,6 +7,79 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-02-18
+
+### Added
+
+- **Adaptive Thinking Support**: New `ThinkingConfigAdaptiveParam` type (and `BetaThinkingConfigAdaptiveParam`)
+  - `type: "adaptive"` — model automatically decides whether and how much to think per request
+  - Recommended default mode for `claude-opus-4-6` and newer models
+  - No `budget_tokens` required; model optimises cost vs. quality automatically
+  - Mirrors Python SDK v0.78.0 feature
+
+- **Speed / Fast-Mode Parameter** (Beta Messages):
+  - `speed: "fast"` — high-throughput inference with lower latency
+  - `speed: "standard"` — full quality responses (default)
+  - Added to `Beta\Messages::getParamTypes()` and `getCountTokensParamTypes()`
+  - Mirrors Python SDK v0.79.0 feature
+
+- **`output_config` in GA Messages**:
+  - Added `output_config` to `Messages::getParamTypes()` for structured outputs in the stable API
+  - Mirrors Python SDK v0.77.0 migration from `output_format` to `output_config`
+
+- **Model Constants** in `ModelParam`:
+  - `MODEL_CLAUDE_OPUS_4_6` = `claude-opus-4-6` (Feb 2026)
+  - `MODEL_CLAUDE_SONNET_4_6` = `claude-sonnet-4-6` (Feb 2026)
+  - `MODEL_CLAUDE_3_7_SONNET_LATEST` = `claude-3-7-sonnet-latest`
+  - `MODEL_CLAUDE_3_7_SONNET_20250219` = `claude-3-7-sonnet-20250219`
+  - `MODEL_CLAUDE_HAIKU_4_5` / `MODEL_CLAUDE_HAIKU_4_5_ALIAS` and full model family constants
+  - All current Claude 4, 3.7, 3.5, and 3 legacy model IDs as typed constants
+
+- **Code Execution Tool Types** (entirely new, GA + Beta):
+  - `CodeExecutionTool20250522Param` — type `code_execution_20250522`
+  - `CodeExecutionTool20250825Param` — type `code_execution_20250825` (enhanced sandbox)
+  - `CodeExecutionOutputBlock` / `CodeExecutionOutputBlockParam` — file outputs from execution
+  - `CodeExecutionResultBlock` / `CodeExecutionResultBlockParam` — execution results
+  - `CodeExecutionToolResultBlock` / `CodeExecutionToolResultBlockParam` — tool result wrappers
+  - `CodeExecutionToolResultError` / `CodeExecutionToolResultErrorCode` — error types
+  - Beta: `BetaCodeExecutionTool20260120Param` — type `code_execution_20260120` (REPL state persistence)
+  - Beta result/output/error block equivalents (`BetaCodeExecution*`)
+
+- **Memory Tool Types** (new):
+  - `MemoryTool20250818Param` — GA memory tool (type `memory_20250818`)
+  - `BetaMemoryTool20250818Param` — Beta memory tool
+  - Memory command classes (all commands): `BetaMemoryTool20250818ViewCommand`,
+    `BetaMemoryTool20250818CreateCommand`, `BetaMemoryTool20250818StrReplaceCommand`,
+    `BetaMemoryTool20250818InsertCommand`, `BetaMemoryTool20250818DeleteCommand`,
+    `BetaMemoryTool20250818RenameCommand`
+
+- **Web Fetch Tool Types** (new):
+  - `WebFetchTool20250910Param` — GA web fetch tool (type `web_fetch_20250910`)
+  - `WebFetchBlock` / `WebFetchBlockParam` — fetched content blocks
+  - `WebFetchToolResultBlock` / `WebFetchToolResultBlockParam` — tool result wrappers
+  - `WebFetchToolResultErrorBlock` / `WebFetchToolResultErrorBlockParam` — error blocks
+  - `WebFetchToolResultErrorCode` — error code constants
+  - Beta: `BetaWebFetchTool20260209Param` — type `web_fetch_20260209` (with `allowed_callers`)
+  - Beta web fetch block/result/error equivalents (`BetaWebFetch*`)
+
+- **Beta Web Search v2**:
+  - `BetaWebSearchTool20260209Param` — type `web_search_20260209` with `allowed_callers` support
+  - Mirrors Python SDK v0.80.0 feature
+
+- **New Examples**:
+  - `examples/adaptive_thinking.php` — Adaptive thinking mode with claude-opus-4-6
+  - `examples/fast_mode.php` — Speed parameter (fast/standard) via Beta Messages API
+  - `examples/web_fetch.php` — Web fetch tool with domain restrictions and citations
+  - `examples/code_execution.php` — Code execution with file outputs and REPL state persistence
+  - `examples/memory_tool.php` — Memory tool with all command types
+
+### Changed
+
+- **`SDK_VERSION` constant**: Updated from `'0.1.0'` to `'0.6.0'` in `ClaudePhp::SDK_VERSION`
+- **`composer.json` version**: Bumped from `0.5.3` to `0.6.0`
+- **`ModelParam`**: Converted from a minimal wrapper class to a fully documented class with
+  typed constants for all current model IDs
+
 ## [0.5.3] - 2025-01-17
 
 ### Added

@@ -343,6 +343,27 @@ Learn about the powerful new features in v0.5.2 that achieve parity with Python 
 
 ---
 
+### [Tutorial 17: v0.6.0 New Features](./17-v060-features/)
+**Time: 60 minutes** | **Difficulty: Intermediate**
+
+Learn about the features added in v0.6.0 for full parity with Python SDK v0.80.0, including the new Claude 4.6 models, adaptive thinking, fast-mode inference, and the complete server-side tool suite.
+
+**What You'll Learn:**
+- Adaptive thinking (`type: "adaptive"`) — model decides how much to think
+- Speed / fast-mode parameter for high-throughput Beta Messages
+- `output_config` for structured outputs in GA and Beta Messages
+- Typed `ModelParam` constants for all current Claude models
+- Code execution tool (GA + Beta REPL-state persistence)
+- Memory tool for file-based cross-session persistence
+- Web fetch tool with domain restrictions and token caps
+- Beta web search v2 (`web_search_20260209`) with `allowed_callers`
+
+**Files:**
+- 📖 [README.md](./17-v060-features/README.md)
+- 💻 [v060_features.php](./17-v060-features/v060_features.php)
+
+---
+
 ## 📚 Related SDK Examples
 
 These tutorials build on patterns from the SDK's `examples/` directory:
@@ -404,7 +425,8 @@ After completing foundations, explore these specialized patterns:
 - Tutorial 13 (RAG) - Knowledge integration
 - Tutorial 14 (Autonomous) - Self-directed agents
 - Tutorial 15 (Context Management) - Advanced context handling
-- Tutorial 16 (v0.5.2 Features) - Latest SDK capabilities
+- Tutorial 16 (v0.5.2 Features) - Server tools, auth, stream management
+- Tutorial 17 (v0.6.0 Features) - Adaptive thinking, fast mode, new tool suite
 
 ### Quick Start Options
 

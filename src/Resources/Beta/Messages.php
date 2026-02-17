@@ -183,8 +183,10 @@ class Messages extends Resource
             'metadata' => ['type' => 'array'],
             'betas' => ['type' => 'array'],
             'output_format' => ['type' => 'array'],
+            'output_config' => ['type' => 'array'],
             'context_management' => ['type' => 'array'],
             'thinking' => ['type' => 'array'],
+            'speed' => ['type' => 'string'],
             'stream' => ['type' => 'bool'],
         ];
     }
@@ -203,6 +205,7 @@ class Messages extends Resource
             'thinking' => ['type' => 'array'],
             'betas' => ['type' => 'array'],
             'context_management' => ['type' => 'array'],
+            'speed' => ['type' => 'string'],
         ];
     }
 

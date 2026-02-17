@@ -39,7 +39,7 @@ class ClaudePhp
     public const DEFAULT_TIMEOUT = 30.0;
     public const DEFAULT_MAX_RETRIES = 2;
     public const DEFAULT_API_VERSION = '2023-06-01';
-    public const SDK_VERSION = '0.1.0';
+    public const SDK_VERSION = '0.6.0';
 
     private string $apiKey;
     private string $baseUrl;

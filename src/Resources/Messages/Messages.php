@@ -146,6 +146,7 @@ class Messages extends Resource
             'tools' => ['type' => 'array'],
             'tool_choice' => ['type' => 'string|array'],
             'thinking' => ['type' => 'array'],
+            'output_config' => ['type' => 'array'],
             'stream' => ['type' => 'bool'],
             'metadata' => ['type' => 'array'],
             'service_tier' => ['type' => 'string'],

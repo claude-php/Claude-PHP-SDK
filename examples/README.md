@@ -251,6 +251,36 @@ See [STREAMING_EXAMPLES.md](STREAMING_EXAMPLES.md) for comprehensive streaming d
   - Environment-based configuration
   - Multi-tenant authentication strategies
 
+### v0.6.0 Features (Parity with Python SDK v0.80.0)
+
+- **adaptive_thinking.php** - Adaptive thinking mode (`type: "adaptive"`) introduced with `claude-opus-4-6`:
+  - Comparison of disabled / enabled / adaptive thinking modes
+  - Cost and latency trade-offs per mode
+  - Detecting whether the model decided to think
+  - Combining adaptive thinking with other parameters
+- **fast_mode.php** - Speed / fast-mode parameter for Beta Messages:
+  - `speed: "fast"` for high-throughput inference
+  - `speed: "standard"` for full quality (default)
+  - Works with `countTokens` too
+  - Latency and quality trade-offs
+- **code_execution.php** - Code execution server-side tool (GA + Beta):
+  - `code_execution_20250522` — Initial GA version
+  - `code_execution_20250825` — Enhanced sandbox (GA)
+  - `code_execution_20260120` — REPL state persistence (Beta)
+  - Result types: `code_execution_result` (stdout/stderr/return_code)
+  - Error codes: timeout / execution_error / internal_error
+- **memory_tool.php** - Memory tool for persistent file-based storage:
+  - `memory_20250818` — GA memory tool
+  - Commands: view / create / str_replace / insert / delete / rename
+  - Beta variant (`BetaMemoryTool20250818Param`) with `allowed_callers`
+  - Practical pattern: user preferences stored across sessions
+- **web_fetch.php** - Web fetch tool for URL content retrieval:
+  - `web_fetch_20250910` — GA version
+  - `web_fetch_20260209` — Beta version with `allowed_callers`
+  - Domain allowlists and blocklists
+  - `max_uses` and `max_content_tokens` caps
+  - Error handling with `WebFetchToolResultErrorCode` constants
+
 ### Beta Features
 
 - **beta_features.php** - Using beta features with the anthropic-beta header
