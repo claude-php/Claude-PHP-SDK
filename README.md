@@ -1,5 +1,9 @@
 # Claude PHP SDK
 
+[![GitHub Stars](https://img.shields.io/github/stars/claude-php/Claude-PHP-SDK?style=flat-square)](https://github.com/claude-php/Claude-PHP-SDK/stargazers)
+
+If this saves you time, a star on GitHub helps other PHP developers find it.
+
 The unofficial PHP client for the [Anthropic Claude API](https://docs.anthropic.com/en/api/overview). Requires PHP 8.1+, Composer, and an [Anthropic API key](https://console.anthropic.com/).
 
 ```bash
