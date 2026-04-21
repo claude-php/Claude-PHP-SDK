@@ -23,6 +23,13 @@ use ClaudePhp\Utils\Transform;
  */
 class Messages extends Resource
 {
+    private const DEPRECATED_MODELS = [
+        'claude-opus-4-0' => '2026-06-15',
+        'claude-opus-4-20250514' => '2026-06-15',
+        'claude-sonnet-4-0' => '2026-06-15',
+        'claude-sonnet-4-20250514' => '2026-06-15',
+    ];
+
     /**
      * Create a message using the beta API.
      *
@@ -36,6 +43,8 @@ class Messages extends Resource
                 throw new \InvalidArgumentException("Missing required parameter: {$key}");
             }
         }
+
+        self::warnIfDeprecated($params['model'] ?? '');
 
         $body = Transform::transform($params, $this->getParamTypes());
         FileExtraction::extractFiles($body, [['files', '<array>']]);
@@ -186,6 +195,9 @@ class Messages extends Resource
             'output_config' => ['type' => 'array'],
             'context_management' => ['type' => 'array'],
             'thinking' => ['type' => 'array'],
+            'cache_control' => ['type' => 'array'],
+            'user_profile_id' => ['type' => 'string'],
+            'container' => ['type' => 'string|array'],
             'speed' => ['type' => 'string'],
             'stream' => ['type' => 'bool'],
         ];
@@ -271,6 +283,8 @@ class Messages extends Resource
                 cache_read_input_tokens: $data['usage']['cache_read_input_tokens'] ?? null,
                 server_tool_use: $data['usage']['server_tool_use'] ?? null,
             ),
+            stop_details: $data['stop_details'] ?? null,
+            container: $data['container'] ?? null,
         );
     }
 
@@ -300,6 +314,34 @@ class Messages extends Resource
      *
      * @return array<string, string> Headers to add to the request
      */
+    /**
+     * @var array<string, true> Tracks models we've already warned about
+     */
+    private static array $warnedModels = [];
+
+    /**
+     * Reset the deprecation warning cache (primarily for tests).
+     *
+     * @internal
+     */
+    public static function resetDeprecationWarnings(): void
+    {
+        self::$warnedModels = [];
+    }
+
+    private static function warnIfDeprecated(string $model): void
+    {
+        if (isset(self::DEPRECATED_MODELS[$model]) && !isset(self::$warnedModels[$model])) {
+            $eol = self::DEPRECATED_MODELS[$model];
+            self::$warnedModels[$model] = true;
+            @trigger_error(
+                "Model '{$model}' is deprecated and will reach end-of-life on {$eol}. "
+                . 'Please migrate to a newer model.',
+                E_USER_DEPRECATED,
+            );
+        }
+    }
+
     private function extractBetaHeaders(array &$body): array
     {
         if (!isset($body['betas']) || !is_array($body['betas']) || empty($body['betas'])) {

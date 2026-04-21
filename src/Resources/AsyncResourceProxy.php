@@ -25,7 +25,7 @@ final class AsyncResourceProxy extends LazyProxy
      *
      * @return Future<mixed>
      */
-    public function __call(string $name, array $arguments): Future
+    public function __call(string $name, array $arguments): mixed
     {
         $resource = $this->getProxied();
         if (!method_exists($resource, $name)) {
@@ -35,6 +35,20 @@ final class AsyncResourceProxy extends LazyProxy
                 $name,
                 $resource::class,
             ));
+        }
+
+        // Resource sub-resource accessors (e.g. Beta::agents(), Vaults::credentials())
+        // return another Resource synchronously and should be wrapped, not awaited.
+        $reflection = new \ReflectionMethod($resource, $name);
+        if (0 === $reflection->getNumberOfParameters()) {
+            $returnType = $reflection->getReturnType();
+            if ($returnType instanceof \ReflectionNamedType
+                && !$returnType->isBuiltin()
+                && (is_subclass_of($returnType->getName(), Resource::class) || $returnType->getName() === Resource::class)
+            ) {
+                $sub = $resource->{$name}();
+                return $sub->async();
+            }
         }
 
         $wrapped = AsyncUtils::asyncify([$resource, $name]);

@@ -10,6 +10,9 @@ namespace ClaudePhp\Types;
  * Configuration for automatic context compaction.
  * When enabled, the message history will be automatically summarized
  * and compressed when it exceeds the specified token threshold.
+ *
+ * @deprecated Use server-side compact_20260112 edit instead. Client-side compaction
+ *             will be removed in a future release.
  */
 class CompactionControlParam
 {

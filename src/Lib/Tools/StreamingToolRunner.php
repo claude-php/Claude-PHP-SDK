@@ -69,6 +69,13 @@ class StreamingToolRunner
      */
     public function run(array $params, ?callable $onStream = null): Message
     {
+        if (isset($params['compaction_control'])) {
+            @trigger_error(
+                'Client-side compaction_control is deprecated. Use server-side compact_20260112 instead.',
+                E_USER_DEPRECATED,
+            );
+        }
+
         $messages = $params['messages'] ?? [];
         $iterationCount = 0;
 
@@ -136,6 +143,11 @@ class StreamingToolRunner
             // If no tool use, we're done
             if (!$hasToolUse) {
                 return $response;
+            }
+
+            // Propagate container_id from response for the next iteration
+            if (isset($response->container['id'])) {
+                $params['container'] = $response->container['id'];
             }
 
             // Add assistant response to messages

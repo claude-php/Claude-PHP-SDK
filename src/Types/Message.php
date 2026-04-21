@@ -20,6 +20,8 @@ class Message
      * @param string $stop_reason Why the model stopped generating text
      * @param null|string $stop_sequence The stop sequence that triggered the halt (if any)
      * @param Usage $usage Token usage information
+     * @param null|array<string, mixed> $stop_details Structured stop details (e.g. refusal)
+     * @param null|array<string, mixed> $container Container metadata from the response
      */
     public function __construct(
         public readonly string $id,
@@ -30,6 +32,8 @@ class Message
         public readonly string $stop_reason,
         public readonly ?string $stop_sequence,
         public readonly Usage $usage,
+        public readonly ?array $stop_details = null,
+        public readonly ?array $container = null,
     ) {
     }
 }

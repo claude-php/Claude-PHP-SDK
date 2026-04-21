@@ -27,19 +27,50 @@ class AnthropicBedrock
     private ?string $region;
 
     /**
+     * @var null|string API key for Bearer token auth (skips SigV4)
+     */
+    private ?string $apiKey;
+
+    /**
      * Create a new AnthropicBedrock client.
      *
      * @param array<string, mixed> $config AWS SDK configuration
      * @param null|string $region AWS region
+     * @param null|string $apiKey Bearer token (env: AWS_BEARER_TOKEN_BEDROCK); mutually exclusive with explicit AWS keys
      */
-    public function __construct(array $config = [], ?string $region = null)
-    {
-        // Use reflection to avoid requiring aws/sdk-php
-        $bedrockClass = 'Aws\BedrockRuntime\BedrockRuntimeClient';
-        if (\class_exists($bedrockClass)) {
-            $this->bedrock = new $bedrockClass($config);
-        }
+    public function __construct(
+        array $config = [],
+        ?string $region = null,
+        ?string $apiKey = null,
+    ) {
+        $this->apiKey = $apiKey ?? ($_ENV['AWS_BEARER_TOKEN_BEDROCK'] ?? null);
         $this->region = $region;
+
+        if (null !== $this->apiKey && !empty($config['credentials'])) {
+            throw new \InvalidArgumentException(
+                'Cannot specify both apiKey and explicit AWS credentials. '
+                . 'Use either Bearer token auth or SigV4, not both.'
+            );
+        }
+
+        if (null === $this->apiKey) {
+            $bedrockClass = 'Aws\BedrockRuntime\BedrockRuntimeClient';
+            if (\class_exists($bedrockClass)) {
+                $this->bedrock = new $bedrockClass($config);
+            }
+        }
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function authHeaders(): array
+    {
+        if (null !== $this->apiKey) {
+            return ['Authorization' => 'Bearer ' . $this->apiKey];
+        }
+
+        return [];
     }
 
     /**
@@ -119,13 +150,33 @@ class AnthropicBedrock
      *
      * @return string Bedrock model ID
      */
+    /**
+     * Convert short model aliases to AWS Bedrock model IDs.
+     *
+     * Pass full Bedrock model IDs directly (e.g. "anthropic.claude-opus-4-7-20260416-v1:0")
+     * to bypass mapping. Unknown IDs are passed through unchanged.
+     */
     private function getBedrockModelId(string $modelId): string
     {
-        // Map common model names to Bedrock IDs
+        // Already a Bedrock-formatted model ID — pass through.
+        if (str_starts_with($modelId, 'anthropic.') || str_starts_with($modelId, 'arn:')) {
+            return $modelId;
+        }
+
         return match ($modelId) {
-            'claude-sonnet-4-5' => 'anthropic.claude-3-5-sonnet-20241022-v2:0',
-            'claude-haiku-4-5' => 'anthropic.claude-3-5-haiku-20241022-v1:0',
-            'claude-opus-4-5' => 'anthropic.claude-3-opus-20240229-v1:0',
+            'claude-opus-4-7' => 'anthropic.claude-opus-4-7-20260416-v1:0',
+            'claude-opus-4-6' => 'anthropic.claude-opus-4-6-20260205-v1:0',
+            'claude-sonnet-4-6' => 'anthropic.claude-sonnet-4-6-20260217-v1:0',
+            'claude-opus-4-5', 'claude-opus-4-5-20251101' => 'anthropic.claude-opus-4-5-20251101-v1:0',
+            'claude-sonnet-4-5', 'claude-sonnet-4-5-20250929' => 'anthropic.claude-sonnet-4-5-20250929-v1:0',
+            'claude-haiku-4-5', 'claude-haiku-4-5-20251001' => 'anthropic.claude-haiku-4-5-20251001-v1:0',
+            'claude-opus-4-1-20250805' => 'anthropic.claude-opus-4-1-20250805-v1:0',
+            'claude-opus-4-20250514', 'claude-opus-4-0' => 'anthropic.claude-opus-4-20250514-v1:0',
+            'claude-sonnet-4-20250514', 'claude-sonnet-4-0' => 'anthropic.claude-sonnet-4-20250514-v1:0',
+            'claude-3-7-sonnet-20250219', 'claude-3-7-sonnet-latest' => 'anthropic.claude-3-7-sonnet-20250219-v1:0',
+            'claude-3-5-haiku-20241022', 'claude-3-5-haiku-latest' => 'anthropic.claude-3-5-haiku-20241022-v1:0',
+            'claude-3-opus-20240229', 'claude-3-opus-latest' => 'anthropic.claude-3-opus-20240229-v1:0',
+            'claude-3-haiku-20240307' => 'anthropic.claude-3-haiku-20240307-v1:0',
             default => $modelId,
         };
     }

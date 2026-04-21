@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ClaudePhp\Resources\Beta\Skills;
 
 use ClaudePhp\Resources\Resource;
+use ClaudePhp\Utils\Path;
 
 /**
  * Skills resource for beta API.
@@ -13,6 +14,8 @@ use ClaudePhp\Resources\Resource;
  */
 class Skills extends Resource
 {
+    private const BETA_HEADER = ['anthropic-beta' => 'skills-2025-10-02'];
+
     /**
      * Get versions sub-resource.
      */
@@ -34,7 +37,7 @@ class Skills extends Resource
             throw new \InvalidArgumentException('name and description are required');
         }
 
-        return $this->_post('/skills', $params);
+        return $this->_post('/skills', $params, self::BETA_HEADER);
     }
 
     /**
@@ -46,7 +49,7 @@ class Skills extends Resource
      */
     public function list(array $params = []): array
     {
-        return $this->_get('/skills', $params);
+        return $this->_get('/skills', $params, self::BETA_HEADER);
     }
 
     /**
@@ -58,7 +61,11 @@ class Skills extends Resource
      */
     public function retrieve(string $skillId): array
     {
-        return $this->_get("/skills/{$skillId}");
+        return $this->_get(
+            Path::pathTemplate('/skills/{skill_id}', ['skill_id' => $skillId]),
+            null,
+            self::BETA_HEADER,
+        );
     }
 
     /**
@@ -72,7 +79,10 @@ class Skills extends Resource
             throw new \InvalidArgumentException('skill_id is required');
         }
 
-        $this->_delete("/skills/{$skillId}");
+        $this->_delete(
+            Path::pathTemplate('/skills/{skill_id}', ['skill_id' => $skillId]),
+            self::BETA_HEADER,
+        );
     }
 }
 

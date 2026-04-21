@@ -74,12 +74,13 @@ abstract class Resource
      * Make a GET request to the API.
      *
      * @param null|array<string, mixed> $query Query parameters
+     * @param array<string, string> $additionalHeaders Extra headers for this request
      */
-    protected function _get(string $path, ?array $query = null): mixed
+    protected function _get(string $path, ?array $query = null, array $additionalHeaders = []): mixed
     {
         $url = $this->getBaseUrl() . $path;
 
-        return $this->makeRequest('GET', $url, $query ?? []);
+        return $this->makeRequest('GET', $url, $query ?? [], $additionalHeaders);
     }
 
     /**
@@ -97,12 +98,14 @@ abstract class Resource
 
     /**
      * Make a DELETE request to the API.
+     *
+     * @param array<string, string> $additionalHeaders Extra headers for this request
      */
-    protected function _delete(string $path): mixed
+    protected function _delete(string $path, array $additionalHeaders = []): mixed
     {
         $url = $this->getBaseUrl() . $path;
 
-        return $this->makeRequest('DELETE', $url);
+        return $this->makeRequest('DELETE', $url, null, $additionalHeaders);
     }
 
     /**

@@ -7,6 +7,167 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added (Full-Parity Closeout)
+
+- **AWS SigV4 Signing**: Pure-PHP `SigV4` signer in `src/Lib/Aws/SigV4.php` (no aws-sdk-php required)
+- **AWS Credentials Resolution**: `Credentials::resolve()` from explicit args, env vars, or `~/.aws/credentials` profile
+- **`AnthropicAws`**: Now exposes `authHeaders($method, $url, $extra, $body)` returning either Bearer token or fully-signed SigV4 headers
+- **Bedrock Mantle**: Now uses the SDK `HttpClient` (with retries, error mapping, timeout) instead of `file_get_contents`
+- **Async Sub-Resource Wrapping**: `AsyncResourceProxy::__call()` detects sub-resource accessors (zero-arg methods returning a `Resource`) and wraps them in another async proxy, enabling `$client->async()->beta()->agents()->versions()->list(...)` chains
+- **Per-Endpoint Array Format**: `HttpClient::setArrayFormat()` allows switching between `brackets`, `comma`, `repeat`, `indices` (used by Mantle for `comma`)
+- **Path Safety Everywhere**: `Path::pathTemplate()` now applied to `Models`, `Beta\Models`, `Beta\Skills\Skills`, `Beta\Skills\Versions`, `Beta\Batches`, `Messages\Batches` (was Files + managed-agents only)
+- **Skills Beta Header**: `Beta\Skills\Skills` and `Beta\Skills\Versions` now send `anthropic-beta: skills-2025-10-02` matching Python
+- **Managed Agents Beta Header Fix**: All managed-agents resources now send `anthropic-beta: managed-agents-2026-04-01` (was the wrong placeholder `managed-agents`)
+- **Deprecation Warning Caching**: Models warned about once per process (cached via `self::$warnedModels`), matching Python's `DeprecationWarning` behavior
+- **Async Tool Runners**: `AsyncToolRunner` and `AsyncStreamingToolRunner` now propagate `container.id` and emit deprecation warnings on `compaction_control`
+- **AsyncMessageStreamManager**: Now handles `stop_details`, `container`, `thinking_delta`, `signature_delta`, `citations_delta`, `input_json_delta` and tolerates unknown delta types
+- **Bedrock/Vertex Model Mappings**: Comprehensive mapping for all current Claude 3/3.5/3.7/4 model IDs to real Bedrock ARNs and Vertex `model@version` IDs; pass-through for already-formatted IDs
+
+### Added Types
+
+- **Managed Agents Param Classes** (16 files in `src/Types/Beta/ManagedAgents/Params/`):
+  `AgentCreateParams`, `AgentUpdateParams`, `AgentListParams`, `SessionCreateParams`,
+  `SessionUpdateParams`, `SessionListParams`, `VaultCreateParams`, `VaultUpdateParams`,
+  `VaultListParams`, `EnvironmentCreateParams`, `EnvironmentUpdateParams`,
+  `EnvironmentListParams`, `UserProfileCreateParams`, `UserProfileUpdateParams`,
+  `UserProfileListParams`, `SkillCreateParams`, `FileUploadParams`
+- **Managed Agents Domain Types** (20+ new files in `src/Types/Beta/ManagedAgents/`):
+  `AlwaysAllowPolicy`, `AlwaysAskPolicy`, `AnthropicSkill`, `BranchCheckout`, `CommitCheckout`,
+  `CacheCreationUsage`, `AgentToolConfig`, `AgentToolset20260401`, `AgentToolsetDefaultConfig`,
+  `CustomToolInputSchema`, `McpToolConfig`, `McpToolsetDefaultConfig`, `McpServerUrlDefinition`,
+  `Model`, `SessionResource`, `FileResource`, `GitHubRepositoryResource`, `DeletedCredential`,
+  `StaticBearerAuthResponse`, `McpOAuthAuthResponse`
+- **Sessions Sub-Types** (`src/Types/Beta/Sessions/`):
+  `Events` (constants for all session event discriminators), `SpanModelUsage`, `SessionEndTurn`,
+  `SessionErrorEvent`, `SessionRequiresAction`, `RetryStatus`
+- **Vaults Sub-Types** (`src/Types/Beta/Vaults/`):
+  `CredentialTypes`, `StaticBearerCreateParams`, `StaticBearerUpdateParams`,
+  `McpOAuthCreateParams`, `TokenEndpointAuth`
+- **Agents Sub-Types** (`src/Types/Beta/Agents/`): `VersionListParams`
+- **GA + Beta Capability Types** (10 files):
+  `CapabilitySupport`, `EffortCapability`, `ThinkingCapability`, `ContextManagementCapability`,
+  `ModelCapabilities`, plus Beta mirrors
+- **Container Types**: `Container`, `ContainerUploadBlock(+Param)`, `BetaContainer`,
+  `BetaContainerParams`, `BetaContainerUploadBlock(+Param)`
+- **Network Types**: `BetaLimitedNetwork(+Param)`, `BetaUnrestrictedNetwork(+Param)`
+- **Compaction Types**: `BetaCompactionBlock(+Param)`, `BetaCompactionContentBlockDelta`,
+  `BetaCompactionIterationUsage`, `BetaIterationsUsage`, `BetaMessageIterationUsage`
+- **Thinking Turns**: `BetaThinkingTurnsParam`
+- **Web Fetch v3** (Mar 2026): `WebFetchTool20260309Param`, `BetaWebFetchTool20260309Param`
+- **Server Tool Caller v2** (Jan 2026): `ServerToolCaller20260120(+Param)`,
+  `BetaServerToolCaller20260120(+Param)`
+- **Parsed Messages**: `ParsedMessage`, `BetaParsedMessage` (typed structured output responses)
+- **Text Editor Code Execution Result Blocks** (10 files for create/strReplace/view variants
+  + tool result + error blocks, GA + Beta): `TextEditorCodeExecution{Create,StrReplace,View}ResultBlock(+Param)`,
+  `TextEditorCodeExecutionToolResultBlock(+Param)`, `TextEditorCodeExecutionToolResultError(+Param,+Code)`,
+  plus Beta mirrors
+
+## [0.7.0] - 2026-04-21
+
+### Added
+
+- **Claude Managed Agents** (Beta): Full resource support mirroring Python SDK v0.92.0
+  - `$client->beta()->agents()` — create, retrieve, update, list, archive agents
+  - `$client->beta()->agents()->versions()` — list agent versions
+  - `$client->beta()->sessions()` — create, retrieve, update, list, delete, archive sessions
+  - `$client->beta()->sessions()->events()` — list, send, stream session events
+  - `$client->beta()->sessions()->resources()` — add, retrieve, update, list, delete session resources
+  - `$client->beta()->vaults()` — create, retrieve, update, list, delete, archive vaults
+  - `$client->beta()->vaults()->credentials()` — CRUD + archive vault credentials
+  - `$client->beta()->environments()` — create, retrieve, update, list, delete, archive environments
+  - `$client->beta()->userProfiles()` — create, retrieve, update, list, createEnrollmentUrl
+  - Types: `Agent`, `Session`, `SessionEvent`, `Vault`, `Credential`, `Environment`,
+    `DeletedSession`, `DeletedVault`, `ModelConfig`, `SessionStats`, `SessionUsage`,
+    `CustomTool`, `CustomSkill`, `McpToolset`, `SessionAgent`
+  - Types: `BetaCloudConfig`, `BetaCloudConfigParams`, `BetaPackages`, `BetaPackagesParams`
+  - Types: `BetaUserProfile`, `BetaUserProfileEnrollmentUrl`, `BetaUserProfileTrustGrant`
+
+- **Bedrock Mantle Client** (Python SDK v0.91.0):
+  - `AnthropicBedrockMantle` / `AsyncAnthropicBedrockMantle` with Bearer token auth
+  - Default URL `https://bedrock-mantle.{region}.api.aws/anthropic`
+  - Env vars: `ANTHROPIC_BEDROCK_MANTLE_BASE_URL`, `AWS_BEARER_TOKEN_BEDROCK`, `ANTHROPIC_AWS_API_KEY`
+  - Nested `MantleBeta` with `messages()` accessor
+
+- **Bedrock API Key Auth** (Python SDK v0.88.0):
+  - `AnthropicBedrock` now accepts `?string $apiKey` for Bearer token auth
+  - Default from env `AWS_BEARER_TOKEN_BEDROCK`; mutually exclusive with SigV4 credentials
+
+- **AWS Package**: New `src/Lib/Aws/` with `AnthropicAws` / `AsyncAnthropicAws` for shared SigV4 + Bearer auth
+
+- **Vertex US/EU Multi-Region** (Python SDK v0.89.0 + v0.94.0):
+  - Region routing: `us` → `aiplatform.us.rep.googleapis.com`, `eu` → `aiplatform.eu.rep.googleapis.com`,
+    `global` → `aiplatform.googleapis.com`, default → `{region}-aiplatform.googleapis.com`
+
+- **Beta Advisor Tool** (Python SDK v0.93.0):
+  - `BetaAdvisorTool20260301Param` with model, caching, allowed_callers, max_uses, strict
+  - Result/error/redacted block types: `BetaAdvisorResultBlock`, `BetaAdvisorRedactedResultBlock`,
+    `BetaAdvisorToolResultBlock`, `BetaAdvisorToolResultError`, `BetaAdvisorMessageIterationUsage`
+
+- **Structured `stop_details`** (Python SDK v0.88.0):
+  - `RefusalStopDetails` / `BetaRefusalStopDetails` types (type, category, explanation)
+  - Added `?array $stop_details` and `?array $container` to `Message` and `Types\Message`
+
+- **Token Budgets** (Python SDK v0.96.0):
+  - `BetaTokenTaskBudgetParam`, `BetaInputTokensTriggerParam`, `BetaInputTokensClearAtLeastParam`,
+    `BetaToolUsesTriggerParam`, `BetaToolUsesKeepParam`
+  - `BetaOutputConfig` / `BetaOutputConfigParam` extended with `?array $task_budget`
+
+- **Top-level `cache_control`** (Python SDK v0.83.0):
+  - Added `cache_control` to `Messages::getParamTypes()` and `getCountTokensParamTypes()`
+  - Added `cache_control` to `Beta\Messages::getParamTypes()` and `getCountTokensParamTypes()`
+
+- **MCP Conversion Helpers** (Python SDK v0.84.0):
+  - `Mcp::tool()`, `Mcp::content()`, `Mcp::message()`, `Mcp::resourceToContent()`, `Mcp::resourceToFile()`
+  - `UnsupportedMcpValueException` for unsupported content types
+
+- **Filesystem Memory Tool** (Python SDK v0.86.0):
+  - `AbstractMemoryTool` base with execute() dispatching to view/create/strReplace/insert/delete/rename
+  - `LocalFilesystemMemoryTool` with restrictive 0600 permissions and path-traversal rejection
+
+- **GA `display` on Thinking Config** (Python SDK v0.85.0):
+  - Added optional `display` ("summarized" | "omitted") to `ThinkingConfigEnabledParam`,
+    `ThinkingConfigAdaptiveParam`, `BetaThinkingConfigAdaptiveParam`
+
+- **Path Safety Utilities**: `Path::pathTemplate()` with percent-encoding and dot-segment rejection
+- **Query String Builder**: `QueryString::build()` with brackets/comma/repeat/indices formats
+- **APIStatusError `type` Field** (Python SDK v0.87.0): Populated from `body.error.type`
+
+- **Model Constants**:
+  - `MODEL_CLAUDE_OPUS_4_7` = `claude-opus-4-7`
+  - `MODEL_CLAUDE_MYTHOS_PREVIEW` = `claude-mythos-preview`
+
+- **Beta `user_profile_id` Parameter** (Python SDK v0.96.0): Added to Beta Messages params
+- **Beta `container` Parameter**: Added to Beta Messages params for container propagation
+
+- **New Examples**: `automatic_caching.php`, `mcp_conversion.php`, `memory_tool_filesystem.php`,
+  `bedrock_mantle.php`, `advisor_tool.php`, `managed_agents/*.php` (agents, sessions, vaults,
+  environments, user_profiles)
+
+### Changed
+
+- **`SDK_VERSION`**: Updated from `'0.6.0'` to `'0.7.0'`
+- **`composer.json`**: Bumped from `0.6.0` to `0.7.0`
+- **Tool Runners**: Now propagate `container.id` from responses into subsequent request params
+- **Streaming**: Tolerant of unknown delta types (compaction, advisor, etc.); handles
+  `stop_details` and `container` on message delta events
+- **HttpClient**: Uses `QueryString::build()` instead of `http_build_query()`; preserves
+  hardcoded query params when merging with user-supplied params
+- **Resource Base**: `_get()` and `_delete()` now accept `$additionalHeaders` parameter
+- **Files**: `upload()` sends file data via multipart field only, not duplicated in JSON body;
+  path params use `Path::pathTemplate()` for safety
+
+### Deprecated
+
+- **`CompactionControl` / `CompactionControlParam`**: Use server-side `compact_20260112` instead.
+  Tool runners emit `E_USER_DEPRECATED` when `compaction_control` is provided.
+- **Models**: `claude-opus-4-0`, `claude-opus-4-20250514`, `claude-sonnet-4-0`,
+  `claude-sonnet-4-20250514` emit `E_USER_DEPRECATED` on `create()` (EOL 2026-06-15).
+
+### Python SDK Parity
+
+This release brings the PHP SDK to parity with the Python Anthropic SDK from
+v0.83.0 through v0.96.0 (Feb 19 – Apr 16, 2026).
+
 ## [0.6.1] - 2026-02-18
 
 ### Changed

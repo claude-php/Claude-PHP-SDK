@@ -37,14 +37,28 @@ namespace ClaudePhp\Types;
 class ModelParam
 {
     // -------------------------------------------------------------------------
+    // Claude 4 — Opus 4.7 (Apr 2026)
+    // -------------------------------------------------------------------------
+
+    /** Latest Claude Opus 4 model (Apr 2026) */
+    public const MODEL_CLAUDE_OPUS_4_7 = 'claude-opus-4-7';
+
+    // -------------------------------------------------------------------------
     // Claude 4 — Opus 4.6 (Feb 2026)
     // -------------------------------------------------------------------------
 
-    /** Latest Claude Opus 4 model (recommended for most powerful tasks) */
+    /** Claude Opus 4.6 */
     public const MODEL_CLAUDE_OPUS_4_6 = 'claude-opus-4-6';
 
-    /** Latest Claude Sonnet 4 model (Feb 2026) */
+    /** Claude Sonnet 4.6 (Feb 2026) */
     public const MODEL_CLAUDE_SONNET_4_6 = 'claude-sonnet-4-6';
+
+    // -------------------------------------------------------------------------
+    // Preview / Experimental models
+    // -------------------------------------------------------------------------
+
+    /** Claude Mythos preview model */
+    public const MODEL_CLAUDE_MYTHOS_PREVIEW = 'claude-mythos-preview';
 
     // -------------------------------------------------------------------------
     // Claude 4 — Opus / Sonnet / Haiku 4.5 (Nov 2025)

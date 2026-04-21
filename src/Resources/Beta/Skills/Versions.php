@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ClaudePhp\Resources\Beta\Skills;
 
 use ClaudePhp\Resources\Resource;
+use ClaudePhp\Utils\Path;
 
 /**
  * Versions sub-resource for skills.
@@ -13,6 +14,8 @@ use ClaudePhp\Resources\Resource;
  */
 class Versions extends Resource
 {
+    private const BETA_HEADER = ['anthropic-beta' => 'skills-2025-10-02'];
+
     /**
      * Create a skill version.
      *
@@ -27,7 +30,11 @@ class Versions extends Resource
             throw new \InvalidArgumentException('name is required');
         }
 
-        return $this->_post("/skills/{$skillId}/versions", $params);
+        return $this->_post(
+            Path::pathTemplate('/skills/{skill_id}/versions', ['skill_id' => $skillId]),
+            $params,
+            self::BETA_HEADER,
+        );
     }
 
     /**
@@ -40,7 +47,11 @@ class Versions extends Resource
      */
     public function list(string $skillId, array $params = []): array
     {
-        return $this->_get("/skills/{$skillId}/versions", $params);
+        return $this->_get(
+            Path::pathTemplate('/skills/{skill_id}/versions', ['skill_id' => $skillId]),
+            $params,
+            self::BETA_HEADER,
+        );
     }
 
     /**
@@ -57,7 +68,14 @@ class Versions extends Resource
             throw new \InvalidArgumentException('skill_id and version_id are required');
         }
 
-        return $this->_get("/skills/{$skillId}/versions/{$versionId}");
+        return $this->_get(
+            Path::pathTemplate(
+                '/skills/{skill_id}/versions/{version_id}',
+                ['skill_id' => $skillId, 'version_id' => $versionId],
+            ),
+            null,
+            self::BETA_HEADER,
+        );
     }
 
     /**
@@ -72,6 +90,12 @@ class Versions extends Resource
             throw new \InvalidArgumentException('skill_id and version_id are required');
         }
 
-        $this->_delete("/skills/{$skillId}/versions/{$versionId}");
+        $this->_delete(
+            Path::pathTemplate(
+                '/skills/{skill_id}/versions/{version_id}',
+                ['skill_id' => $skillId, 'version_id' => $versionId],
+            ),
+            self::BETA_HEADER,
+        );
     }
 }

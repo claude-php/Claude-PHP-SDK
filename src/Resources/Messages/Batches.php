@@ -6,6 +6,7 @@ namespace ClaudePhp\Resources\Messages;
 
 use ClaudePhp\Resources\Resource;
 use ClaudePhp\Responses\Decoders\JSONLDecoder;
+use ClaudePhp\Utils\Path;
 use ClaudePhp\Utils\Transform;
 use Psr\Http\Message\StreamInterface;
 
@@ -52,7 +53,7 @@ class Batches extends Resource
             throw new \InvalidArgumentException('batch_id is required');
         }
 
-        return $this->_get("/messages/batches/{$batchId}");
+        return $this->_get(Path::pathTemplate('/messages/batches/{batch_id}', ['batch_id' => $batchId]));
     }
 
     /**
@@ -91,7 +92,10 @@ class Batches extends Resource
             throw new \InvalidArgumentException('batch_id is required');
         }
 
-        return $this->_post("/messages/batches/{$batchId}/cancel", []);
+        return $this->_post(
+            Path::pathTemplate('/messages/batches/{batch_id}/cancel', ['batch_id' => $batchId]),
+            [],
+        );
     }
 
     /**
@@ -128,7 +132,7 @@ class Batches extends Resource
             throw new \InvalidArgumentException('batch_id is required');
         }
 
-        $this->_delete("/messages/batches/{$batchId}");
+        $this->_delete(Path::pathTemplate('/messages/batches/{batch_id}', ['batch_id' => $batchId]));
     }
 
     /**

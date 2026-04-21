@@ -41,11 +41,19 @@ class BetaToolRunner implements \IteratorAggregate
      */
     public function getIterator(): \Traversable
     {
+        if (isset($this->baseParams['compaction_control'])) {
+            @trigger_error(
+                'Client-side compaction_control is deprecated. Use server-side compact_20260112 instead.',
+                E_USER_DEPRECATED,
+            );
+        }
+
         $messages = $this->baseParams['messages'] ?? [];
+        $params = $this->baseParams;
         $iterations = 0;
 
         while (true) {
-            $payload = $this->baseParams;
+            $payload = $params;
             $payload['messages'] = $messages;
 
             if ([] !== $this->apiToolDefinitions) {
@@ -55,6 +63,13 @@ class BetaToolRunner implements \IteratorAggregate
             $response = $this->client->beta()->messages()->create($payload);
 
             yield $response;
+
+            // Propagate container_id from response for the next iteration
+            if ($response instanceof Message && isset($response->container['id'])) {
+                $params['container'] = $response->container['id'];
+            } elseif (\is_array($response) && isset($response['container']['id'])) {
+                $params['container'] = $response['container']['id'];
+            }
 
             $toolUses = $this->extractToolUses($response);
             if ([] === $toolUses) {

@@ -13,9 +13,11 @@ class BetaOutputConfigParam
 {
     /**
      * @param null|string $effort Effort level for model output (low, medium, high)
+     * @param null|array<string, mixed> $task_budget Token task budget (BetaTokenTaskBudgetParam shape)
      */
     public function __construct(
         public readonly ?string $effort = null,
+        public readonly ?array $task_budget = null,
     ) {
     }
 }

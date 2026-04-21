@@ -17,19 +17,24 @@ class BetaThinkingConfigAdaptiveParam
 {
     /**
      * @param string $type Must be "adaptive"
+     * @param string|null $display Display mode: "summarized" or "omitted"
      */
     public function __construct(
         public readonly string $type = 'adaptive',
+        public readonly ?string $display = null,
     ) {
     }
 
     /**
      * Convert to array for API request.
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
-        return ['type' => $this->type];
+        return array_filter([
+            'type' => $this->type,
+            'display' => $this->display,
+        ], static fn ($v) => null !== $v);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ClaudePhp\Resources;
 
 use ClaudePhp\Types\Model;
+use ClaudePhp\Utils\Path;
 
 /**
  * Models resource for the Claude API.
@@ -44,6 +45,6 @@ class Models extends Resource
             throw new \InvalidArgumentException('model_id is required');
         }
 
-        return $this->_get("/models/{$modelId}");
+        return $this->_get(Path::pathTemplate('/models/{model_id}', ['model_id' => $modelId]));
     }
 }

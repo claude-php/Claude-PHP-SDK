@@ -68,6 +68,13 @@ class AsyncStreamingToolRunner
      */
     public function run(array $params, ?callable $onStream = null): mixed
     {
+        if (isset($params['compaction_control'])) {
+            @trigger_error(
+                'Client-side compaction_control is deprecated. Use server-side compact_20260112 instead.',
+                E_USER_DEPRECATED,
+            );
+        }
+
         return \Amp\async(function () use ($params, $onStream) {
             $messages = $params['messages'] ?? [];
             $iterationCount = 0;
@@ -126,6 +133,11 @@ class AsyncStreamingToolRunner
                 // If no tool use, we're done
                 if (!$hasToolUse) {
                     return $response;
+                }
+
+                // Propagate container_id from response for the next iteration
+                if (isset($response->container['id'])) {
+                    $params['container'] = $response->container['id'];
                 }
 
                 // Add assistant response to messages

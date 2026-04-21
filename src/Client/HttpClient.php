@@ -19,6 +19,7 @@ use ClaudePhp\Exceptions\RateLimitError;
 use ClaudePhp\Exceptions\RequestTooLargeError;
 use ClaudePhp\Exceptions\ServiceUnavailableError;
 use ClaudePhp\Exceptions\UnprocessableEntityError;
+use ClaudePhp\Utils\QueryString;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -59,7 +60,23 @@ class HttpClient
         private readonly StreamFactoryInterface $streamFactory,
         private array $defaultHeaders = [],
         private readonly float $timeout = 30.0,
+        private string $arrayFormat = QueryString::FORMAT_BRACKETS,
     ) {
+    }
+
+    /**
+     * Set the default array serialization format for query strings.
+     *
+     * Allowed values: brackets, comma, repeat, indices.
+     */
+    public function setArrayFormat(string $format): void
+    {
+        $this->arrayFormat = $format;
+    }
+
+    public function getArrayFormat(): string
+    {
+        return $this->arrayFormat;
     }
 
     /**
@@ -69,9 +86,7 @@ class HttpClient
      */
     public function get(string $url, array $query = [], array $headers = []): mixed
     {
-        if ([] !== $query) {
-            $url .= '?' . http_build_query($query);
-        }
+        $url = $this->appendQuery($url, $query);
 
         $request = $this->requestFactory->createRequest('GET', $url);
         $response = $this->sendRequest($request, $headers);
@@ -89,9 +104,7 @@ class HttpClient
      */
     public function getRaw(string $url, array $query = [], array $headers = []): ResponseInterface
     {
-        if ([] !== $query) {
-            $url .= '?' . http_build_query($query);
-        }
+        $url = $this->appendQuery($url, $query);
 
         $request = $this->requestFactory->createRequest('GET', $url);
 
@@ -330,5 +343,29 @@ class HttpClient
         } catch (\JsonException) {
             return $raw;
         }
+    }
+
+    /**
+     * Append query parameters to a URL, preserving any hardcoded params already in the URL.
+     *
+     * @param array<string, mixed> $query
+     */
+    private function appendQuery(string $url, array $query): string
+    {
+        if ([] === $query) {
+            return $url;
+        }
+
+        $parsed = parse_url($url);
+        $existingQuery = [];
+        if (isset($parsed['query'])) {
+            parse_str($parsed['query'], $existingQuery);
+            $url = str_replace('?' . $parsed['query'], '', $url);
+        }
+
+        $merged = QueryString::mergePreservingHardcoded($existingQuery, $query);
+        $qs = QueryString::build($merged, $this->arrayFormat);
+
+        return '' !== $qs ? $url . '?' . $qs : $url;
     }
 }

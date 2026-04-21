@@ -25,6 +25,8 @@ class AsyncMessageStreamManager
         'model' => null,
         'stop_reason' => null,
         'stop_sequence' => null,
+        'stop_details' => null,
+        'container' => null,
         'usage' => ['input_tokens' => 0, 'output_tokens' => 0, 'server_tool_use' => null],
     ];
 
@@ -82,6 +84,8 @@ class AsyncMessageStreamManager
                 cache_read_input_tokens: $this->message['usage']['cache_read_input_tokens'] ?? null,
                 server_tool_use: $this->message['usage']['server_tool_use'] ?? null,
             ),
+            stop_details: $this->message['stop_details'],
+            container: $this->message['container'],
         );
     }
 
@@ -107,6 +111,9 @@ class AsyncMessageStreamManager
         $message = $event['message'] ?? [];
         $this->message['id'] = $message['id'] ?? null;
         $this->message['model'] = $message['model'] ?? null;
+        if (isset($message['container'])) {
+            $this->message['container'] = $message['container'];
+        }
 
         $usage = $message['usage'] ?? [];
         if (isset($usage['input_tokens'])) {
@@ -128,6 +135,12 @@ class AsyncMessageStreamManager
         $delta = $event['delta'] ?? [];
         if (isset($delta['stop_reason'])) {
             $this->message['stop_reason'] = $delta['stop_reason'];
+        }
+        if (isset($delta['stop_sequence'])) {
+            $this->message['stop_sequence'] = $delta['stop_sequence'];
+        }
+        if (isset($delta['stop_details'])) {
+            $this->message['stop_details'] = $delta['stop_details'];
         }
         $usage = $event['usage'] ?? [];
         if (isset($usage['output_tokens'])) {
@@ -165,12 +178,22 @@ class AsyncMessageStreamManager
     private function handleContentBlockDelta(array $event): void
     {
         $delta = $event['delta'] ?? [];
-        if (isset($this->message['content'][$this->currentBlockIndex])) {
-            $block = &$this->message['content'][$this->currentBlockIndex];
-            if ('text_delta' === $delta['type'] && isset($delta['text'])) {
-                $block['text'] = ($block['text'] ?? '') . $delta['text'];
-            }
+
+        if (!isset($this->message['content'][$this->currentBlockIndex])) {
+            return;
         }
+
+        $block = &$this->message['content'][$this->currentBlockIndex];
+        $deltaType = $delta['type'] ?? '';
+
+        match ($deltaType) {
+            'text_delta' => $block['text'] = ($block['text'] ?? '') . ($delta['text'] ?? ''),
+            'input_json_delta' => $block['input'] = ($block['input'] ?? '') . ($delta['partial_json'] ?? ''),
+            'thinking_delta' => $block['thinking'] = ($block['thinking'] ?? '') . ($delta['thinking'] ?? ''),
+            'signature_delta' => $block['signature'] = ($block['signature'] ?? '') . ($delta['signature'] ?? ''),
+            'citations_delta' => $block['citations'] = array_merge($block['citations'] ?? [], $delta['citations'] ?? []),
+            default => null,
+        };
     }
 
     private function handleContentBlockStop(array $event): void

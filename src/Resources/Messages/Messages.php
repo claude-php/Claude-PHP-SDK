@@ -21,6 +21,16 @@ use ClaudePhp\Utils\Transform;
 class Messages extends Resource
 {
     /**
+     * Models that are deprecated with their EOL dates.
+     */
+    private const DEPRECATED_MODELS = [
+        'claude-opus-4-0' => '2026-06-15',
+        'claude-opus-4-20250514' => '2026-06-15',
+        'claude-sonnet-4-0' => '2026-06-15',
+        'claude-sonnet-4-20250514' => '2026-06-15',
+    ];
+
+    /**
      * Lazy-load batches sub-resource.
      */
     public function batches(): Batches
@@ -61,6 +71,8 @@ class Messages extends Resource
                 throw new \InvalidArgumentException("Missing required parameter: {$key}");
             }
         }
+
+        self::warnIfDeprecated($params['model'] ?? '');
 
         // Transform request parameters
         $body = Transform::transform($params, $this->getParamTypes());
@@ -147,6 +159,7 @@ class Messages extends Resource
             'tool_choice' => ['type' => 'string|array'],
             'thinking' => ['type' => 'array'],
             'output_config' => ['type' => 'array'],
+            'cache_control' => ['type' => 'array'],
             'stream' => ['type' => 'bool'],
             'metadata' => ['type' => 'array'],
             'service_tier' => ['type' => 'string'],
@@ -167,6 +180,7 @@ class Messages extends Resource
             'tools' => ['type' => 'array'],
             'tool_choice' => ['type' => 'string|array'],
             'thinking' => ['type' => 'array'],
+            'cache_control' => ['type' => 'array'],
         ];
     }
 
@@ -192,6 +206,8 @@ class Messages extends Resource
                 cache_read_input_tokens: $data['usage']['cache_read_input_tokens'] ?? null,
                 server_tool_use: $data['usage']['server_tool_use'] ?? null,
             ),
+            stop_details: $data['stop_details'] ?? null,
+            container: $data['container'] ?? null,
         );
     }
 
@@ -209,5 +225,33 @@ class Messages extends Resource
             cache_read_input_tokens: $data['cache_read_input_tokens'] ?? null,
             context_management: $data['context_management'] ?? null,
         );
+    }
+
+    /**
+     * @var array<string, true> Tracks models we've already warned about
+     */
+    private static array $warnedModels = [];
+
+    /**
+     * Reset the deprecation warning cache (primarily for tests).
+     *
+     * @internal
+     */
+    public static function resetDeprecationWarnings(): void
+    {
+        self::$warnedModels = [];
+    }
+
+    private static function warnIfDeprecated(string $model): void
+    {
+        if (isset(self::DEPRECATED_MODELS[$model]) && !isset(self::$warnedModels[$model])) {
+            $eol = self::DEPRECATED_MODELS[$model];
+            self::$warnedModels[$model] = true;
+            @trigger_error(
+                "Model '{$model}' is deprecated and will reach end-of-life on {$eol}. "
+                . 'Please migrate to a newer model.',
+                E_USER_DEPRECATED,
+            );
+        }
     }
 }

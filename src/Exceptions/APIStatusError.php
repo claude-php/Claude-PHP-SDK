@@ -38,6 +38,13 @@ class APIStatusError extends APIError
     public $request_id;
 
     /**
+     * Error type from the API error body (e.g. "invalid_request_error").
+     *
+     * @var null|string
+     */
+    public $type;
+
+    /**
      * @param int $status_code HTTP status code
      * @param string $message Error message
      * @param RequestInterface $request The HTTP request
@@ -59,5 +66,20 @@ class APIStatusError extends APIError
         $this->response = $response;
         $this->body = $body;
         $this->request_id = $request_id;
+        $this->type = self::extractErrorType($body);
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    private static function extractErrorType(array|object|string|null $body): ?string
+    {
+        if (\is_array($body) && isset($body['error']['type']) && \is_string($body['error']['type'])) {
+            return $body['error']['type'];
+        }
+
+        return null;
     }
 }

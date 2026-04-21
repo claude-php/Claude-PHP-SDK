@@ -44,7 +44,7 @@ class AnthropicVertex
         ?string $accessToken = null,
     ) {
         $this->projectId = $projectId;
-        $this->region = $region ?? 'us-central1';
+        $this->region = $region ?? ($_ENV['CLOUD_ML_REGION'] ?? 'us-central1');
         $this->accessToken = $accessToken ?? $this->loadAccessToken();
     }
 
@@ -58,7 +58,8 @@ class AnthropicVertex
         $vertexParams = $this->transformParams($params);
         $modelId = $this->getVertexModelId($params['model'] ?? 'claude-sonnet-4-5');
 
-        $url = "https://{$this->region}-aiplatform.googleapis.com/v1beta1/projects/{$this->projectId}/locations/{$this->region}/publishers/anthropic/models/{$modelId}:rawPredict";
+        $baseUrl = self::regionBaseUrl($this->region);
+        $url = "{$baseUrl}/projects/{$this->projectId}/locations/{$this->region}/publishers/anthropic/models/{$modelId}:rawPredict";
 
         $response = $this->makeRequest('POST', $url, $vertexParams);
 
@@ -79,7 +80,8 @@ class AnthropicVertex
         $vertexParams['stream'] = true;
         $modelId = $this->getVertexModelId($params['model'] ?? 'claude-sonnet-4-5');
 
-        $url = "https://{$this->region}-aiplatform.googleapis.com/v1beta1/projects/{$this->projectId}/locations/{$this->region}/publishers/anthropic/models/{$modelId}:streamRawPredict";
+        $baseUrl = self::regionBaseUrl($this->region);
+        $url = "{$baseUrl}/projects/{$this->projectId}/locations/{$this->region}/publishers/anthropic/models/{$modelId}:streamRawPredict";
 
         $manager = new MessageStreamManager();
 
@@ -123,10 +125,25 @@ class AnthropicVertex
      */
     private function getVertexModelId(string $modelId): string
     {
+        // Pass through Vertex-formatted IDs (model@version) unchanged.
+        if (str_contains($modelId, '@')) {
+            return $modelId;
+        }
+
         return match ($modelId) {
-            'claude-sonnet-4-5', 'claude-sonnet-4-5-20250929' => 'claude-3-5-sonnet@20241022',
-            'claude-haiku-4-5', 'claude-haiku-4-5-20251001' => 'claude-3-5-haiku@20241022',
-            'claude-opus-4-5', 'claude-opus-4-5-20251101' => 'claude-3-opus@20240229',
+            'claude-opus-4-7' => 'claude-opus-4-7@20260416',
+            'claude-opus-4-6' => 'claude-opus-4-6@20260205',
+            'claude-sonnet-4-6' => 'claude-sonnet-4-6@20260217',
+            'claude-opus-4-5', 'claude-opus-4-5-20251101' => 'claude-opus-4-5@20251101',
+            'claude-sonnet-4-5', 'claude-sonnet-4-5-20250929' => 'claude-sonnet-4-5@20250929',
+            'claude-haiku-4-5', 'claude-haiku-4-5-20251001' => 'claude-haiku-4-5@20251001',
+            'claude-opus-4-1-20250805' => 'claude-opus-4-1@20250805',
+            'claude-opus-4-20250514', 'claude-opus-4-0' => 'claude-opus-4@20250514',
+            'claude-sonnet-4-20250514', 'claude-sonnet-4-0' => 'claude-sonnet-4@20250514',
+            'claude-3-7-sonnet-20250219', 'claude-3-7-sonnet-latest' => 'claude-3-7-sonnet@20250219',
+            'claude-3-5-haiku-20241022', 'claude-3-5-haiku-latest' => 'claude-3-5-haiku@20241022',
+            'claude-3-opus-20240229', 'claude-3-opus-latest' => 'claude-3-opus@20240229',
+            'claude-3-haiku-20240307' => 'claude-3-haiku@20240307',
             default => $modelId,
         };
     }
@@ -163,6 +180,21 @@ class AnthropicVertex
             stop_reason: $vertexResponse['stop_reason'] ?? 'end_turn',
             usage: $usage,
         );
+    }
+
+    /**
+     * Resolve the Vertex AI base URL for a given region.
+     *
+     * Supports multi-region endpoints (us, eu, global) and standard region-prefixed URLs.
+     */
+    private static function regionBaseUrl(string $region): string
+    {
+        return match ($region) {
+            'us' => 'https://aiplatform.us.rep.googleapis.com/v1',
+            'eu' => 'https://aiplatform.eu.rep.googleapis.com/v1',
+            'global' => 'https://aiplatform.googleapis.com/v1',
+            default => "https://{$region}-aiplatform.googleapis.com/v1beta1",
+        };
     }
 
     /**
