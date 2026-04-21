@@ -48,7 +48,7 @@ class MessagesApiTest extends TestCase
         // Verify headers
         $this->assertHttpHeadersPresent([
             'Content-Type' => 'application/json',
-            'User-Agent' => 'ClaudePhp/0.7.0',
+            'User-Agent' => 'ClaudePhp/0.7.1',
             'anthropic-version' => '2023-06-01',
         ]);
     }

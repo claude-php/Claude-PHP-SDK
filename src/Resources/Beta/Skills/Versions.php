@@ -31,7 +31,7 @@ class Versions extends Resource
         }
 
         return $this->_post(
-            Path::pathTemplate('/skills/{skill_id}/versions', ['skill_id' => $skillId]),
+            Path::pathTemplate('/skills/{skill_id}/versions?beta=true', ['skill_id' => $skillId]),
             $params,
             self::BETA_HEADER,
         );
@@ -48,7 +48,7 @@ class Versions extends Resource
     public function list(string $skillId, array $params = []): array
     {
         return $this->_get(
-            Path::pathTemplate('/skills/{skill_id}/versions', ['skill_id' => $skillId]),
+            Path::pathTemplate('/skills/{skill_id}/versions?beta=true', ['skill_id' => $skillId]),
             $params,
             self::BETA_HEADER,
         );
@@ -70,7 +70,7 @@ class Versions extends Resource
 
         return $this->_get(
             Path::pathTemplate(
-                '/skills/{skill_id}/versions/{version_id}',
+                '/skills/{skill_id}/versions/{version_id}?beta=true',
                 ['skill_id' => $skillId, 'version_id' => $versionId],
             ),
             null,
@@ -92,7 +92,7 @@ class Versions extends Resource
 
         $this->_delete(
             Path::pathTemplate(
-                '/skills/{skill_id}/versions/{version_id}',
+                '/skills/{skill_id}/versions/{version_id}?beta=true',
                 ['skill_id' => $skillId, 'version_id' => $versionId],
             ),
             self::BETA_HEADER,

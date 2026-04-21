@@ -218,17 +218,40 @@ class NewFeaturesIntegrationTest extends TestCase
     }
 
     /**
-     * Test authentication error message provides helpful info
+     * Test authentication error message provides helpful info.
+     *
+     * The constructor falls back to `$_ENV['ANTHROPIC_API_KEY']` when no
+     * apiKey/custom-auth header is provided, so we must isolate the env var
+     * before asserting that the no-auth path raises InvalidArgumentException.
      */
     public function testAuthenticationErrorMessage(): void
     {
+        $originalEnv = $_ENV['ANTHROPIC_API_KEY'] ?? null;
+        $originalServer = $_SERVER['ANTHROPIC_API_KEY'] ?? null;
+        $originalGetenv = getenv('ANTHROPIC_API_KEY');
+
+        unset($_ENV['ANTHROPIC_API_KEY'], $_SERVER['ANTHROPIC_API_KEY']);
+        putenv('ANTHROPIC_API_KEY');
+
         try {
-            new ClaudePhp(apiKey: null, customHeaders: []);
-            $this->fail('Should throw InvalidArgumentException');
-        } catch (\InvalidArgumentException $e) {
-            $this->assertStringContainsString('Authentication is required', $e->getMessage());
-            $this->assertStringContainsString('x-api-key', $e->getMessage());
-            $this->assertStringContainsString('Authorization', $e->getMessage());
+            try {
+                new ClaudePhp(apiKey: null, customHeaders: []);
+                $this->fail('Should throw InvalidArgumentException');
+            } catch (\InvalidArgumentException $e) {
+                $this->assertStringContainsString('Authentication is required', $e->getMessage());
+                $this->assertStringContainsString('x-api-key', $e->getMessage());
+                $this->assertStringContainsString('Authorization', $e->getMessage());
+            }
+        } finally {
+            if (null !== $originalEnv) {
+                $_ENV['ANTHROPIC_API_KEY'] = $originalEnv;
+            }
+            if (null !== $originalServer) {
+                $_SERVER['ANTHROPIC_API_KEY'] = $originalServer;
+            }
+            if (false !== $originalGetenv) {
+                putenv('ANTHROPIC_API_KEY=' . $originalGetenv);
+            }
         }
     }
 }

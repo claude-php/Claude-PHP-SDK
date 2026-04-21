@@ -28,10 +28,31 @@ class AnthropicTest extends PHPUnitTestCase
      */
     public function testClientThrowsExceptionWithoutApiKey(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Authentication is required');
+        // The constructor falls back to ANTHROPIC_API_KEY in $_ENV / getenv(),
+        // so we must isolate the env var to assert the no-auth code path.
+        $originalEnv = $_ENV['ANTHROPIC_API_KEY'] ?? null;
+        $originalServer = $_SERVER['ANTHROPIC_API_KEY'] ?? null;
+        $originalGetenv = getenv('ANTHROPIC_API_KEY');
 
-        new ClaudePhp(apiKey: null);
+        unset($_ENV['ANTHROPIC_API_KEY'], $_SERVER['ANTHROPIC_API_KEY']);
+        putenv('ANTHROPIC_API_KEY');
+
+        try {
+            $this->expectException(InvalidArgumentException::class);
+            $this->expectExceptionMessage('Authentication is required');
+
+            new ClaudePhp(apiKey: null);
+        } finally {
+            if (null !== $originalEnv) {
+                $_ENV['ANTHROPIC_API_KEY'] = $originalEnv;
+            }
+            if (null !== $originalServer) {
+                $_SERVER['ANTHROPIC_API_KEY'] = $originalServer;
+            }
+            if (false !== $originalGetenv) {
+                putenv('ANTHROPIC_API_KEY=' . $originalGetenv);
+            }
+        }
     }
 
     /**

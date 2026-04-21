@@ -29,7 +29,7 @@ class Batches extends Resource
             throw new \InvalidArgumentException('requests parameter is required');
         }
 
-        return $this->_post('/messages/batches', $params);
+        return $this->_post('/messages/batches?beta=true', $params);
     }
 
     /**
@@ -45,7 +45,7 @@ class Batches extends Resource
             throw new \InvalidArgumentException('batch_id is required');
         }
 
-        return $this->_get(Path::pathTemplate('/messages/batches/{batch_id}', ['batch_id' => $batchId]));
+        return $this->_get(Path::pathTemplate('/messages/batches/{batch_id}?beta=true', ['batch_id' => $batchId]));
     }
 
     /**
@@ -62,7 +62,7 @@ class Batches extends Resource
         }
 
         return $this->_post(
-            Path::pathTemplate('/messages/batches/{batch_id}/cancel', ['batch_id' => $batchId]),
+            Path::pathTemplate('/messages/batches/{batch_id}/cancel?beta=true', ['batch_id' => $batchId]),
             [],
         );
     }

@@ -9,48 +9,50 @@ use ClaudePhp\Utils\Path;
 
 class Vaults extends Resource
 {
+    private const BETA_HEADER = ['anthropic-beta' => 'managed-agents-2026-04-01'];
+
     public function create(array $params = []): array
     {
-        return $this->_post('/vaults', $params, ['anthropic-beta' => 'managed-agents-2026-04-01']);
+        return $this->_post('/vaults?beta=true', $params, self::BETA_HEADER);
     }
 
     public function retrieve(string $vaultId): array
     {
         return $this->_get(
-            Path::pathTemplate('/vaults/{vault_id}', ['vault_id' => $vaultId]),
+            Path::pathTemplate('/vaults/{vault_id}?beta=true', ['vault_id' => $vaultId]),
             null,
-            ['anthropic-beta' => 'managed-agents-2026-04-01'],
+            self::BETA_HEADER,
         );
     }
 
     public function update(string $vaultId, array $params = []): array
     {
         return $this->_post(
-            Path::pathTemplate('/vaults/{vault_id}', ['vault_id' => $vaultId]),
+            Path::pathTemplate('/vaults/{vault_id}?beta=true', ['vault_id' => $vaultId]),
             $params,
-            ['anthropic-beta' => 'managed-agents-2026-04-01'],
+            self::BETA_HEADER,
         );
     }
 
     public function list(array $params = []): array
     {
-        return $this->_get('/vaults', null, ['anthropic-beta' => 'managed-agents-2026-04-01']);
+        return $this->_get('/vaults?beta=true', $params, self::BETA_HEADER);
     }
 
     public function delete(string $vaultId): array
     {
         return $this->_delete(
-            Path::pathTemplate('/vaults/{vault_id}', ['vault_id' => $vaultId]),
-            ['anthropic-beta' => 'managed-agents-2026-04-01'],
+            Path::pathTemplate('/vaults/{vault_id}?beta=true', ['vault_id' => $vaultId]),
+            self::BETA_HEADER,
         );
     }
 
     public function archive(string $vaultId): array
     {
         return $this->_post(
-            Path::pathTemplate('/vaults/{vault_id}/archive', ['vault_id' => $vaultId]),
+            Path::pathTemplate('/vaults/{vault_id}/archive?beta=true', ['vault_id' => $vaultId]),
             [],
-            ['anthropic-beta' => 'managed-agents-2026-04-01'],
+            self::BETA_HEADER,
         );
     }
 

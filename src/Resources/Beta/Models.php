@@ -23,7 +23,7 @@ class Models extends Resource
      */
     public function list(array $params = []): array
     {
-        return $this->_get('/models', $params);
+        return $this->_get('/models?beta=true', $params);
     }
 
     /**
@@ -39,6 +39,6 @@ class Models extends Resource
             throw new \InvalidArgumentException('model_id is required');
         }
 
-        return $this->_get(Path::pathTemplate('/models/{model_id}', ['model_id' => $modelId]));
+        return $this->_get(Path::pathTemplate('/models/{model_id}?beta=true', ['model_id' => $modelId]));
     }
 }

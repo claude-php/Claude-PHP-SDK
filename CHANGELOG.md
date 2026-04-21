@@ -7,6 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-04-21
+
+### Fixed (Python SDK parity closeout)
+
+- **`Beta\UserProfiles`**: Now sends the correct `anthropic-beta: user-profiles-2026-03-24`
+  header (was incorrectly using `managed-agents-2026-04-01`), matching Python
+  `src/anthropic/resources/beta/user_profiles.py` (Python SDK v0.96.0).
+- **`?beta=true` Query Parameter**: All beta resource endpoints now append the
+  `?beta=true` query string required by the Anthropic API for routing through the
+  beta handler. Affected resources: `Beta\Messages`, `Beta\Batches`, `Beta\Models`,
+  `Beta\Files`, `Beta\Skills\Skills`, `Beta\Skills\Versions`,
+  `Beta\Sessions\Sessions`, `Beta\Sessions\Events`, `Beta\Sessions\Resources`,
+  `Beta\Vaults\Vaults`, `Beta\Vaults\Credentials`, `Beta\Environments`,
+  `Beta\Agents\Agents`, `Beta\Agents\Versions`, `Beta\UserProfiles`. Mirrors
+  Python `?beta=true` URL convention used everywhere under
+  `src/anthropic/resources/beta/`.
+- **`BetaCompactionBlock`**: Replaced the incorrect `summary` / `compacted_tokens`
+  / `remaining_tokens` fields with the spec-correct `content` and the new
+  `encrypted_content` field (Python SDK v0.96.0). `encrypted_content` is opaque
+  metadata from prior compaction that must be round-tripped verbatim.
+- **`BetaCompactionBlockParam`**: Replaced `summary` with `content` and added
+  `cache_control` and `encrypted_content` fields, matching Python.
+- **`BetaCompactionContentBlockDelta`**: Replaced `partial_summary` with
+  `content` and added `encrypted_content`, matching Python streaming deltas.
+- **`Beta\Sessions\Sessions::list()` / `Beta\Sessions\Events::list()` / `Beta\Sessions\Resources::list()` / `Beta\Vaults\Vaults::list()` / `Beta\Vaults\Credentials::list()` / `Beta\Environments::list()` / `Beta\Agents\Agents::list()` / `Beta\Agents\Versions::list()`**:
+  Now actually pass `$params` as query parameters to the API (previously the
+  `$params` arg was accepted but discarded, so callers couldn't paginate /
+  filter list responses).
+
+### Added (Python SDK v0.96.0 parity)
+
+- **`BetaManagedAgentsModel`** (`Types\Beta\ManagedAgents\Model`): Promoted from
+  an empty wrapper class to a full constants class with `MODEL_CLAUDE_OPUS_4_7`
+  and the rest of the managed-agents-supported model IDs (`claude-opus-4-7`,
+  `claude-opus-4-6`, `claude-sonnet-4-6`, `claude-haiku-4-5(+date)`,
+  `claude-opus-4-5(+date)`, `claude-sonnet-4-5(+date)`).
+- **`xhigh` Effort Level**: `OutputConfigParam` and `BetaOutputConfigParam`
+  documentation now lists `xhigh` as a valid `effort` value, and
+  `EffortCapability` / `BetaEffortCapability` document `xhigh` as an allowed
+  level (Python SDK v0.96.0).
+
+### Changed
+
+- **`SDK_VERSION`**: Updated from `'0.7.0'` to `'0.7.1'`
+- **`composer.json`**: Bumped from `0.7.0` to `0.7.1`
+- **`AnthropicBedrockMantle` user-agent**: Bumped to `claude-php-sdk-mantle/0.7.1`
+
+### Python SDK Parity
+
+This release closes the remaining gaps against the Python Anthropic SDK
+v0.96.0 / v0.96.1 (Apr 16 – Apr 20, 2026). All public Python API surface
+is now reflected in PHP.
+
+## [0.7.0] — Implementation details (continued from below)
+
 ### Added (Full-Parity Closeout)
 
 - **AWS SigV4 Signing**: Pure-PHP `SigV4` signer in `src/Lib/Aws/SigV4.php` (no aws-sdk-php required)

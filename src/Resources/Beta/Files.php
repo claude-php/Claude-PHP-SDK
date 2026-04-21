@@ -39,7 +39,7 @@ class Files extends Resource
         $body = $params;
         $body['file'] = $fileData;
 
-        return $this->_post('/files', $body);
+        return $this->_post('/files?beta=true', $body);
     }
 
     /**
@@ -51,7 +51,7 @@ class Files extends Resource
      */
     public function list(array $params = []): array
     {
-        return $this->_get('/files', $params);
+        return $this->_get('/files?beta=true', $params);
     }
 
     /**
@@ -63,7 +63,7 @@ class Files extends Resource
      */
     public function retrieveMetadata(string $fileId): array
     {
-        $path = Path::pathTemplate('/files/{file_id}', ['file_id' => $fileId]);
+        $path = Path::pathTemplate('/files/{file_id}?beta=true', ['file_id' => $fileId]);
 
         return $this->_get($path);
     }
@@ -77,7 +77,7 @@ class Files extends Resource
      */
     public function download(string $fileId): string
     {
-        $path = Path::pathTemplate('/files/{file_id}/content', ['file_id' => $fileId]);
+        $path = Path::pathTemplate('/files/{file_id}/content?beta=true', ['file_id' => $fileId]);
 
         return $this->_get($path);
     }
@@ -93,7 +93,7 @@ class Files extends Resource
             throw new \InvalidArgumentException('file_id is required');
         }
 
-        $path = Path::pathTemplate('/files/{file_id}', ['file_id' => $fileId]);
+        $path = Path::pathTemplate('/files/{file_id}?beta=true', ['file_id' => $fileId]);
         $this->_delete($path);
     }
 }

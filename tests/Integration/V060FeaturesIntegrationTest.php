@@ -30,7 +30,7 @@ class V060FeaturesIntegrationTest extends TestCase
 
     public function testSdkVersionIsCorrect(): void
     {
-        $this->assertEquals('0.7.0', \ClaudePhp\ClaudePhp::SDK_VERSION);
+        $this->assertEquals('0.7.1', \ClaudePhp\ClaudePhp::SDK_VERSION);
     }
 
     public function testUserAgentReflectsNewVersion(): void
@@ -44,7 +44,7 @@ class V060FeaturesIntegrationTest extends TestCase
             'messages'   => [['role' => 'user', 'content' => 'Hi']],
         ]);
 
-        $this->assertHttpHeadersPresent(['User-Agent' => 'ClaudePhp/0.7.0']);
+        $this->assertHttpHeadersPresent(['User-Agent' => 'ClaudePhp/0.7.1']);
     }
 
     // -------------------------------------------------------------------------

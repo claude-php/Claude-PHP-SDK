@@ -53,10 +53,10 @@ class Messages extends Resource
         $headers = $this->extractBetaHeaders($body);
 
         if (!empty($params['stream'])) {
-            return $this->_postStream('/messages', $body, $headers);
+            return $this->_postStream('/messages?beta=true', $body, $headers);
         }
 
-        $response = $this->_post('/messages', $body, $headers);
+        $response = $this->_post('/messages?beta=true', $body, $headers);
         if (!\is_array($response)) {
             throw new \RuntimeException('Unexpected response payload from beta messages API');
         }
@@ -95,7 +95,7 @@ class Messages extends Resource
         }
 
         $body = Transform::transform($params, $this->getCountTokensParamTypes());
-        $response = $this->_post('/messages/count_tokens', $body);
+        $response = $this->_post('/messages/count_tokens?beta=true', $body);
         if (!\is_array($response)) {
             throw new \RuntimeException('Unexpected response payload from beta messages countTokens');
         }

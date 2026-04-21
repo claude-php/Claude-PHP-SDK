@@ -37,7 +37,7 @@ class Skills extends Resource
             throw new \InvalidArgumentException('name and description are required');
         }
 
-        return $this->_post('/skills', $params, self::BETA_HEADER);
+        return $this->_post('/skills?beta=true', $params, self::BETA_HEADER);
     }
 
     /**
@@ -49,7 +49,7 @@ class Skills extends Resource
      */
     public function list(array $params = []): array
     {
-        return $this->_get('/skills', $params, self::BETA_HEADER);
+        return $this->_get('/skills?beta=true', $params, self::BETA_HEADER);
     }
 
     /**
@@ -62,7 +62,7 @@ class Skills extends Resource
     public function retrieve(string $skillId): array
     {
         return $this->_get(
-            Path::pathTemplate('/skills/{skill_id}', ['skill_id' => $skillId]),
+            Path::pathTemplate('/skills/{skill_id}?beta=true', ['skill_id' => $skillId]),
             null,
             self::BETA_HEADER,
         );
@@ -80,7 +80,7 @@ class Skills extends Resource
         }
 
         $this->_delete(
-            Path::pathTemplate('/skills/{skill_id}', ['skill_id' => $skillId]),
+            Path::pathTemplate('/skills/{skill_id}?beta=true', ['skill_id' => $skillId]),
             self::BETA_HEADER,
         );
     }

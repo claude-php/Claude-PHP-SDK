@@ -124,7 +124,7 @@ class AnthropicBedrockMantle
     {
         $headers = [
             'Accept' => 'application/json',
-            'User-Agent' => 'claude-php-sdk-mantle/0.7.0',
+            'User-Agent' => 'claude-php-sdk-mantle/0.7.1',
         ];
 
         return array_merge($headers, $this->authHeaders());
