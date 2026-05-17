@@ -20,6 +20,8 @@ use ClaudePhp\Exceptions\RequestTooLargeError;
 use ClaudePhp\Exceptions\ServiceUnavailableError;
 use ClaudePhp\Exceptions\UnprocessableEntityError;
 use ClaudePhp\Utils\QueryString;
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Psr7\Request as GuzzleRequest;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -61,6 +63,7 @@ class HttpClient
         private array $defaultHeaders = [],
         private readonly float $timeout = 30.0,
         private string $arrayFormat = QueryString::FORMAT_BRACKETS,
+        private readonly ?GuzzleClient $guzzleClient = null,
     ) {
     }
 
@@ -162,20 +165,45 @@ class HttpClient
     /**
      * Make a POST request that expects a streaming response.
      *
+     * When a native GuzzleClient is available (the default), this uses Guzzle's
+     * own send() with stream=true so curl delivers response bytes incrementally
+     * as they arrive rather than buffering the full body first.  PSR-18's
+     * sendRequest() always sets SYNCHRONOUS=true and blocks until curl_exec()
+     * finishes, making true chunk-by-chunk streaming impossible through that
+     * interface.
+     *
      * @param array<string, mixed>|string $body
      */
     public function postStream(string $url, array|string $body = [], array $headers = []): ResponseInterface
     {
         $bodyString = \is_array($body) ? $this->encodeJson($body) : $body;
+
+        $streamHeaders = array_merge($this->defaultHeaders, [
+            'Content-Type' => 'application/json',
+            'Accept' => 'text/event-stream',
+            'Cache-Control' => 'no-cache',
+        ], $headers);
+
+        if (null !== $this->guzzleClient) {
+            $request = new GuzzleRequest('POST', $url, $streamHeaders, $bodyString);
+
+            try {
+                return $this->guzzleClient->send($request, [
+                    'stream' => true,
+                    'timeout' => $this->timeout,
+                ]);
+            } catch (\GuzzleHttp\Exception\ClientException | \GuzzleHttp\Exception\ServerException $e) {
+                $response = $e->getResponse();
+                $this->handleErrorResponse($request, $response);
+            } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+                throw new APIConnectionError('HTTP request failed: ' . $e->getMessage(), 0, $e);
+            }
+        }
+
         $request = $this->requestFactory
             ->createRequest('POST', $url)
             ->withBody($this->streamFactory->createStream($bodyString))
         ;
-
-        $streamHeaders = array_merge([
-            'Accept' => 'text/event-stream',
-            'Cache-Control' => 'no-cache',
-        ], $headers);
 
         return $this->sendRequest($request, $streamHeaders);
     }

@@ -198,6 +198,7 @@ class ClaudePhp
             streamFactory: $this->streamFactory,
             defaultHeaders: $this->buildDefaultHeaders(),
             timeout: $this->timeout,
+            guzzleClient: $this->httpClient instanceof \GuzzleHttp\Client ? $this->httpClient : null,
         );
 
         return $this->transport;
