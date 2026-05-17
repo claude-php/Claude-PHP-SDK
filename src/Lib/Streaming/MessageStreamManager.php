@@ -193,6 +193,8 @@ class MessageStreamManager
 
         if ('text' === $block['type']) {
             $this->currentContent['text'] = '';
+        } elseif ('tool_use' === $block['type']) {
+            $this->currentContent['input'] = '';
         }
 
         $this->message['content'][] = $this->currentContent;
@@ -227,6 +229,15 @@ class MessageStreamManager
      */
     private function handleContentBlockStop(array $event): void
     {
-        // Content block complete
+        if (!isset($this->message['content'][$this->currentBlockIndex])) {
+            return;
+        }
+
+        $block = &$this->message['content'][$this->currentBlockIndex];
+
+        if ('tool_use' === ($block['type'] ?? '') && is_string($block['input'] ?? null)) {
+            $decoded = json_decode($block['input'], true);
+            $block['input'] = is_array($decoded) ? $decoded : [];
+        }
     }
 }

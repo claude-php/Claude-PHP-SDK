@@ -110,6 +110,137 @@ class StreamingTest extends TestCase
         $this->assertEquals('message_delta', $events[9]['type']);
     }
 
+    /**
+     * Regression test: input_json_delta on a tool_use block must not trigger
+     * "Array to string conversion" — the API sends "input": {} in
+     * content_block_start which PHP decodes as [], causing a warning when
+     * concatenating partial_json strings unless the manager initialises
+     * input as ''.  After content_block_stop the input must be a decoded array.
+     */
+    public function testToolUseInputJsonDeltaNoArrayToStringWarning(): void
+    {
+        $streamData = '';
+
+        $streamData .= $this->createStreamingEvent('message_start', [
+            'type' => 'message_start',
+            'message' => [
+                'id' => 'msg_input_json_delta_test',
+                'type' => 'message',
+                'role' => 'assistant',
+                'content' => [],
+                'model' => 'claude-sonnet-4-6',
+                'stop_reason' => null,
+                'stop_sequence' => null,
+                'usage' => ['input_tokens' => 25, 'output_tokens' => 0],
+            ],
+        ]);
+
+        // content_block_start with "input": {} — exactly what the API sends,
+        // which PHP json_decode turns into an empty array [].
+        $streamData .= $this->createStreamingEvent('content_block_start', [
+            'type' => 'content_block_start',
+            'index' => 0,
+            'content_block' => [
+                'type' => 'tool_use',
+                'id' => 'toolu_regression_test',
+                'name' => 'get_weather',
+                'input' => new \stdClass(), // {} → [] after json_encode/decode
+            ],
+        ]);
+
+        // Deliver the JSON in two separate deltas to exercise the concatenation path.
+        $streamData .= $this->createStreamingEvent('content_block_delta', [
+            'type' => 'content_block_delta',
+            'index' => 0,
+            'delta' => [
+                'type' => 'input_json_delta',
+                'partial_json' => '{"location": "San Fra',
+            ],
+        ]);
+
+        $streamData .= $this->createStreamingEvent('content_block_delta', [
+            'type' => 'content_block_delta',
+            'index' => 0,
+            'delta' => [
+                'type' => 'input_json_delta',
+                'partial_json' => 'ncisco", "unit": "celsius"}',
+            ],
+        ]);
+
+        $streamData .= $this->createStreamingEvent('content_block_stop', [
+            'type' => 'content_block_stop',
+            'index' => 0,
+        ]);
+
+        $streamData .= $this->createStreamingEvent('message_delta', [
+            'type' => 'message_delta',
+            'delta' => ['stop_reason' => 'tool_use', 'stop_sequence' => null],
+            'usage' => ['output_tokens' => 20],
+        ]);
+
+        $streamData .= "event: message_stop\ndata: [DONE]\n\n";
+
+        $this->addMockResponse(200, ['Content-Type' => 'text/event-stream'], $streamData);
+
+        $tools = [[
+            'name' => 'get_weather',
+            'description' => 'Get the weather for a location',
+            'input_schema' => [
+                'type' => 'object',
+                'properties' => [
+                    'location' => ['type' => 'string'],
+                    'unit' => ['type' => 'string', 'enum' => ['celsius', 'fahrenheit']],
+                ],
+                'required' => ['location'],
+            ],
+        ]];
+
+        $stream = $this->testClient->messages()->stream([
+            'model' => 'claude-sonnet-4-6',
+            'max_tokens' => 100,
+            'tools' => $tools,
+            'messages' => [['role' => 'user', 'content' => "What's the weather in San Francisco?"]],
+        ]);
+
+        // Capture any warnings triggered during stream processing.
+        $warnings = [];
+        set_error_handler(static function (int $errno, string $errstr) use (&$warnings): bool {
+            $warnings[] = $errstr;
+
+            return true;
+        }, E_WARNING);
+
+        $messageStream = new MessageStream($stream);
+        foreach ($messageStream as $ignored) {
+            // drain
+        }
+
+        restore_error_handler();
+
+        // No "Array to string conversion" warning must have fired.
+        $arrayToStringWarnings = array_filter(
+            $warnings,
+            fn (string $w) => str_contains($w, 'Array to string conversion'),
+        );
+        $this->assertEmpty(
+            $arrayToStringWarnings,
+            'Unexpected "Array to string conversion" warning during input_json_delta accumulation: '
+                . implode('; ', $arrayToStringWarnings),
+        );
+
+        // The final message's tool_use block must expose a decoded array, not a JSON string.
+        $finalMessage = $messageStream->getFinalMessage();
+        $this->assertCount(1, $finalMessage->content);
+
+        $toolBlock = $finalMessage->content[0];
+        $this->assertSame('tool_use', $toolBlock['type']);
+        $this->assertSame('get_weather', $toolBlock['name']);
+        $this->assertIsArray($toolBlock['input'], 'tool_use input must be a decoded array after streaming');
+        $this->assertSame('San Francisco', $toolBlock['input']['location']);
+        $this->assertSame('celsius', $toolBlock['input']['unit']);
+        $this->assertSame('tool_use', $finalMessage->stop_reason);
+    }
+
     public function testStreamingWithToolUse(): void
     {
         $streamData = '';
